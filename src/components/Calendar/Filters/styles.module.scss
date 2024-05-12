@@ -1,0 +1,29 @@
+.container {
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &_search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    &_input {
+      width: 300px;
+    }
+    &_btn {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+  }
+  &_pagination {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    right: 0;
+  }
+}

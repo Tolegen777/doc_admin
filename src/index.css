@@ -1,0 +1,29 @@
+:root {
+  font-family: 'Museo Sans Cyrl', sans-serif;
+  font-size: 12px;
+  line-height: 24px;
+  font-weight: 400;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  max-width: 100%;
+}
+
+/*Максимальная ширина контента выпадающего списка селекта*/
+.ant-select-dropdown {
+  width: max-content !important;
+}
+/*Максимальная ширина контента выпадающего списка селекта*/
+.ant-select-dropdown .rc-virtual-list-holder-inner {
+  width: max-content;
+}
+
+

@@ -1,0 +1,29 @@
+.container {
+  border-bottom: 1px solid grey;
+  width: 200px;
+  flex: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+  &_content {
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+    &_count {
+      color: lightgray;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    &_info {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+  }
+}
+

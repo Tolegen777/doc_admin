@@ -1,0 +1,33 @@
+.container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-right: 1px solid grey;
+  flex: none;
+  width: 50px;
+  background: lightgray;
+  &_enabled {
+    background: #50B987;
+  }
+  &_disabled {
+    background: red;
+  }
+  //flex: 1;
+  &_title {
+     color: white;
+     font-size: 16px;
+    font-weight: 600;
+  }
+  &_sub_title {
+    color: white;
+    font-size: 11px;
+    font-weight: 400;
+  }
+  &_empty_title {
+    color: darkgrey;
+    font-size: 10px;
+    font-weight: 400;
+  }
+}

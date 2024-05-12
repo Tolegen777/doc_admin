@@ -1,0 +1,35 @@
+.container {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: #1677ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 50px;
+  &_info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    &_logo {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+  &_action {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    &_logout {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+}
