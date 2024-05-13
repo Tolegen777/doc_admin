@@ -8,9 +8,12 @@ type Props = {
 const DoctorSlots = ({slots}: Props) => {
     return (
         <div className={styles.container}>
-            {slots?.map((item, index) => <Slot key={index} slot={{
-                count: item?.working_hours?.length ?? 0
-            }} />)}
+            {slots?.map((item, index) => <Slot
+                key={index}
+                panelColour={item?.panel_colour}
+                workingHoursCount={item?.working_hours_count}
+                visitsCount={item?.visits_count}
+            />)}
         </div>
     );
 };

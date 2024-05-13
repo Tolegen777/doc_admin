@@ -24,7 +24,7 @@ const CalendarContent = () => {
         queryKey: ['calendarData', searchDates],
         queryFn: () =>
             axiosInstance
-                .get<ICalendar[]>(`partners/franchise-branches/13/schedule/${searchDates}`)
+                .get<ICalendar[]>(`partners/franchise-branches/90/schedule/${searchDates}`)
                 .then((response) => response?.data),
     });
 

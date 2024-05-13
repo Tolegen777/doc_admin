@@ -4,16 +4,21 @@ export interface ICalendar {
 }
 
 export interface WorkSchedule {
-    clinic_branch?: string
-    date: string
-    doctor_work_schedule_object_id?: number
+    work_date: string
+    clinic_branch_id: number
+    doctor_work_schedule_object_id: number
     working_hours: WorkingHour[]
+    working_hours_count: number
+    visits_count: number
+    panel_colour: PanelColourType
 }
 
 export interface WorkingHour {
-    working_hour: string
+    start_time: string
     appointment_duration: string
-    availability: string
-    patients_visit_object_id?: string
-    time_passed: string
+    availability: boolean
+    patients_visit_object_id?: number
+    time_passed: boolean
 }
+
+export type PanelColourType = 'red' | 'green' | 'white'
