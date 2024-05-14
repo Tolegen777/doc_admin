@@ -9,6 +9,7 @@ const App: FC = () =>  (
         theme={{
             token: {
                 fontFamily: 'Museo Sans Cyrl, sans-serif',
+                colorPrimary: '#5194C1',
             },
         }}
     >
