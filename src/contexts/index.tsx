@@ -6,7 +6,8 @@ import type { Dispatch, State, Action, StateContextProviderProps } from './types
 const initialState: State = {
   authUser: false,
   searchQuery: '',
-  page: 1
+  page: 1,
+  addressId: null
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -29,6 +30,12 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         page: action.payload,
+      }
+    }
+    case 'SET_ADDRESS_ID': {
+      return {
+        ...state,
+        addressId: action.payload,
       }
     }
     default: {

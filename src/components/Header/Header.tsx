@@ -1,11 +1,19 @@
 import styles from './styles.module.scss'
-import {Avatar} from "antd";
+import {Avatar, Select} from "antd";
 import {useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {IFranchise} from "../../types/franchiseTypes.ts";
 import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
+import {useEffect} from "react";
+import {useStateContext} from "../../contexts";
 
 const Header = () => {
+
+    const {state, dispatch} = useStateContext()
+
+    const {addressId} = state
+
+    // const [activeAddress, setActiveAddress] = useState<number | null>(null)
 
     const { data, isLoading } = useQuery({
         queryKey: ['franchiseBranches'],
@@ -15,7 +23,18 @@ const Header = () => {
                 .then((response) => response?.data),
     });
 
-    const options = selectOptionsParser<IFranchise>(data ?? [], 'title', 'id')
+    useEffect(() => {
+        if (data && !addressId) {
+            const defaultId = data?.find(item => item)?.id ?? null
+            dispatch({
+                type: 'SET_ADDRESS_ID',
+                payload: defaultId as number
+            })
+        }
+    }, [data])
+
+    const options =
+        selectOptionsParser<IFranchise>(data ?? [], 'title', 'id')
 
     return (
         <div className={styles.container}>
@@ -34,7 +53,21 @@ const Header = () => {
             </div>
             <div className={styles.container_action}>
                 <div className={styles.container_action_address}>
-
+                    <Select
+                        onChange={(value: number) => {
+                            dispatch({
+                                type: 'SET_ADDRESS_ID',
+                                payload: value as number
+                            })
+                        }}
+                        style={{width: 'max-content'}}
+                        options={options}
+                        variant="borderless"
+                        value={addressId}
+                        showSearch
+                        loading={isLoading}
+                        popupMatchSelectWidth={false}
+                    />
                 </div>
                 <div className={styles.container_action_logout}>
                     <Avatar/>

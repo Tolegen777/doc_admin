@@ -4,6 +4,7 @@ export type State = {
   authUser: boolean
   searchQuery: string
   page: number
+  addressId: number | null
 };
 
 
@@ -22,7 +23,12 @@ type SetSearchQueryActionType = {
   payload: string
 }
 
-export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType
+type SetAddressIdActionType = {
+  type: 'SET_ADDRESS_ID'
+  payload: number
+}
+
+export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType | SetAddressIdActionType
 
 export type Dispatch = (action: Action) => void;
 

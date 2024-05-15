@@ -7,7 +7,6 @@ export interface WorkSchedule {
     work_date: string
     clinic_branch_id: number
     doctor_work_schedule_object_id: number
-    working_hours: WorkingHour[]
     working_hours_count: number
     visits_count: number
     panel_colour: PanelColourType

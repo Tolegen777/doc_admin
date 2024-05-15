@@ -14,18 +14,17 @@ const CalendarContent = () => {
 
     const {state} = useStateContext()
 
-    const {searchQuery} = state
-
-    const {page} = state
+    const {page, searchQuery, addressId} = state
 
     const searchDates = getDateRange(page)
 
     const { data, isLoading } = useQuery({
-        queryKey: ['calendarData', searchDates],
+        queryKey: ['calendarData', searchDates, addressId],
         queryFn: () =>
             axiosInstance
-                .get<ICalendar[]>(`partners/franchise-branches/90/schedule/${searchDates}`)
+                .get<ICalendar[]>(`partners/franchise-branches/${addressId}/schedule/${searchDates}`)
                 .then((response) => response?.data),
+        enabled: !!addressId
     });
 
     const dates = getDates(page)
