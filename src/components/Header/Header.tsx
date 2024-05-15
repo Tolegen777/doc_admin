@@ -1,11 +1,13 @@
 import styles from './styles.module.scss'
-import {Avatar, Select} from "antd";
-import {useQuery} from "@tanstack/react-query";
+import {Avatar, Dropdown, MenuProps, Select, Space} from "antd";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {IFranchise} from "../../types/franchiseTypes.ts";
 import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
 import {useEffect} from "react";
 import {useStateContext} from "../../contexts";
+import {resetService} from "../../services/resetService.ts";
+import {authApi} from "../../api/authApi.ts";
 
 const Header = () => {
 
@@ -13,7 +15,12 @@ const Header = () => {
 
     const {addressId} = state
 
-    // const [activeAddress, setActiveAddress] = useState<number | null>(null)
+    const {
+        mutate: onLogout,
+    } = useMutation({
+        mutationKey: ['signout'],
+        mutationFn: authApi.signOutUser,
+    });
 
     const { data, isLoading } = useQuery({
         queryKey: ['franchiseBranches'],
@@ -22,6 +29,18 @@ const Header = () => {
                 .get<IFranchise[]>('partners/franchise-branches/')
                 .then((response) => response?.data),
     });
+
+    const items: MenuProps['items'] = [
+        {
+            key: '4',
+            danger: true,
+            label: 'Выйти',
+            onClick: () => {
+                resetService()
+                onLogout()
+            }
+        },
+    ];
 
     useEffect(() => {
         if (data && !addressId) {
@@ -60,19 +79,28 @@ const Header = () => {
                                 payload: value as number
                             })
                         }}
-                        style={{width: 'max-content'}}
+                        style={{width: 'max-content', color: '#fff'}}
                         options={options}
                         variant="borderless"
                         value={addressId}
                         showSearch
                         loading={isLoading}
                         popupMatchSelectWidth={false}
+
                     />
                 </div>
                 <div className={styles.container_action_logout}>
                     <Avatar/>
                     <div className={styles.container_action_logout_partner}>
-                        Эмирмед
+                        <Dropdown menu={{ items }} placement={'bottomRight'}>
+                            <a onClick={(e) => {
+                                e.preventDefault()
+                            }}>
+                                <Space style={{marginRight: 20}}>
+                                    Эмирмед
+                                </Space>
+                            </a>
+                        </Dropdown>
                     </div>
                 </div>
             </div>

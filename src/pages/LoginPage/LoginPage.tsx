@@ -9,6 +9,7 @@ import {useStateContext} from "../../contexts";
 import {AxiosError} from "axios";
 import {customNotification} from "../../utils/customNotification.ts";
 import {regExpValidator} from "../../utils/regExpValidator.ts";
+import {useNavigate} from "react-router-dom";
 
 const { useToken } = theme;
 const { useBreakpoint } = Grid;
@@ -20,6 +21,8 @@ export const LoginPage = () => {
 
     const {dispatch} = useStateContext()
 
+    const navigate = useNavigate()
+
     const {
         mutate: onLogin,
         isPending: isLoading,
@@ -30,6 +33,7 @@ export const LoginPage = () => {
             tokenService.updateLocalTokenData(data.access, 'access')
             tokenService.updateLocalTokenData(data.refresh, 'refresh')
             dispatch({ type: 'SET_AUTH_STATUS', payload: true })
+            navigate('/calendar')
         },
         onError: (error: AxiosError<{ message: string }>) => {
             if (error.response && error?.response.status === 401)
