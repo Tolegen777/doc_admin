@@ -12,6 +12,7 @@
   justify-content: space-between;
   box-sizing: border-box;
   height: 50px;
+  font-size: 13px;
   &_info {
     display: flex;
     gap: 20px;
@@ -26,6 +27,15 @@
     display: flex;
     gap: 20px;
     align-items: center;
+    &_address {
+      &_select {
+        .ant-select-selector {
+          .ant-select-selection-item {
+            color: green !important;
+          }
+        }
+      }
+    }
     &_logout {
       display: flex;
       gap: 10px;
