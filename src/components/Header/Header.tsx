@@ -10,6 +10,7 @@ import {resetService} from "../../services/resetService.ts";
 import {authApi} from "../../api/authApi.ts";
 import userIcon from '../../assets/userIcon.svg'
 import {DownOutlined} from '@ant-design/icons'
+import {Spinner} from "../Shared/Spinner";
 
 const Header = () => {
 
@@ -99,7 +100,7 @@ const Header = () => {
                         >{e?.label}
                         </div>
                     }
-                        suffixIcon={<DownOutlined style={{color: '#fff'}} />}
+                        suffixIcon={isLoading ? <Spinner text/> : <DownOutlined style={{color: '#fff'}} />}
 
                     />
                 </div>

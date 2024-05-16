@@ -8,7 +8,7 @@ import {getDateRange, getDates} from "../../../utils/date/getDates.ts";
 import DateSlots from "../DateSlots/DateSlots.tsx";
 import {useStateContext} from "../../../contexts";
 import {useMemo} from "react";
-import {Spin} from "antd";
+import {FullSpinner} from "../../Shared/FullSpinner";
 
 const CalendarContent = () => {
 
@@ -45,7 +45,7 @@ const CalendarContent = () => {
     }, [searchQuery, data])
 
     if (isLoading) {
-        return <Spin fullscreen/>
+        return <FullSpinner />
     }
 
     return (
