@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import {Avatar, Dropdown, MenuProps, Select, Space} from "antd";
+import {Dropdown, MenuProps, Select, Space} from "antd";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {IFranchise} from "../../types/franchiseTypes.ts";
@@ -8,6 +8,8 @@ import {useEffect} from "react";
 import {useStateContext} from "../../contexts";
 import {resetService} from "../../services/resetService.ts";
 import {authApi} from "../../api/authApi.ts";
+import userIcon from '../../assets/userIcon.svg'
+import {DownOutlined} from '@ant-design/icons'
 
 const Header = () => {
 
@@ -71,7 +73,7 @@ const Header = () => {
                 </div>
             </div>
             <div className={styles.container_action}>
-                <div className={styles.container_action_address}>
+                <div>
                     <Select
                         onChange={(value: number) => {
                             dispatch({
@@ -79,24 +81,36 @@ const Header = () => {
                                 payload: value as number
                             })
                         }}
-                        style={{width: 'max-content', color: '#fff'}}
+                        style={{width: 'max-content', color: 'red'}}
                         options={options}
                         variant="borderless"
                         value={addressId}
                         showSearch
                         loading={isLoading}
                         popupMatchSelectWidth={false}
+                        labelRender={(e) => <div
+                            style={{
+                                color: '#fff',
+                                maxWidth: 300,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                cursor: "pointer"
+                        }}
+                        >{e?.label}
+                        </div>
+                    }
+                        suffixIcon={<DownOutlined style={{color: '#fff'}} />}
 
                     />
                 </div>
                 <div className={styles.container_action_logout}>
-                    <Avatar/>
+                    <img src={userIcon} alt={''} width={25} height={25}/>
                     <div className={styles.container_action_logout_partner}>
                         <Dropdown menu={{ items }} placement={'bottomRight'}>
                             <a onClick={(e) => {
                                 e.preventDefault()
                             }}>
-                                <Space style={{marginRight: 20}}>
+                                <Space style={{marginRight: 20, textTransform: "uppercase", cursor: 'pointer'}}>
                                     Эмирмед
                                 </Space>
                             </a>

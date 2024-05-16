@@ -1,6 +1,7 @@
 import {Button, Tooltip} from "antd";
 import { RightOutlined, LeftOutlined } from '@ant-design/icons';
 import {useStateContext} from "../../../contexts";
+import styles from './styles.module.scss'
 
 type Props = {
     actionType: 'next' | 'prev'
@@ -18,11 +19,12 @@ const PaginationButton = ({actionType}: Props) => {
     }
 
     return (
-        <Tooltip title="search">
+        <Tooltip title={actionType === 'next' ? 'следующий' : 'предыдущий'}>
             <Button
                 shape="circle"
-                icon={actionType === 'next' ? <RightOutlined /> : <LeftOutlined /> }
+                icon={actionType === 'next' ? <RightOutlined className={styles.icon} /> : <LeftOutlined className={styles.icon} /> }
                 onClick={handlePaginate}
+                className={styles.btn}
             />
         </Tooltip>
     );

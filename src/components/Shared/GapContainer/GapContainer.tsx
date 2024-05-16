@@ -8,7 +8,7 @@ type Props = {
     children: ReactNode
 }
 
-const GapContainer = ({flexDirection, alignItems, justifyContent, gap, children}: Props & React.HTMLAttributes<HTMLDivElement>) => {
+const GapContainer = ({flexDirection, alignItems, justifyContent, gap, children, ...props}: Props & React.HTMLAttributes<HTMLDivElement>) => {
     const containerStyle: CSSProperties = {
         display: 'flex',
         alignItems: alignItems,
@@ -18,7 +18,7 @@ const GapContainer = ({flexDirection, alignItems, justifyContent, gap, children}
     };
 
     return (
-        <div style={containerStyle}>
+        <div style={containerStyle} {...props}>
             {children}
         </div>
     );

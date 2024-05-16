@@ -37,11 +37,10 @@ const items: MenuItem[] = [
 ];
 
 const NavigationMenu: React.FC = () => {
-    const [current, setCurrent] = useState('mail');
+    const [current, setCurrent] = useState('/calendar');
     const navigate = useNavigate()
 
     const onClick: MenuProps['onClick'] = (e) => {
-        console.log('click ', e);
         setCurrent(e.key);
         navigate(e.key)
     };
