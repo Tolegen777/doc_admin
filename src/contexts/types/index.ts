@@ -5,6 +5,10 @@ export type State = {
   searchQuery: string
   page: number
   addressId: number | null
+  doctor: {
+    query: string,
+    specialities: string[]
+  }
 };
 
 
@@ -28,7 +32,18 @@ type SetAddressIdActionType = {
   payload: number
 }
 
-export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType | SetAddressIdActionType
+type SetDoctorSearchQueryActionType = {
+  type: 'SET_DOCTOR_SEARCH_QUERY'
+  payload: string
+}
+
+type SetDoctorSpecilititesActionType = {
+  type: 'SET_DOCTOR_SPECIALITIES_QUERY'
+  payload: string[]
+}
+
+export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
+    SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType
 
 export type Dispatch = (action: Action) => void;
 

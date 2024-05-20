@@ -30,6 +30,7 @@ const DoctorTitle = ({doctor, isEmpty = false, count}: Props) => {
                 {!isEmpty && <img src={calendarIcon}
                                   width={20}
                                   height={20}
+                                  alt=""
                     style={{
                         fontSize: '17px',
                         fontWeight: 800

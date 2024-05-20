@@ -1,11 +1,10 @@
 import styles from './styles.module.scss'
-import {Button, Input} from "antd";
-import {SearchOutlined, ReloadOutlined} from '@ant-design/icons';
+import {Button} from "antd";
+import {ReloadOutlined} from '@ant-design/icons';
 import PaginationButton from "../../Shared/PaginationButton/PaginationButton.tsx";
-import {useCallback} from "react";
 import {useStateContext} from "../../../contexts";
-import debounce from 'debounce';
 import {useQueryClient} from "@tanstack/react-query";
+import {CustomSearchInput} from "../../Shared/CustomSearchInput";
 
 type Props = {}
 const Filters = ({}: Props) => {
@@ -14,13 +13,6 @@ const Filters = ({}: Props) => {
 
     const queryClient = useQueryClient()
 
-    const onHandleInputChange = useCallback(
-        debounce((value: string) => {
-            dispatch({type: 'SET_SEARCH_QUERY', payload: value});
-        }, 500),
-        [],
-    );
-
     const handleReload = () => {
         queryClient.invalidateQueries({ queryKey: ['calendarData'] })
     }
@@ -28,9 +20,11 @@ const Filters = ({}: Props) => {
     return (
         <div className={styles.container}>
             <div className={styles.container_search}>
-                <Input prefix={<SearchOutlined/>} className={styles.container_search_input} onChange={(event) => {
-                    onHandleInputChange(event.target.value);
-                }}/>
+                <CustomSearchInput
+                    action={(value) => {
+                    dispatch({type: 'SET_SEARCH_QUERY', payload: value})
+                }}
+                />
                 <Button className={styles.container_search_btn} onClick={handleReload}><ReloadOutlined/></Button>
             </div>
             <div className={styles.container_pagination}>

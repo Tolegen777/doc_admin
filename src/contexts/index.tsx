@@ -7,7 +7,11 @@ const initialState: State = {
   authUser: false,
   searchQuery: '',
   page: 1,
-  addressId: null
+  addressId: null,
+  doctor: {
+    query: '',
+    specialities: []
+  }
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -36,6 +40,24 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         addressId: action.payload,
+      }
+    }
+    case 'SET_DOCTOR_SEARCH_QUERY': {
+      return {
+        ...state,
+        doctor: {
+          ...state.doctor,
+          query: action.payload
+        },
+      }
+    }
+    case 'SET_DOCTOR_SPECIALITIES_QUERY': {
+      return {
+        ...state,
+        doctor: {
+          ...state.doctor,
+          specialities: action.payload
+        },
       }
     }
     default: {
