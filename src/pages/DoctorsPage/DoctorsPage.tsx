@@ -24,26 +24,26 @@ const DoctorsPage = () => {
 
     const {specialities, query} = doctor
 
-    const [fullVisibleFullItems, setFullVisibleFullItems] = useState<number[]>([])
+    const [fullVisibleFullItems] = useState<number[]>([])
 
     const getIsShowFull = (number: number) => {
         return fullVisibleFullItems.includes(number);
 
     }
 
-    const handleSetFullVisibleFullItems = (index: number) => {
-        const isIndexVisible = fullVisibleFullItems?.includes(index)
-
-        let payload = []
-
-        if (isIndexVisible) {
-            payload =  fullVisibleFullItems.filter(item => item !== index)
-        } else {
-            payload = [...fullVisibleFullItems, index]
-        }
-
-        setFullVisibleFullItems(payload)
-    }
+    // const handleSetFullVisibleFullItems = (index: number) => {
+    //     const isIndexVisible = fullVisibleFullItems?.includes(index)
+    //
+    //     let payload = []
+    //
+    //     if (isIndexVisible) {
+    //         payload =  fullVisibleFullItems.filter(item => item !== index)
+    //     } else {
+    //         payload = [...fullVisibleFullItems, index]
+    //     }
+    //
+    //     setFullVisibleFullItems(payload)
+    // }
 
     const columns = [
         {
