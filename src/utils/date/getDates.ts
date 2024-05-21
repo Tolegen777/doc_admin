@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export function getDates(page: number) {
     const dates = [];
     const weekdays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
@@ -45,3 +47,29 @@ export function getDateRange(page: number): string {
 
     return `${formattedStartDate}/${formattedEndDate}/`
 }
+
+/**
+ * Форматирует дату и время в соответствии с указанными форматами.
+ * @param inputDate - Дата в формате "YYYY-MM-DD".
+ * @param inputTime - Время в формате "HH:mm:ss".
+ * @returns Отформатированная строка, представляющая дату и время.
+ * Если дата сегодняшняя, возвращается строка "Сегодня, HH:mm".
+ * Иначе возвращается строка в формате "DD.MM.YYYY, HH:mm".
+ * В случае недопустимой даты или времени возвращается "Invalid date or time".
+ */
+export function formatDateTime(inputDate: string, inputTime: string): string {
+    const now = moment();
+    const dateMoment = moment(inputDate);
+    const timeMoment = moment(inputTime, 'HH:mm:ss');
+
+    if (!dateMoment.isValid() || !timeMoment.isValid()) {
+        return 'Invalid date or time';
+    }
+
+    if (dateMoment.isSame(now, 'day')) {
+        return `Сегодня, ${timeMoment.format('HH:mm')}`;
+    }
+
+    return `${dateMoment.format('DD.MM.YYYY')}, ${timeMoment.format('HH:mm')}`;
+}
+

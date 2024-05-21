@@ -12,7 +12,7 @@ const items: MenuItem[] = [
     },
     {
         label: 'Записи',
-        key: '/appointments',
+        key: '/visits',
     },
     {
         label: 'Ежедневная сверка',

@@ -9,6 +9,7 @@ export type State = {
     query: string,
     specialities: string[]
   }
+  visitsQuery: string
 };
 
 
@@ -42,8 +43,13 @@ type SetDoctorSpecilititesActionType = {
   payload: string[]
 }
 
+type SetVisitsQueryActionType = {
+  type: 'SET_VISITS_QUERY'
+  payload: string
+}
+
 export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
-    SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType
+    SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType | SetVisitsQueryActionType
 
 export type Dispatch = (action: Action) => void;
 

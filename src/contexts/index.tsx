@@ -11,7 +11,8 @@ const initialState: State = {
   doctor: {
     query: '',
     specialities: []
-  }
+  },
+  visitsQuery: ''
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -58,6 +59,12 @@ const stateReducer = (state: State, action: Action) => {
           ...state.doctor,
           specialities: action.payload
         },
+      }
+    }
+    case 'SET_VISITS_QUERY': {
+      return {
+        ...state,
+        visitsQuery: action.payload,
       }
     }
     default: {
