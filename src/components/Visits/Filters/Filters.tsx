@@ -15,7 +15,7 @@ const Filters = ({}: Props) => {
                     dispatch({type: 'SET_VISITS_QUERY', payload: value})
                 }}
             />
-            <Button type={'default'}>Дата записи</Button>
+            <Button type="primary" ghost>Дата записи</Button>
         </div>
     );
 };

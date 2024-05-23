@@ -5,10 +5,12 @@ import {axiosInstance} from "../../api";
 import {useStateContext} from "../../contexts";
 import {addCountsToData} from "../../utils/addCountsToData.ts";
 import {useMemo} from "react";
-import {Button, Typography} from 'antd'
+import {Button} from 'antd'
 import {IVisit} from "../../types/visits.ts";
 import Filters from "../../components/Visits/Filters/Filters.tsx";
 import {formatDateTime} from "../../utils/date/getDates.ts";
+import {TextButton} from "../../components/Shared/Buttons/TextButton";
+import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 
 const VisitsPage = () => {
 
@@ -19,13 +21,20 @@ const VisitsPage = () => {
     const columns = [
         {
             title: 'Дата визита',
-            dataIndex: 'date',
             key: 'date',
+            render: (visit: IVisit) => !visit?.date ? <p>{formatDateTime({
+                inputDate: visit?.date,
+                inputTime: visit?.visit_time_slot
+            })}</p> : <TextButton text={'Новая заявка'} type={'primary'} action={() => {}} />
         },
         {
             title: 'Врач',
             key: 'doctor_full_name',
-            render: (visit: IVisit) => <Typography.Title style={{fontSize: 15}}>{visit.doctor_full_name}</Typography.Title>
+            render: (visit: IVisit) => <DoctorProfile
+                title={visit?.doctor_full_name}
+                subTitle={visit?.procedure_title}
+                imgSrc={''}
+            />
         },
         {
             title: 'Статус',
@@ -33,8 +42,8 @@ const VisitsPage = () => {
             dataIndex: 'visit_status',
             render: (status: string) => (
                 <div>
-                   <div>{status}</div>
-                   <Button type={'text'}>Изменить</Button>
+                    <div>{status}</div>
+                    <TextButton text={'Изменить'} type={'primary'} action={() => {}} />
                 </div>
 
             ),
@@ -43,12 +52,14 @@ const VisitsPage = () => {
             title: 'Пациент',
             key: 'patient_full_name',
             render: (visit: IVisit) => {
-                if (visit.patient_id) {return <div>
-                   <div>{visit?.patient_full_name}</div>
-                   <div>{visit?.patient_phone_number}</div>
-                   <div>{visit?.patient_iin_number}</div>
-                </div>} else {
-                    return <Button>Показать информацию</Button>
+                if (!visit.patient_id) {
+                    return <div>
+                        <div>{visit?.patient_full_name}</div>
+                        <div>{visit?.patient_phone_number}</div>
+                        <div>{visit?.patient_iin_number}</div>
+                    </div>
+                } else {
+                    return <Button type="primary" ghost>Показать информацию</Button>
                 }
 
             },
@@ -56,11 +67,22 @@ const VisitsPage = () => {
         {
             title: 'Дата создания/обновления',
             key: 'visit_time_slot',
-            render: (visit: IVisit) => <p>{formatDateTime(visit?.date, visit?.visit_time_slot)}</p>
+            render: (visit: IVisit) => <div>
+                <p>
+                    {formatDateTime({
+                        isoDateTime: visit?.created_at
+                    })}
+                </p>
+                {visit?.updated_at?.length > 0 && <p>
+                    Изменено: {formatDateTime({
+                        isoDateTime: visit?.updated_at
+                    })}
+                </p>}
+            </div>
         },
     ];
 
-    const { data, isLoading } = useQuery({
+    const {data, isLoading} = useQuery({
         queryKey: ['visitsData', addressId],
         queryFn: () =>
             axiosInstance

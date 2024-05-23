@@ -19,4 +19,6 @@ export interface IVisit {
     visit_price: number
     visit_status: boolean
     visit_time_slot: string
+    created_at: string
+    updated_at: string
 }

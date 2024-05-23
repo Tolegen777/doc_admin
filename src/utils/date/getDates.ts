@@ -57,10 +57,28 @@ export function getDateRange(page: number): string {
  * Иначе возвращается строка в формате "DD.MM.YYYY, HH:mm".
  * В случае недопустимой даты или времени возвращается "Invalid date or time".
  */
-export function formatDateTime(inputDate: string, inputTime: string): string {
+
+type Props = {
+    inputDate?: string,
+    inputTime?: string,
+    isoDateTime?: string
+}
+
+export function formatDateTime({inputDate, inputTime, isoDateTime}: Props): string {
     const now = moment();
-    const dateMoment = moment(inputDate);
-    const timeMoment = moment(inputTime, 'HH:mm:ss');
+    let dateMoment, timeMoment;
+
+    if (isoDateTime) {
+        const isoMoment = moment(isoDateTime);
+        if (!isoMoment.isValid()) {
+            return 'Invalid ISO date-time';
+        }
+        dateMoment = isoMoment;
+        timeMoment = isoMoment;
+    } else {
+        dateMoment = moment(inputDate);
+        timeMoment = moment(inputTime, 'HH:mm:ss');
+    }
 
     if (!dateMoment.isValid() || !timeMoment.isValid()) {
         return 'Invalid date or time';

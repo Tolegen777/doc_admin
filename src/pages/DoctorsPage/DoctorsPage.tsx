@@ -8,7 +8,7 @@ import {IDoctor, SpecialitiesAndProcedure} from "../../types/doctor.ts";
 import {addCountsToData} from "../../utils/addCountsToData.ts";
 import {useMemo, useState} from "react";
 import Filters from "../../components/Doctors/Filters/Filters.tsx";
-import {Typography} from 'antd'
+import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 
 const hiddenStyles = {
     // whiteSpace: 'nowrap',
@@ -55,7 +55,10 @@ const DoctorsPage = () => {
             title: 'Врач',
             dataIndex: 'full_name',
             key: 'full_name',
-            render: (name: string) => <Typography.Title style={{fontSize: 15}}>{name}</Typography.Title>
+            render: (name: string) => <DoctorProfile
+                title={name}
+                imgSrc={''}
+            />
         },
         {
             title: 'Специальности/Процедуры',
