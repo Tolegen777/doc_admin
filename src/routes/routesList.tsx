@@ -1,6 +1,8 @@
 import { Empty } from 'antd';
 import CalendarPage from "../pages/CalendarPage/CalendarPage.tsx";
 import DoctorsPage from "../pages/DoctorsPage/DoctorsPage.tsx";
+import VisitsPage from "../pages/VisitsPage/VisitsPage.tsx";
+import {LoginPage} from "../pages/LoginPage/LoginPage.tsx";
 
 export const routesList = [
   {
@@ -18,5 +20,13 @@ export const routesList = [
   {
     path: '/doctors',
     element: <DoctorsPage />,
+  },
+  {
+    path: '/visits',
+    element: <VisitsPage />,
+  },
+  {
+    path: '/login',
+    element: <LoginPage />,
   },
 ];

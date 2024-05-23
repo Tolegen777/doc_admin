@@ -1,12 +1,9 @@
 // eslint-disable-next-line prettier/prettier
-import type { AxiosRequestConfig, AxiosRequestHeaders, AxiosError } from 'axios';
+import type {AxiosError, AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
 import axios from 'axios';
-
-import { resetService } from '../services/resetService';
-import { tokenService } from '../services/tokenService';
-import { customConfirmAction } from '../utils/customConfirmAction';
-import { customNotification } from '../utils/customNotification';
-import { authApi } from './authApi';
+import {tokenService} from '../services/tokenService';
+import {customNotification} from '../utils/customNotification';
+import {authApi} from './authApi';
 
 type FailedQueue = {
     reject: (error: Error | null) => void;
@@ -67,14 +64,8 @@ axiosInstance.interceptors.response.use(
             _retry: boolean
         } = error.config
 
-        console.log(error, 'ERR')
-
         const errorStatus = error.response.status;
         const errorCode = error.response.data?.code;
-
-        if (error.response.data.message === 'session_expired') {
-            customConfirmAction('Время вашего сеанса истекло, пожалуйста, войдите снова!', resetService, 'Выйти', true, true)
-        }
 
         // console.log(errorStatus, !originalRequest._retry, tokenService.getLocalAccessToken())
         if (errorStatus === 401 && !originalRequest._retry && tokenService.getLocalAccessToken() && errorCode === 'token_not_valid') {
@@ -104,16 +95,16 @@ axiosInstance.interceptors.response.use(
                 void authApi.refreshAccessToken(tokenService.getLocalRefreshToken()).then((response) => {
 
                     // Set refresh access and refresh token
-                    tokenService.updateLocalTokenData(response.access, 'access')
+                    tokenService.updateLocalTokenData(response?.access as string, 'access')
 
-                    axios.defaults.headers.common.Authorization = `Bearer ${response.access}`;
+                    axios.defaults.headers.common.Authorization = `Bearer ${response?.access}`;
 
                     if (originalRequest && originalRequest.headers) {
-                        originalRequest.headers.Authorization = `Bearer ${response.access}`;
+                        originalRequest.headers.Authorization = `Bearer ${response?.access}`;
                     }
 
                     // Send requests without errors, with new access token
-                    processQueue(null, response.access)
+                    processQueue(null, response?.access)
                     resolve(axiosInstance(originalRequest))
 
                 }).catch((err: AxiosError) => {
@@ -126,7 +117,7 @@ axiosInstance.interceptors.response.use(
         }
 
         if (errorStatus !== 401) {
-            const errorMessage = error.response.data.message
+            const errorMessage = error.response?.data?.detail
             customNotification({
                 type: 'error',
                 message: errorMessage.length ? errorMessage : 'Ошибка сервера'
