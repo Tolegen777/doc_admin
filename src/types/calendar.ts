@@ -12,12 +12,29 @@ export interface WorkSchedule {
     panel_colour: PanelColourType
 }
 
-export interface WorkingHour {
-    start_time: string
-    appointment_duration: string
-    availability: boolean
-    patients_visit_object_id?: number
-    time_passed: boolean
+export interface ITimeSlot {
+    doctor_work_schedule_detailed_api_view: DoctorWorkScheduleDetailedApiView
 }
+
+export interface DoctorWorkScheduleDetailedApiView {
+    clinic_branch: string
+    clinic_branch_id: number
+    doctor_profile: string
+    doctor_profile_id: number
+    doctor_work_schedule_id: number
+    work_date: string
+    working_hours_list: WorkingHoursList[]
+}
+
+export interface WorkingHoursList {
+    code: string
+    doctor_availability: boolean
+    start_time: string
+    time_slot_id: number
+    reserved: boolean
+    patient_clinic_visit_id?: number
+    isActive?: boolean
+}
+
 
 export type PanelColourType = 'red' | 'green' | 'white'

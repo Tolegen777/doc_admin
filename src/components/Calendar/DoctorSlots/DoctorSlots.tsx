@@ -6,6 +6,11 @@ type Props = {
     slots: WorkSchedule[]
 }
 const DoctorSlots = ({slots}: Props) => {
+
+    const onSlotOpen = (item: WorkSchedule) => {
+        console.log(item)
+    }
+
     return (
         <div className={styles.container}>
             {slots?.map((item, index) => <Slot
@@ -13,6 +18,7 @@ const DoctorSlots = ({slots}: Props) => {
                 panelColour={item?.panel_colour}
                 workingHoursCount={item?.working_hours_count}
                 visitsCount={item?.visits_count}
+                onSlotOpen={() => onSlotOpen(item)}
             />)}
         </div>
     );

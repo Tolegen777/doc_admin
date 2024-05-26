@@ -1,0 +1,25 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #5194C1;
+  color: #5194C1;
+  font-size: 15px;
+  font-weight: 600;
+  box-sizing: border-box;
+  height: 30px;
+  width: 70px;
+
+  &_not_available {
+    border: 1px solid #D1D1D1;
+    color: #FFFFFF;
+    background: #D1D1D1;
+  }
+  &_reserved {
+    border: 1px solid #5194C1;
+    color: #FFFFFF;
+    background: #5194C1;
+  }
+}

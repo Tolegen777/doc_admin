@@ -91,3 +91,26 @@ export function formatDateTime({inputDate, inputTime, isoDateTime}: Props): stri
     return `${dateMoment.format('DD.MM.YYYY')}, ${timeMoment.format('HH:mm')}`;
 }
 
+export function removeSeconds(time?: string): string {
+    // Проверка на undefined или пустую строку
+    if (!time) {
+        return '';
+    }
+
+    // Разделяем строку времени на компоненты
+    const parts = time.split(':');
+
+    // Проверка, что частей ровно три (HH, MM, SS)
+    if (parts.length !== 3) {
+        return '';
+    }
+
+    const [hours, minutes] = parts;
+    // Проверка, что часы и минуты состоят из двух цифр
+    if (hours.length !== 2 || minutes.length !== 2) {
+        return '';
+    }
+
+    // Возвращаем строку в формате "HH:MM"
+    return `${hours}:${minutes}`;
+}

@@ -6,14 +6,17 @@ type Props = {
   panelColour: PanelColourType
   visitsCount: number
   workingHoursCount: number
+  onSlotOpen: () => void
 }
-const Slot = ({panelColour, visitsCount, workingHoursCount}: Props) => {
+const Slot = ({panelColour, visitsCount, workingHoursCount, onSlotOpen}: Props) => {
     return (
         <div className={clsx({
             [styles.container]: true,
             [styles.container_enabled]: panelColour === 'green',
             [styles.container_disabled]: panelColour === 'red'
-        })}>
+        })}
+        onClick={onSlotOpen}
+        >
             {panelColour !== 'white' && <>
                 <div className={styles.container_title}>{visitsCount}</div>
                 <div className={styles.container_sub_title}>{workingHoursCount}</div>

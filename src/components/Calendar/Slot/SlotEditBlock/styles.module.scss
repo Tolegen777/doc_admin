@@ -1,0 +1,9 @@
+.container {
+  &_content {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+}
