@@ -8,7 +8,7 @@ type Props = {
     workingHours: WorkingHoursList[]
 }
 
-export const SlotEditBlockContent = memo(({workingHours}: Props) => {
+export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
     const [selectedTimeSlotIds, setSelectedTimeSlotIds] = useState<Set<number>>(new Set());
     const selectableItems = useRef<Box[]>([]);
     const elementsContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +26,8 @@ export const SlotEditBlockContent = memo(({workingHours}: Props) => {
     );
 
     const { DragSelection } = useSelectionContainer({
-        eventsElement: document.getElementById("root"),
+        // @ts-ignore
+        eventsElement: document,
         onSelectionChange: (box) => {
             const scrollAwareBox: Box = {
                 ...box,
