@@ -15,10 +15,10 @@ export const SlotEditBlockHeader = ({}: Props) => {
                     </div>
                 </div>
                 <div className={styles.container_actions}>
-                    <TextButton text={'Выделить все'} action={() => {
+                    <TextButton text={'Выделить все'} type={"primary"} action={() => {
                     }}/>
                     /
-                    <TextButton text={'Отменить все'} action={() => {
+                    <TextButton text={'Отменить все'} type={"primary"} action={() => {
                     }}/>
                 </div>
             </div>

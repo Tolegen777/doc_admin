@@ -10,6 +10,7 @@ export interface WorkSchedule {
     working_hours_count: number
     visits_count: number
     panel_colour: PanelColourType
+    doctor_id: number
 }
 
 export interface ITimeSlot {
@@ -34,6 +35,12 @@ export interface WorkingHoursList {
     reserved: boolean
     patient_clinic_visit_id?: number
     isActive?: boolean
+}
+
+export interface ISlotPayload {
+    doctorId?: number | null,
+    workScheduleId?: number | null,
+    title?: string,
 }
 
 

@@ -1,4 +1,5 @@
 import React from "react";
+import {ISlotPayload} from "../../types/calendar.ts";
 
 export type State = {
   authUser: boolean
@@ -10,6 +11,7 @@ export type State = {
     specialities: string[]
   }
   visitsQuery: string
+  slot: ISlotPayload
 };
 
 
@@ -48,8 +50,14 @@ type SetVisitsQueryActionType = {
   payload: string
 }
 
+type SetSlotDataActionType = {
+  type: 'SET_SLOT_DATA'
+  payload: ISlotPayload
+}
+
 export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
-    SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType | SetVisitsQueryActionType
+    SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType |
+    SetVisitsQueryActionType | SetSlotDataActionType
 
 export type Dispatch = (action: Action) => void;
 

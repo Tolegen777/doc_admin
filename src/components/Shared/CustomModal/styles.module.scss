@@ -11,6 +11,19 @@
   z-index: 1000;
 }
 
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+
+  &_title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+}
+
 .modalContent {
   background: white;
   padding: 20px;
@@ -28,7 +41,7 @@
   right: 10px;
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 35px;
   cursor: pointer;
   color: #aaa;
   transition: color 0.3s ease, transform 0.3s ease;

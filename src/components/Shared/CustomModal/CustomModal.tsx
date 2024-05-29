@@ -7,9 +7,10 @@ type CustomModalProps = {
     onClose: () => void;
     onConfirm: () => void;
     children: React.ReactNode;
+    title: string
 };
 
-const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, children }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, children, title }) => {
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -29,9 +30,14 @@ const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, c
     return ReactDOM.createPortal(
         <div className={styles.modalOverlay} onClick={onClose}>
             <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-                <button className={styles.modalClose} onClick={onClose}>
-                    &times;
-                </button>
+                <div className={styles.modalHeader}>
+                    <div className={styles.modalHeader_title}>
+                        {title}
+                    </div>
+                    <button className={styles.modalClose} onClick={onClose}>
+                        &times;
+                    </button>
+                </div>
                 {children}
                 <div className={styles.modalFooter}>
                     <button className={styles.cancelButton} onClick={onClose}>Отмена</button>
