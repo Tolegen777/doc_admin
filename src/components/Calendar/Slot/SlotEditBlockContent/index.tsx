@@ -1,15 +1,16 @@
-import React, {memo, useMemo, useRef, useState} from "react";
+import React, {memo, useMemo, useRef} from "react";
 import styles from "../SlotEditBlock/styles.module.scss";
 import {WorkingHoursList} from "../../../../types/calendar.ts";
 import {ReactMouseSelect, TFinishSelectionCallback} from "react-mouse-select";
 import {TimeSlotContent} from "../TimeSlotContent";
 
 type Props = {
-    workingHours: WorkingHoursList[]
+    workingHours: WorkingHoursList[],
+    selectedTimeSlotIds: number[],
+    setSelectedTimeSlotIds: React.Dispatch<React.SetStateAction<number[]>>
 }
 
-export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
-    const [selectedTimeSlotIds, setSelectedTimeSlotIds] = useState<number[]>([]);
+export const SlotEditBlockContent = memo(({ workingHours, setSelectedTimeSlotIds, selectedTimeSlotIds }: Props) => {
 
     const borderSelectionContainer = document.getElementById('root') as HTMLElement;
     const containerRef = useRef<HTMLElement>(null);

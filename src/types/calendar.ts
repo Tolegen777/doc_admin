@@ -41,6 +41,7 @@ export interface ISlotPayload {
     doctorId?: number | null,
     workScheduleId?: number | null,
     title?: string,
+    previousWorkScheduleId?: number | null,
 }
 
 

@@ -16,7 +16,8 @@ const initialState: State = {
   slot: {
     doctorId: null,
     workScheduleId: null,
-    title: ''
+    title: '',
+    previousWorkScheduleId: null
   }
 };
 

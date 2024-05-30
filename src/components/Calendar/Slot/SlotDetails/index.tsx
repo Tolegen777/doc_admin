@@ -12,15 +12,24 @@ export const SlotDetails = () => {
 
     const {addressId, slot} = state
 
-    const {doctorId, workScheduleId} = slot
+    const {doctorId, workScheduleId, previousWorkScheduleId} = slot
 
     const { data, isLoading } = useQuery({
-        queryKey: ['doctorTimeSlotDetails', doctorId, addressId],
+        queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId],
         queryFn: () =>
             axiosInstance
                 .get<ITimeSlot>(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${workScheduleId}`)
                 .then((response) => response?.data),
         enabled: !!addressId && !!doctorId && !!workScheduleId
+    });
+
+    const { data: prevDayTimeSlotData } = useQuery({
+        queryKey: ['doctorOtherTimeSlotDetails', doctorId, addressId, previousWorkScheduleId],
+        queryFn: () =>
+            axiosInstance
+                .get<ITimeSlot>(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${previousWorkScheduleId}`)
+                .then((response) => response?.data),
+        enabled: !!addressId && !!doctorId && !!previousWorkScheduleId
     });
 
     if (isLoading) {
@@ -32,7 +41,10 @@ export const SlotDetails = () => {
 
     return (
         <div className={styles.container}>
-            <SlotEditBlock workingHours={data?.doctor_work_schedule_detailed_api_view?.working_hours_list ?? []}/>
+            <SlotEditBlock
+                workingHours={data?.doctor_work_schedule_detailed_api_view?.working_hours_list ?? []}
+                prevWorkingHours={prevDayTimeSlotData?.doctor_work_schedule_detailed_api_view?.working_hours_list ?? []}
+            />
             <div style={{background: 'rgba(86,204,39,0.17)', height: '100%', width: '400px'}}>
                 Тут будет какая то информация
             </div>
