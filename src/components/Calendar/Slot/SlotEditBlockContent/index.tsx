@@ -1,16 +1,19 @@
-import React, {memo, useMemo, useRef} from "react";
+import {memo, useMemo, useRef} from "react";
 import styles from "../SlotEditBlock/styles.module.scss";
 import {WorkingHoursList} from "../../../../types/calendar.ts";
 import {ReactMouseSelect, TFinishSelectionCallback} from "react-mouse-select";
 import {TimeSlotContent} from "../TimeSlotContent";
+import {useStateContext} from "../../../../contexts";
 
 type Props = {
     workingHours: WorkingHoursList[],
-    selectedTimeSlotIds: number[],
-    setSelectedTimeSlotIds: React.Dispatch<React.SetStateAction<number[]>>
 }
 
-export const SlotEditBlockContent = memo(({ workingHours, setSelectedTimeSlotIds, selectedTimeSlotIds }: Props) => {
+export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
+
+    const {state, dispatch} = useStateContext()
+
+    const {selectedTimeSlotIds} = state
 
     const borderSelectionContainer = document.getElementById('root') as HTMLElement;
     const containerRef = useRef<HTMLElement>(null);
@@ -33,12 +36,15 @@ export const SlotEditBlockContent = memo(({ workingHours, setSelectedTimeSlotIds
             ?.filter(item => !isNaN(item));
         console.log(selectedIds, 'IDS')
         if (selectedIds.length > 0) {
-            setSelectedTimeSlotIds(selectedIds);
+            dispatch({
+                type: 'SET_SELECTED_TIME_SLOTS_IDS',
+                payload: selectedIds
+            })
         }
     }
 
     return (
-        <div>
+        <div className={styles.container}>
             <main
                 className={styles.container_content}
                 ref={containerRef}
@@ -48,8 +54,6 @@ export const SlotEditBlockContent = memo(({ workingHours, setSelectedTimeSlotIds
                         <TimeSlotContent
                             key={item?.time_slot_id}
                             timeSlot={item}
-                            setSelectedTimeSlotIds={setSelectedTimeSlotIds}
-                            selectedTimeSlotIds={selectedTimeSlotIds}
                         />
                 )}
             </main>

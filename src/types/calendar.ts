@@ -44,5 +44,9 @@ export interface ISlotPayload {
     previousWorkScheduleId?: number | null,
 }
 
+export interface IWorkScheduleUpdate {
+    time_slot_id: number
+}
+
 
 export type PanelColourType = 'red' | 'green' | 'white'

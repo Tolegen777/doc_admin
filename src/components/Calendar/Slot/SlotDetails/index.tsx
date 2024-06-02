@@ -3,8 +3,9 @@ import {SlotEditBlock} from "../SlotEditBlock";
 import {axiosInstance} from "../../../../api";
 import {ITimeSlot} from "../../../../types/calendar.ts";
 import {Spinner} from "../../../Shared/Spinner";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {useStateContext} from "../../../../contexts";
+import {SlotAdditionalInfoBlock} from "../SlotAdditionalInfoBlock";
 
 export const SlotDetails = () => {
 
@@ -12,7 +13,7 @@ export const SlotDetails = () => {
 
     const {addressId, slot} = state
 
-    const {doctorId, workScheduleId, previousWorkScheduleId} = slot
+    const {doctorId, workScheduleId} = slot
 
     const { data, isLoading } = useQuery({
         queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId],
@@ -23,14 +24,20 @@ export const SlotDetails = () => {
         enabled: !!addressId && !!doctorId && !!workScheduleId
     });
 
-    const { data: prevDayTimeSlotData } = useQuery({
-        queryKey: ['doctorOtherTimeSlotDetails', doctorId, addressId, previousWorkScheduleId],
-        queryFn: () =>
-            axiosInstance
-                .get<ITimeSlot>(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${previousWorkScheduleId}`)
-                .then((response) => response?.data),
-        enabled: !!addressId && !!doctorId && !!previousWorkScheduleId
+    const {
+        mutate: onGetPrevWorkSchedule,
+        isPending: isUpdateLoading,
+    } = useMutation({
+        mutationKey: ['previousDoctorTimeSlotDetails'],
+        mutationFn: () =>
+            axiosInstance.get(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${workScheduleId}`),
     });
+
+    const handleCopyPreviousDay = async () => {
+        const data = await onGetPrevWorkSchedule()
+        console.log(data)
+
+    }
 
     if (isLoading) {
         return  <div className={styles.loader}>
@@ -43,11 +50,10 @@ export const SlotDetails = () => {
         <div className={styles.container}>
             <SlotEditBlock
                 workingHours={data?.doctor_work_schedule_detailed_api_view?.working_hours_list ?? []}
-                prevWorkingHours={prevDayTimeSlotData?.doctor_work_schedule_detailed_api_view?.working_hours_list ?? []}
+                handleCopyPreviousDay={handleCopyPreviousDay}
+                isLoading={isUpdateLoading}
             />
-            <div style={{background: 'rgba(86,204,39,0.17)', height: '100%', width: '400px'}}>
-                Тут будет какая то информация
-            </div>
+            <SlotAdditionalInfoBlock slotInfoData={data?.doctor_work_schedule_detailed_api_view}/>
         </div>
     );
 };

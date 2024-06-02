@@ -73,20 +73,23 @@
 }
 
 .confirmButton {
-  background-color: #4CAF50;
+  background-color: #5194C1;
+  width: 200px;
   color: white;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #75b9e7;
   }
 }
 
 .cancelButton {
-  background-color: #f44336;
-  color: white;
+  color: grey;
+  width: 200px;
+  border: 1px solid lightgray;
+  background: #FFFFFF;
 
   &:hover {
-    background-color: #da190b;
+    background-color: #e8e5e5;
   }
 }
 

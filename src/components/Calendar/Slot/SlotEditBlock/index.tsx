@@ -2,28 +2,23 @@ import styles from './styles.module.scss'
 import {SlotEditBlockHeader} from "../SlotEditBlockHeader";
 import {WorkingHoursList} from "../../../../types/calendar.ts";
 import {SlotEditBlockContent} from "../SlotEditBlockContent";
-import {useState} from "react";
 
 type Props = {
     workingHours: WorkingHoursList[]
-   prevWorkingHours: WorkingHoursList[]
+    handleCopyPreviousDay: () => void
+    isLoading: boolean
 }
-export const SlotEditBlock = ({workingHours, prevWorkingHours}: Props) => {
-
-    const [selectedTimeSlotIds, setSelectedTimeSlotIds] = useState<number[]>([]);
-    const [isPrevDay, setIsPrevDay] = useState(false)
+export const SlotEditBlock = ({workingHours, handleCopyPreviousDay, isLoading}: Props) => {
 
     return (
         <div className={styles.container}>
             <SlotEditBlockHeader
-                workingHours={isPrevDay ? prevWorkingHours : workingHours}
-                setSelectedTimeSlotIds={setSelectedTimeSlotIds}
-                setIsPrevDay={setIsPrevDay}
+                workingHours={workingHours}
+                handleCopyPreviousDay={handleCopyPreviousDay}
+                isLoading={isLoading}
             />
             <SlotEditBlockContent
-                workingHours={isPrevDay ? prevWorkingHours : workingHours}
-                selectedTimeSlotIds={selectedTimeSlotIds}
-                setSelectedTimeSlotIds={setSelectedTimeSlotIds}
+                workingHours={workingHours}
             />
         </div>
     );

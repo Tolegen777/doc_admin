@@ -4,7 +4,7 @@ import { createContext, useContext, useReducer } from 'react';
 import type { Dispatch, State, Action, StateContextProviderProps } from './types';
 
 const initialState: State = {
-  authUser: false,
+  authUser: true,
   searchQuery: '',
   page: 1,
   addressId: null,
@@ -18,7 +18,8 @@ const initialState: State = {
     workScheduleId: null,
     title: '',
     previousWorkScheduleId: null
-  }
+  },
+  selectedTimeSlotIds: []
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -80,6 +81,12 @@ const stateReducer = (state: State, action: Action) => {
           ...state.slot,
           ...action.payload
         },
+      }
+    }
+    case 'SET_SELECTED_TIME_SLOTS_IDS': {
+      return {
+        ...state,
+        selectedTimeSlotIds: action.payload,
       }
     }
     default: {

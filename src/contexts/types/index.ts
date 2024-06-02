@@ -12,6 +12,7 @@ export type State = {
   }
   visitsQuery: string
   slot: ISlotPayload
+  selectedTimeSlotIds: number[]
 };
 
 
@@ -55,9 +56,14 @@ type SetSlotDataActionType = {
   payload: ISlotPayload
 }
 
+type SetSelectedTimeSlotIds = {
+  type: 'SET_SELECTED_TIME_SLOTS_IDS'
+  payload: number[]
+}
+
 export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
     SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType |
-    SetVisitsQueryActionType | SetSlotDataActionType
+    SetVisitsQueryActionType | SetSlotDataActionType | SetSelectedTimeSlotIds
 
 export type Dispatch = (action: Action) => void;
 

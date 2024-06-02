@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import styles from "./styles.module.scss";
+import {Spinner} from "../Spinner";
 
 type CustomModalProps = {
     isOpen: boolean;
@@ -8,9 +9,10 @@ type CustomModalProps = {
     onConfirm: () => void;
     children: React.ReactNode;
     title: string
+    isLoading: boolean
 };
 
-const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, children, title }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, children, title, isLoading }) => {
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -40,8 +42,20 @@ const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, c
                 </div>
                 {children}
                 <div className={styles.modalFooter}>
-                    <button className={styles.cancelButton} onClick={onClose}>Отмена</button>
-                    <button className={styles.confirmButton} onClick={onConfirm}>Подтвердить</button>
+                    <button
+                        className={styles.cancelButton}
+                        onClick={onClose}
+                        disabled={isLoading}
+                    >
+                        Отмена
+                    </button>
+                    <button
+                        className={styles.confirmButton}
+                        onClick={onConfirm}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? <Spinner text/> : 'Подтвердить'}
+                    </button>
                 </div>
             </div>
         </div>,
