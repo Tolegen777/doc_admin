@@ -1,4 +1,8 @@
 import moment from 'moment';
+import 'moment/locale/ru';
+
+// Устанавливаем локализацию на русский язык
+moment.locale('ru');
 
 export function getDates(page: number) {
     const dates = [];
@@ -89,5 +93,49 @@ export function formatDateTime({inputDate, inputTime, isoDateTime}: Props): stri
     }
 
     return `${dateMoment.format('DD.MM.YYYY')}, ${timeMoment.format('HH:mm')}`;
+}
+
+export function removeSeconds(time?: string): string {
+    // Проверка на undefined или пустую строку
+    if (!time) {
+        return '';
+    }
+
+    // Разделяем строку времени на компоненты
+    const parts = time.split(':');
+
+    // Проверка, что частей ровно три (HH, MM, SS)
+    if (parts.length !== 3) {
+        return '';
+    }
+
+    const [hours, minutes] = parts;
+    // Проверка, что часы и минуты состоят из двух цифр
+    if (hours.length !== 2 || minutes.length !== 2) {
+        return '';
+    }
+
+    // Возвращаем строку в формате "HH:MM"
+    return `${hours}:${minutes}`;
+}
+
+// 2024-05-24 => Пятница, 24 мая
+// export function formatDateToDayMonth(dateStr: string): string {
+//     return moment(dateStr).format('dddd, D MMMM');
+// }
+
+export function formatDateToDayMonth(dateStr: string): string {
+    const date = new Date(dateStr);
+    const daysOfWeek = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    const months = [
+        'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+        'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+
+    return `${dayOfWeek}, ${day} ${month}`;
 }
 

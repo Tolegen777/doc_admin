@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  margin-bottom: 15px;
+  &_title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #85827f;
+    font-size: 15px;
+    &_link {
+      color: #5194C1;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+
+  &_actions {
+    color: #5194C1;
+  }
+}

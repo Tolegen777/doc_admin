@@ -12,7 +12,14 @@ const initialState: State = {
     query: '',
     specialities: []
   },
-  visitsQuery: ''
+  visitsQuery: '',
+  slot: {
+    doctorId: null,
+    workScheduleId: null,
+    title: '',
+    previousWorkScheduleId: null
+  },
+  selectedTimeSlotIds: []
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -65,6 +72,21 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         visitsQuery: action.payload,
+      }
+    }
+    case 'SET_SLOT_DATA': {
+      return {
+        ...state,
+        slot: {
+          ...state.slot,
+          ...action.payload
+        },
+      }
+    }
+    case 'SET_SELECTED_TIME_SLOTS_IDS': {
+      return {
+        ...state,
+        selectedTimeSlotIds: action.payload,
       }
     }
     default: {

@@ -57,7 +57,7 @@ const CalendarContent = () => {
             {
                 filteredDate?.map((item, index) => <div className={styles.container_content} key={index}>
                     <DoctorTitle doctor={item?.doctor ?? ''} count={index + 1}/>
-                    <DoctorSlots slots={item?.work_schedule ?? []}/>
+                    <DoctorSlots slots={item?.work_schedule ?? []} doctorName={item?.doctor ?? ''}/>
                 </div>)
             }
         </div>

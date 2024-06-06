@@ -18,6 +18,7 @@ export const TextButton = ({action, type = 'default', text}: Props) => {
         type={'text'}
         color={textColors[type]}
         onClick={action}
+        style={{color: textColors[type]}}
     >
         {text}
     </Button>

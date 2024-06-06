@@ -20,6 +20,7 @@
     "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-mouse-select": "^1.1.2",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.23.1"
   },
