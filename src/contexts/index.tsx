@@ -4,7 +4,7 @@ import { createContext, useContext, useReducer } from 'react';
 import type { Dispatch, State, Action, StateContextProviderProps } from './types';
 
 const initialState: State = {
-  authUser: true,
+  authUser: false,
   searchQuery: '',
   page: 1,
   addressId: null,
