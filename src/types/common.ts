@@ -6,4 +6,11 @@ export interface IDate {
     time: string
 }
 
+export interface IGet<T> {
+    count: number
+    next: string
+    previous: any
+    results: T[]
+}
+
 export type ActionType = 'create' | 'update' | ''

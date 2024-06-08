@@ -18,7 +18,7 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
 
     const {state, dispatch} = useStateContext()
 
-    const {selectedTimeSlotIds} = state
+    const {selectedTimeSlotIds, slot, addressId} = state
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -28,9 +28,9 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
         mutate: onCreateWorkSchedule,
         isPending: isCreateLoading,
     } = useMutation({
-        mutationKey: ['doctorTimeSlotDetails'],
+        mutationKey: ['doctorTimeSlotDetailsCreate'],
         mutationFn: (body: IWorkScheduleUpdate[]) =>
-            axiosInstance.post('/users/profile/', body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`, body),
         onSuccess: (response: any) => {
             console.log(response, 'RESPONSE');
             setIsModalOpen(true)
@@ -41,9 +41,11 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
         mutate: onUpdateWorkSchedule,
         isPending: isUpdateLoading,
     } = useMutation({
-        mutationKey: ['doctorTimeSlotDetails'],
-        mutationFn: (body: IWorkScheduleUpdate[]) =>
-            axiosInstance.put('/users/profile/', body),
+        mutationKey: ['doctorTimeSlotDetailsUpdate'],
+        mutationFn: (body: IWorkScheduleUpdate) => {
+            debugger
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`, body)
+        },
         onSuccess: (response: any) => {
             console.log(response, 'RESPONSE');
             setIsModalOpen(true)
@@ -79,7 +81,9 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
         if (actionType === 'create') {
             onCreateWorkSchedule(payload)
         } else {
-            onUpdateWorkSchedule(payload)
+            onUpdateWorkSchedule({
+                working_hours: payload
+            })
         }
         setIsModalOpen(false);
     };

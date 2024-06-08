@@ -9,6 +9,7 @@ import {addCountsToData} from "../../utils/addCountsToData.ts";
 import {useMemo, useState} from "react";
 import Filters from "../../components/Doctors/Filters/Filters.tsx";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
+import {IGet} from "../../types/common.ts";
 
 const hiddenStyles = {
     // whiteSpace: 'nowrap',
@@ -94,13 +95,13 @@ const DoctorsPage = () => {
         queryKey: ['doctorsData', addressId],
         queryFn: () =>
             axiosInstance
-                .get<IDoctor[]>(`partners/franchise-branches/${addressId}/doctors/`)
+                .get<IGet<IDoctor>>(`partners/franchise-branches/${addressId}/doctors/`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
 
     function filterByQueryAndSpecialities() {
-        return data?.filter(item => {
+        return data?.results?.filter(item => {
             const matchesQuery = query === '' || item.full_name.toLowerCase().includes(query.toLowerCase());
             const matchesSpecialities = specialities.length === 0 ||
                 specialities.every(spec => item.specialities_and_procedures?.map(item => item?.speciality).includes(spec));

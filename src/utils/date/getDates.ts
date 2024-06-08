@@ -139,3 +139,9 @@ export function formatDateToDayMonth(dateStr: string): string {
     return `${dayOfWeek}, ${day} ${month}`;
 }
 
+// Вернет true, если сегодня понедельник, иначе false
+export function isMonday(): boolean {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    return dayOfWeek === 1;
+}

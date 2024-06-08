@@ -9,6 +9,7 @@ import DateSlots from "../DateSlots/DateSlots.tsx";
 import {useStateContext} from "../../../contexts";
 import {useMemo} from "react";
 import {FullSpinner} from "../../Shared/FullSpinner";
+import {IGet} from "../../../types/common.ts";
 
 const CalendarContent = () => {
 
@@ -22,7 +23,7 @@ const CalendarContent = () => {
         queryKey: ['calendarData', searchDates, addressId],
         queryFn: () =>
             axiosInstance
-                .get<ICalendar[]>(`partners/franchise-branches/${addressId}/schedule/${searchDates}`)
+                .get<IGet<ICalendar>>(`partners/franchise-branches/${addressId}/schedule/2024-05-25/2024-05-30/`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
@@ -32,9 +33,9 @@ const CalendarContent = () => {
     const filterDataByQuery = (): ICalendar[] => {
         if (data) {
             if (searchQuery?.length) {
-                return data.filter(item => item.doctor.includes(searchQuery))
+                return data?.results?.filter(item => item.doctor.includes(searchQuery))
             } else {
-                return data
+                return data?.results
             }
         }
         return []

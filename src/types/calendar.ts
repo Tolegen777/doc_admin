@@ -45,7 +45,9 @@ export interface ISlotPayload {
 }
 
 export interface IWorkScheduleUpdate {
-    time_slot_id: number
+    working_hours: {
+        time_slot_id: number
+    }[]
 }
 
 

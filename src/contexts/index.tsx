@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer } from 'react';
 
 // eslint-disable-next-line prettier/prettier
 import type { Dispatch, State, Action, StateContextProviderProps } from './types';
+import {mergeAndRemoveDuplicates} from "../utils/mergeAndRemoveDuplicates.ts";
 
 const initialState: State = {
   authUser: false,
@@ -87,6 +88,12 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         selectedTimeSlotIds: action.payload,
+      }
+    }
+    case 'ADD_SELECTED_TIME_SLOTS_IDS': {
+      return {
+        ...state,
+        selectedTimeSlotIds: mergeAndRemoveDuplicates(state.selectedTimeSlotIds, action.payload),
       }
     }
     default: {

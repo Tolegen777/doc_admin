@@ -6,6 +6,8 @@ import {Spinner} from "../../../Shared/Spinner";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {useStateContext} from "../../../../contexts";
 import {SlotAdditionalInfoBlock} from "../SlotAdditionalInfoBlock";
+import {isMonday} from "../../../../utils/date/getDates.ts";
+import {customNotification} from "../../../../utils/customNotification.ts";
 
 export const SlotDetails = () => {
 
@@ -34,8 +36,16 @@ export const SlotDetails = () => {
     });
 
     const handleCopyPreviousDay = async () => {
-        const data = await onGetPrevWorkSchedule()
-        console.log(data)
+        if (isMonday()) {
+            customNotification({
+                type: 'warning',
+                message: 'Предыдущий день был выходным, и в этот день у врача не было рабочих часов.'
+            })
+        } else {
+            const data = await onGetPrevWorkSchedule()
+            console.log(data)
+        }
+
 
     }
 

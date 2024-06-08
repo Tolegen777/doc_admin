@@ -1,5 +1,5 @@
-import {memo, useMemo, useRef} from "react";
-import styles from "../SlotEditBlock/styles.module.scss";
+import {memo, useEffect, useMemo, useRef} from "react";
+import styles from "./styles.module.scss";
 import {WorkingHoursList} from "../../../../types/calendar.ts";
 import {ReactMouseSelect, TFinishSelectionCallback} from "react-mouse-select";
 import {TimeSlotContent} from "../TimeSlotContent";
@@ -30,14 +30,21 @@ export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
         [selectedTimeSlotIds]
     );
 
+    useEffect(() => {
+        const reservedWorkingHours = workingHours.filter(item => item?.reserved)?.map(item => item?.time_slot_id)
+        dispatch({
+            type: 'SET_SELECTED_TIME_SLOTS_IDS',
+            payload: reservedWorkingHours ?? []
+        })
+    }, [workingHours])
+
     const finishSelection: TFinishSelectionCallback = (items) => {
         const selectedIds = items
             ?.map(item => parseInt(item.getAttribute('data-id') || ''))
             ?.filter(item => !isNaN(item));
-        console.log(selectedIds, 'IDS')
         if (selectedIds.length > 0) {
             dispatch({
-                type: 'SET_SELECTED_TIME_SLOTS_IDS',
+                type: 'ADD_SELECTED_TIME_SLOTS_IDS',
                 payload: selectedIds
             })
         }
@@ -48,7 +55,6 @@ export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
             <main
                 className={styles.container_content}
                 ref={containerRef}
-                style={{padding: '40px'}}
             >
                 {memoizedTimeSlots?.map(item =>
                         <TimeSlotContent

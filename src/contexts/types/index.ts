@@ -61,9 +61,14 @@ type SetSelectedTimeSlotIds = {
   payload: number[]
 }
 
+type AddSelectedTimeSlotIds = {
+  type: 'ADD_SELECTED_TIME_SLOTS_IDS'
+  payload: number[]
+}
+
 export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
     SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType |
-    SetVisitsQueryActionType | SetSlotDataActionType | SetSelectedTimeSlotIds
+    SetVisitsQueryActionType | SetSlotDataActionType | SetSelectedTimeSlotIds | AddSelectedTimeSlotIds
 
 export type Dispatch = (action: Action) => void;
 
