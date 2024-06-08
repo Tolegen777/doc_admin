@@ -9,7 +9,11 @@ import {SlotAdditionalInfoBlock} from "../SlotAdditionalInfoBlock";
 import {isMonday} from "../../../../utils/date/getDates.ts";
 import {customNotification} from "../../../../utils/customNotification.ts";
 
-export const SlotDetails = () => {
+type Props = {
+    isSuccess: boolean
+}
+
+export const SlotDetails = ({isSuccess}: Props) => {
 
     const {state} = useStateContext()
 
@@ -18,7 +22,7 @@ export const SlotDetails = () => {
     const {doctorId, workScheduleId} = slot
 
     const { data, isLoading } = useQuery({
-        queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId],
+        queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId, isSuccess],
         queryFn: () =>
             axiosInstance
                 .get<ITimeSlot>(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${workScheduleId}`)

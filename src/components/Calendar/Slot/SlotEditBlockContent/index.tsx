@@ -4,6 +4,7 @@ import {WorkingHoursList} from "../../../../types/calendar.ts";
 import {ReactMouseSelect, TFinishSelectionCallback} from "react-mouse-select";
 import {TimeSlotContent} from "../TimeSlotContent";
 import {useStateContext} from "../../../../contexts";
+import './styles.scss'
 
 type Props = {
     workingHours: WorkingHoursList[],

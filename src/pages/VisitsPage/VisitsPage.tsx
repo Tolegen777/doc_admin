@@ -11,6 +11,7 @@ import Filters from "../../components/Visits/Filters/Filters.tsx";
 import {formatDateTime} from "../../utils/date/getDates.ts";
 import {TextButton} from "../../components/Shared/Buttons/TextButton";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
+import {IGet} from "../../types/common.ts";
 
 const VisitsPage = () => {
 
@@ -86,13 +87,13 @@ const VisitsPage = () => {
         queryKey: ['visitsData', addressId],
         queryFn: () =>
             axiosInstance
-                .get<IVisit[]>(`partners/franchise-branches/${addressId}/visits/`)
+                .get<IGet<IVisit>>(`partners/franchise-branches/${addressId}/visits/`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
 
     function filterByQueryAndSpecialities() {
-        return data?.filter(item => {
+        return data?.results?.filter(item => {
             return visitsQuery === '' ||
                 item.doctor_full_name.toLowerCase().includes(visitsQuery.toLowerCase()) ||
                 item.procedure_title.toLowerCase().includes(visitsQuery.toLowerCase());

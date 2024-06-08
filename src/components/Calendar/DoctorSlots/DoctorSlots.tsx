@@ -7,7 +7,7 @@ import CustomModal from "../../Shared/CustomModal/CustomModal.tsx";
 import {useStateContext} from "../../../contexts";
 import {formatDateToDayMonth} from "../../../utils/date/getDates.ts";
 import {axiosInstance} from "../../../api";
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {ActionType} from "../../../types/common.ts";
 
 type Props = {
@@ -15,6 +15,8 @@ type Props = {
     doctorName: string
 }
 const DoctorSlots = ({slots, doctorName}: Props) => {
+
+    const queryClient = useQueryClient()
 
     const {state, dispatch} = useStateContext()
 
@@ -27,19 +29,21 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
     const {
         mutate: onCreateWorkSchedule,
         isPending: isCreateLoading,
+        isSuccess: createSuccess
     } = useMutation({
         mutationKey: ['doctorTimeSlotDetailsCreate'],
-        mutationFn: (body: IWorkScheduleUpdate[]) =>
+        mutationFn: (body: IWorkScheduleUpdate) =>
             axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`, body),
         onSuccess: (response: any) => {
             console.log(response, 'RESPONSE');
-            setIsModalOpen(true)
+            setIsModalOpen(false)
         },
     });
 
     const {
         mutate: onUpdateWorkSchedule,
         isPending: isUpdateLoading,
+        isSuccess: updateSuccess
     } = useMutation({
         mutationKey: ['doctorTimeSlotDetailsUpdate'],
         mutationFn: (body: IWorkScheduleUpdate) => {
@@ -48,7 +52,8 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
         },
         onSuccess: (response: any) => {
             console.log(response, 'RESPONSE');
-            setIsModalOpen(true)
+            setIsModalOpen(false)
+            queryClient.invalidateQueries({ queryKey: ['calendarData'] })
         },
     });
 
@@ -79,7 +84,9 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
             time_slot_id: item
         }))
         if (actionType === 'create') {
-            onCreateWorkSchedule(payload)
+            onCreateWorkSchedule({
+                working_hours: payload
+            })
         } else {
             onUpdateWorkSchedule({
                 working_hours: payload
@@ -101,7 +108,7 @@ const DoctorSlots = ({slots, doctorName}: Props) => {
                 title={state?.slot?.title ?? ''}
                 isLoading={isUpdateLoading || isCreateLoading}
             >
-                <SlotDetails/>
+                <SlotDetails isSuccess={createSuccess || updateSuccess}/>
             </CustomModal>
             <div className={styles.container}>
                 {slots?.map((item, index) => <Slot
