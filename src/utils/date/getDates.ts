@@ -139,9 +139,21 @@ export function formatDateToDayMonth(dateStr: string): string {
     return `${dayOfWeek}, ${day} ${month}`;
 }
 
-// Вернет true, если сегодня понедельник, иначе false
-export function isMonday(): boolean {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    return dayOfWeek === 1;
+// Принимает дату и возвращает предыдущую дату 2024-06-24 => 2024-06-23.
+// Но если предыдущий день суббота или воскресенье тогда вернут 'weekend'
+export function getPreviousDate(dateString: string): string {
+    const date = new Date(dateString);
+    date.setDate(date.getDate() - 1);
+
+    const day = date.getDay();
+
+    if (day === 0 || day === 6) {
+        return 'weekend';
+    }
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const dayOfMonth = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${dayOfMonth}`;
 }

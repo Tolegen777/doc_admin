@@ -14,7 +14,7 @@ export const SlotEditBlockHeader = ({workingHours, handleCopyPreviousDay, isLoad
     const {dispatch} = useStateContext()
 
     const handleSetAll = () => {
-        const allTimeSlotIds = workingHours?.filter(item => item?.doctor_availability)?.map(item => item.time_slot_id)
+        const allTimeSlotIds = workingHours?.filter(item => !item?.reserved)?.map(item => item.time_slot_id)
         dispatch({
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
             payload: allTimeSlotIds

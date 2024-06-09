@@ -6,8 +6,9 @@ import {Spinner} from "../../../Shared/Spinner";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {useStateContext} from "../../../../contexts";
 import {SlotAdditionalInfoBlock} from "../SlotAdditionalInfoBlock";
-import {isMonday} from "../../../../utils/date/getDates.ts";
+import {getPreviousDate} from "../../../../utils/date/getDates.ts";
 import {customNotification} from "../../../../utils/customNotification.ts";
+import {AxiosResponse} from "axios";
 
 type Props = {
     isSuccess: boolean
@@ -31,23 +32,26 @@ export const SlotDetails = ({isSuccess}: Props) => {
     });
 
     const {
-        mutate: onGetPrevWorkSchedule,
         isPending: isUpdateLoading,
+        mutateAsync: onGetPrevWorkSchedule
     } = useMutation({
         mutationKey: ['previousDoctorTimeSlotDetails'],
-        mutationFn: () =>
-            axiosInstance.get(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${workScheduleId}`),
+        mutationFn: (date: string) =>
+            axiosInstance.get(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule_by_date/${date}`),
     });
 
     const handleCopyPreviousDay = async () => {
-        if (isMonday()) {
+        const prevDate = getPreviousDate(data?.doctor_work_schedule_detailed_api_view?.work_date ?? '')
+        if (prevDate === 'weekend') {
             customNotification({
                 type: 'warning',
                 message: 'Предыдущий день был выходным, и в этот день у врача не было рабочих часов.'
             })
         } else {
-            const data = await onGetPrevWorkSchedule()
-            console.log(data)
+            const data: AxiosResponse<ITimeSlot> = await onGetPrevWorkSchedule(prevDate)
+            const workingHours = data?.data?.doctor_work_schedule_detailed_api_view?.working_hours_list
+
+            console.log(workingHours, 'WORK')
         }
 
 

@@ -20,35 +20,25 @@ export const TimeSlotContent = memo(({timeSlot}: Props) => {
         const index = newState.indexOf(item.time_slot_id);
         if (index !== -1) {
             newState.splice(index, 1);
-        } else if (item.doctor_availability) {
+        } else if (!item.reserved) {
             newState.push(item.time_slot_id);
         }
         dispatch({
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
             payload: newState
         })
-        // setSelectedTimeSlotIds(prevState => {
-        //     const newState = [...prevState];
-        //     const index = newState.indexOf(item.time_slot_id);
-        //     if (index !== -1) {
-        //         newState.splice(index, 1);
-        //     } else if (item.doctor_availability) {
-        //         newState.push(item.time_slot_id);
-        //     }
-        //     return newState;
-        // });
     };
 
     return (
         <div
             className={clsx({
                 [styles.container]: true,
-                [styles.container_not_available]: !timeSlot?.doctor_availability,
-                [styles.container_reserved]: selectedTimeSlotIds.includes(timeSlot?.time_slot_id),
+                [styles.container_not_available]: timeSlot?.reserved,
+                [styles.container_active]: selectedTimeSlotIds.includes(timeSlot?.time_slot_id),
                 ['mouse-select__selectable']: true
             })}
             onClick={() => handleChangeTimeSlot(timeSlot)}
-            data-id={timeSlot?.doctor_availability ? timeSlot?.time_slot_id : null}
+            data-id={!timeSlot?.reserved ? timeSlot?.time_slot_id : null}
         >
             {removeSeconds(timeSlot?.start_time)}
         </div>

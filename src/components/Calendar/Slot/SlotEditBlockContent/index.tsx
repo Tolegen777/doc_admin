@@ -32,7 +32,7 @@ export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
     );
 
     useEffect(() => {
-        const reservedWorkingHours = workingHours.filter(item => item?.reserved)?.map(item => item?.time_slot_id)
+        const reservedWorkingHours = workingHours?.filter(item => item?.doctor_availability)?.map(item => item?.time_slot_id)
         dispatch({
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
             payload: reservedWorkingHours ?? []
