@@ -2,6 +2,7 @@ import styles from './styles.module.scss'
 import {Avatar, Tooltip, Typography} from "antd";
 import {UserOutlined} from '@ant-design/icons';
 import calendarIcon from '../../../assets/calendarIcon.svg'
+import {memo} from "react";
 
 const {Title} = Typography;
 
@@ -10,7 +11,7 @@ type Props = {
     count?: number
     isEmpty?: boolean,
 }
-const DoctorTitle = ({doctor, isEmpty = false, count}: Props) => {
+const DoctorTitle = memo(({doctor, isEmpty = false, count}: Props) => {
     return (
         <div className={styles.container}>
             <div className={styles.container_count}>{count}</div>
@@ -39,6 +40,6 @@ const DoctorTitle = ({doctor, isEmpty = false, count}: Props) => {
 
         </div>
     );
-};
+});
 
 export default DoctorTitle;

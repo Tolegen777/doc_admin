@@ -1,5 +1,6 @@
 import React from "react";
 import {ISlotPayload} from "../../types/calendar.ts";
+import {IDoctor} from "../../types/doctor.ts";
 
 export type State = {
   authUser: boolean
@@ -13,6 +14,7 @@ export type State = {
   visitsQuery: string
   slot: ISlotPayload
   selectedTimeSlotIds: number[]
+  doctorData: IDoctor | null
 };
 
 
@@ -56,19 +58,25 @@ type SetSlotDataActionType = {
   payload: ISlotPayload
 }
 
-type SetSelectedTimeSlotIds = {
+type SetSelectedTimeSlotIdsActionType = {
   type: 'SET_SELECTED_TIME_SLOTS_IDS'
   payload: number[]
 }
 
-type AddSelectedTimeSlotIds = {
+type AddSelectedTimeSlotIdsActionType = {
   type: 'ADD_SELECTED_TIME_SLOTS_IDS'
   payload: number[]
 }
 
+type SetDoctorDataActionType = {
+  type: 'SET_DOCTOR_DATA'
+  payload: IDoctor
+}
+
 export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
     SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType |
-    SetVisitsQueryActionType | SetSlotDataActionType | SetSelectedTimeSlotIds | AddSelectedTimeSlotIds
+    SetVisitsQueryActionType | SetSlotDataActionType | SetSelectedTimeSlotIdsActionType |
+    AddSelectedTimeSlotIdsActionType | SetDoctorDataActionType
 
 export type Dispatch = (action: Action) => void;
 

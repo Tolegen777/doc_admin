@@ -13,8 +13,13 @@ export const SlotEditBlockHeader = ({workingHours, handleCopyPreviousDay, isLoad
 
     const {dispatch} = useStateContext()
 
+    const reservedTimeSlotIds = workingHours
+        ?.filter(item => item.reserved)
+        ?.map(item => item.time_slot_id)
+
     const handleSetAll = () => {
-        const allTimeSlotIds = workingHours?.filter(item => !item?.reserved)?.map(item => item.time_slot_id)
+        const allTimeSlotIds = workingHours
+            ?.map(item => item.time_slot_id)
         dispatch({
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
             payload: allTimeSlotIds
@@ -24,7 +29,7 @@ export const SlotEditBlockHeader = ({workingHours, handleCopyPreviousDay, isLoad
     const handleClearAll = () => {
         dispatch({
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
-            payload: []
+            payload: reservedTimeSlotIds
         })
     }
 
@@ -34,17 +39,27 @@ export const SlotEditBlockHeader = ({workingHours, handleCopyPreviousDay, isLoad
                     <div>
                         Повторить предыдущий:
                     </div>
-                    {isLoading ? <Spinner text/> : <div
-                        className={styles.container_title_link}
-                        onClick={handleCopyPreviousDay}
-                    >
-                        день
-                    </div>}
+                    {isLoading ? <Spinner text/> : <TextButton
+                            text={'день'}
+                            type={"primary"}
+                            action={handleCopyPreviousDay}
+                            disabled={reservedTimeSlotIds.length > 0}
+                        />
+                       }
                 </div>
                 <div className={styles.container_actions}>
-                    <TextButton text={'Выделить все'} type={"primary"} action={handleSetAll}/>
+                    <TextButton
+                        text={'Выделить все'}
+                        type={"primary"}
+                        action={handleSetAll}
+                    />
                     /
-                    <TextButton text={'Отменить все'} type={"primary"} action={handleClearAll}/>
+                    <TextButton
+                        text={'Отменить все'}
+                        type={"primary"}
+                        action={handleClearAll}
+                        disabled={reservedTimeSlotIds.length > 0}
+                    />
                 </div>
             </div>
     );

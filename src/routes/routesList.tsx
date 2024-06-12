@@ -3,6 +3,7 @@ import CalendarPage from "../pages/CalendarPage/CalendarPage.tsx";
 import DoctorsPage from "../pages/DoctorsPage/DoctorsPage.tsx";
 import VisitsPage from "../pages/VisitsPage/VisitsPage.tsx";
 import {LoginPage} from "../pages/LoginPage/LoginPage.tsx";
+import DoctorEditPage from "../pages/DoctorEditPage/DoctorEditPage.tsx";
 
 export const routesList = [
   {
@@ -20,6 +21,10 @@ export const routesList = [
   {
     path: '/doctors',
     element: <DoctorsPage />,
+  },
+  {
+    path: '/doctor/:id',
+    element: <DoctorEditPage />,
   },
   {
     path: '/visits',

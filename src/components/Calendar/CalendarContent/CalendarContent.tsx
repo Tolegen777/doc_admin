@@ -7,7 +7,7 @@ import DoctorSlots from "../DoctorSlots/DoctorSlots.tsx";
 import {getDateRange, getDates} from "../../../utils/date/getDates.ts";
 import DateSlots from "../DateSlots/DateSlots.tsx";
 import {useStateContext} from "../../../contexts";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {FullSpinner} from "../../Shared/FullSpinner";
 import {IGet} from "../../../types/common.ts";
 import {useInfiniteScroll} from "../../../hooks/useInfiniteScroll.ts";
@@ -22,7 +22,7 @@ const CalendarContent = () => {
 
     const [currentPage, setCurrentPage] = useState(1)
 
-    const searchDates = getDateRange(page)
+    const searchDates = useMemo(() => getDateRange(page), [page])
 
     const { data, isLoading } = useQuery({
         queryKey: ['calendarData', searchDates, addressId, currentPage],
@@ -39,7 +39,7 @@ const CalendarContent = () => {
         page: currentPage,
     });
 
-    const dates = getDates(page)
+    const dates = useMemo(() => getDates(page), [page])
 
     if (isLoading && !localData?.length) {
         return <FullSpinner />

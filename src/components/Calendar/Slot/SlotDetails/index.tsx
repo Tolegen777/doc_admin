@@ -11,10 +11,11 @@ import {customNotification} from "../../../../utils/customNotification.ts";
 import {AxiosResponse} from "axios";
 
 type Props = {
-    isSuccess: boolean
+    isSuccess: boolean,
+    createLoading: boolean
 }
 
-export const SlotDetails = ({isSuccess}: Props) => {
+export const SlotDetails = ({isSuccess, createLoading}: Props) => {
 
     const {state} = useStateContext()
 
@@ -57,7 +58,7 @@ export const SlotDetails = ({isSuccess}: Props) => {
 
     }
 
-    if (isLoading) {
+    if (isLoading || createLoading) {
         return  <div className={styles.loader}>
             <Spinner/>
         </div>

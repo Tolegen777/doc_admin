@@ -10,6 +10,8 @@ import {useMemo, useState} from "react";
 import Filters from "../../components/Doctors/Filters/Filters.tsx";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 import {IGet} from "../../types/common.ts";
+import {Button} from "antd";
+import {useNavigate} from "react-router-dom";
 
 const hiddenStyles = {
     // whiteSpace: 'nowrap',
@@ -19,7 +21,9 @@ const hiddenStyles = {
 }
 const DoctorsPage = () => {
 
-    const {state} = useStateContext()
+    const {state, dispatch} = useStateContext()
+
+    const navigate = useNavigate()
 
     const {addressId, doctor} = state
 
@@ -30,6 +34,14 @@ const DoctorsPage = () => {
     const getIsShowFull = (number: number) => {
         return fullVisibleFullItems.includes(number);
 
+    }
+
+    const handleGoEditPage = (doctorData: IDoctor) => {
+        dispatch({
+            type: 'SET_DOCTOR_DATA',
+            payload: doctorData
+        })
+        navigate(`doctor/${doctorData?.id}`)
     }
 
     // const handleSetFullVisibleFullItems = (index: number) => {
@@ -88,6 +100,15 @@ const DoctorsPage = () => {
             dataIndex: 'is_active',
             key: 'is_active',
             render: (is_active: boolean) => <p>{is_active ? 'Да' : 'Нет'}</p>
+        },
+        {
+            title: 'Редактировать',
+            render: (data: IDoctor) => <Button
+                onClick={() => handleGoEditPage(data)}
+                type={"primary"}
+            >
+                Редактировать
+            </Button>
         },
     ];
 
