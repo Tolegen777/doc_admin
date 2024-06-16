@@ -41,7 +41,7 @@ const DoctorsPage = () => {
             type: 'SET_DOCTOR_DATA',
             payload: doctorData
         })
-        navigate(`doctor/${doctorData?.id}`)
+        navigate(`/doctor/${doctorData?.id}`)
     }
 
     // const handleSetFullVisibleFullItems = (index: number) => {

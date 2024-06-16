@@ -1,5 +1,6 @@
 import moment from 'moment';
 import 'moment/locale/ru';
+import dayjs from "dayjs";
 
 // Устанавливаем локализацию на русский язык
 moment.locale('ru');
@@ -157,3 +158,5 @@ export function getPreviousDate(dateString: string): string {
 
     return `${year}-${month}-${dayOfMonth}`;
 }
+
+export const datePickerFormatter = (date: string | number, format = 'YYYY-MM-DD HH:mm'): dayjs.Dayjs => dayjs(date, format);

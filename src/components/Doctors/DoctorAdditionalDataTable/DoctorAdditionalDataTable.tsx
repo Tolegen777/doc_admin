@@ -1,181 +1,156 @@
-import React, { useState } from 'react';
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
-import type { TableProps } from 'antd';
+import React, {useState} from 'react';
+import type {TableProps} from 'antd';
+import {Button, Switch} from 'antd';
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {axiosInstance} from "../../../api";
+import {useStateContext} from "../../../contexts";
+import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.tsx";
+import {IAllSpec, ICreateSpec, ISpec} from "../../../types/doctorSpec.ts";
 
-interface Item {
+interface DataType {
     key: string;
     name: string;
     age: number;
     address: string;
+    tags: string[];
 }
-
-const originData: Item[] = [];
-for (let i = 0; i < 100; i++) {
-    originData.push({
-        key: i.toString(),
-        name: `Edward ${i}`,
-        age: 32,
-        address: `London Park no. ${i}`,
-    });
-}
-
-interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-    editing: boolean;
-    dataIndex: string;
-    title: any;
-    inputType: 'number' | 'text';
-    record: Item;
-    index: number;
-}
-
-const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
-                                                                                editing,
-                                                                                dataIndex,
-                                                                                title,
-                                                                                inputType,
-                                                                                record,
-                                                                                index,
-                                                                                children,
-                                                                                ...restProps
-                                                                            }) => {
-    const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-    return (
-        <td {...restProps}>
-            {editing ? (
-                <Form.Item
-                    name={dataIndex}
-                    style={{ margin: 0 }}
-                    rules={[
-                        {
-                            required: true,
-                            message: `Please Input ${title}!`,
-                        },
-                    ]}
-                >
-                    {inputNode}
-                </Form.Item>
-            ) : (
-                children
-            )}
-        </td>
-    );
-};
 
 const DoctorAdditionalDataTable: React.FC = () => {
-    const [form] = Form.useForm();
-    const [data, setData] = useState(originData);
-    const [editingKey, setEditingKey] = useState('');
 
-    const isEditing = (record: Item) => record.key === editingKey;
+    const {state} = useStateContext()
 
-    const edit = (record: Partial<Item> & { key: React.Key }) => {
-        form.setFieldsValue({ name: '', age: '', address: '', ...record });
-        setEditingKey(record.key);
-    };
+    const {doctorData, addressId} = state
 
-    const cancel = () => {
-        setEditingKey('');
-    };
+    const [activeSpecId, setActiveSpecId] = useState<number | null>(null)
 
-    const save = async (key: React.Key) => {
-        try {
-            const row = (await form.validateFields()) as Item;
-            const newData = [...data];
-            const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, {
-                    ...item,
-                    ...row,
-                });
-                setData(newData);
-                setEditingKey('');
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey('');
-            }
-        } catch (errInfo) {
-            console.log('Validate Failed:', errInfo);
+    const {
+        mutate: onCreateSpec,
+        isPending: isSpecCreateLoading,
+        isSuccess: createSpecSuccess
+    } = useMutation({
+        mutationKey: ['createSpec'],
+        mutationFn: (body: ICreateSpec) =>
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`, body),
+    });
+
+    const {
+        mutate: onUpdateSpec,
+        isPending: isSpecUpdateLoading,
+        isSuccess: updateSpecSuccess
+    } = useMutation({
+        mutationKey: ['updateSpec'],
+        mutationFn: (body: ICreateSpec) => {
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`, body)
+        },
+        onSuccess: (response: any) => {
+            console.log(response, 'RESPONSE');
+            // setIsModalOpen(false)
+            // queryClient.invalidateQueries({queryKey: ['calendarData']})
+        },
+    });
+
+    const {
+        mutate: onDeleteSpec,
+        isPending: isSpecDeleteLoading,
+        isSuccess: deleteSpecSuccess
+    } = useMutation({
+        mutationKey: ['deleteSpec'],
+        mutationFn: (id: number) =>
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}`),
+    });
+
+    const { data: specs, isLoading: isSpecLoading } = useQuery({
+        queryKey: ['doctorSpecsList', createSpecSuccess, updateSpecSuccess, deleteSpecSuccess],
+        queryFn: () =>
+            axiosInstance
+                .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
+                .then((response) => response?.data),
+    });
+
+    const { data: allSpecsList } = useQuery({
+        queryKey: ['allSpecsList', createSpecSuccess, updateSpecSuccess],
+        queryFn: () =>
+            axiosInstance
+                .get<IAllSpec>(`partners/medical-specialties-list/`)
+                .then((response) => response?.data),
+    });
+
+    const handleUpdateSpec = (id:number, isActive: boolean) => {
+        const payload = {
+            med_spec_id: id,
+            is_active: isActive
         }
-    };
+        onUpdateSpec(payload)
+    }
 
-    const columns = [
+    const handleCreateSpec = (id: number) => {
+        const payload = {
+            med_spec_id: id,
+            is_active: true
+        }
+
+        onCreateSpec(payload)
+    }
+
+    const handleDeleteSpec = (id: number) => {
+        onDeleteSpec(id)
+    }
+
+
+    const specColumns: TableProps<DataType>['columns'] = [
         {
-            title: 'name',
-            dataIndex: 'name',
-            width: '25%',
-            editable: true,
+            title: 'Name',
+            dataIndex: 'id',
+            key: 'id',
         },
         {
-            title: 'age',
-            dataIndex: 'age',
-            width: '15%',
-            editable: true,
+            title: 'Age',
+            dataIndex: 'speciality',
+            key: 'speciality',
         },
         {
-            title: 'address',
-            dataIndex: 'address',
-            width: '40%',
-            editable: true,
+            title: 'Address',
+            dataIndex: 'doctor_procedures',
+            key: 'doctor_procedures',
+            render: (doctor_procedures: any[]) => <div>{doctor_procedures?.length}</div>
         },
         {
-            title: 'operation',
-            dataIndex: 'operation',
-            render: (_: any, record: Item) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-            <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-                ) : (
-                    <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-                        Edit
-                    </Typography.Link>
-                );
-            },
+            title: 'Action',
+            key: 'is_active',
+            render: (item: ISpec) => (
+                <Switch
+                    checked={item?.is_active}
+                    onChange={() => handleUpdateSpec(item?.id, !item?.is_active)}
+                    disabled={isSpecUpdateLoading}
+                />
+            ),
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (item: ISpec) => (
+                <Button
+                    onClick={() => handleDeleteSpec(item?.id)}
+                    disabled={isSpecDeleteLoading}
+                >
+                    Удалить
+                </Button>
+            ),
         },
     ];
 
-    const mergedColumns: TableProps['columns'] = columns.map((col) => {
-        if (!col.editable) {
-            return col;
-        }
-        return {
-            ...col,
-            onCell: (record: Item) => ({
-                record,
-                inputType: col.dataIndex === 'age' ? 'number' : 'text',
-                dataIndex: col.dataIndex,
-                title: col.title,
-                editing: isEditing(record),
-            }),
-        };
-    });
+    if (isSpecLoading)
 
-    return (
-        <Form form={form} component={false}>
-            <Table
-                components={{
-                    body: {
-                        cell: EditableCell,
-                    },
-                }}
-                bordered
-                dataSource={data}
-                columns={mergedColumns}
-                rowClassName="editable-row"
-                pagination={{
-                    onChange: cancel,
-                }}
-            />
-        </Form>
-    );
+    return <>
+        <SpecProcTableAction
+            data={specs}
+            columns={specColumns}
+            onCreate={handleCreateSpec}
+            procSpecList={allSpecsList}
+            isLoading={isSpecLoading}
+        />
+        {/*{activeSpecId && <SpecProcTableAction data={specs} columns={specColumns} onCreate={handleCreateSpec}/>}*/}
+    </>
 };
 
 export default DoctorAdditionalDataTable;

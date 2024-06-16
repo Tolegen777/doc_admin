@@ -16,7 +16,7 @@ const items: MenuItem[] = [
     },
     {
         label: 'Ежедневная сверка',
-        key: '/daily_reconciliation',
+        key: '/daily_summary',
     },
     {
         label: 'Сверка',

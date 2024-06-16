@@ -1,3 +1,5 @@
+import {Dayjs} from "dayjs";
+
 export interface IDoctor {
     id: number
     full_name: string
@@ -10,7 +12,7 @@ export interface IDoctor {
     patronymic_name: string
     description: string
     gender: string
-    works_since: string
+    works_since: string | Dayjs
     for_child: boolean
     is_active: boolean
     created_at: string
@@ -31,4 +33,16 @@ export interface Speciality {
     updated_at: string
     doctor: number
     speciality: number
+}
+
+export interface ICreateUpdateDoctor {
+    first_name: string,
+    last_name: string,
+    patronymic_name: string,
+    description: string,
+    category: number,
+    gender: "MALE" | "FEMALE",
+    works_since: string,
+    for_child: boolean,
+    is_active: boolean
 }
