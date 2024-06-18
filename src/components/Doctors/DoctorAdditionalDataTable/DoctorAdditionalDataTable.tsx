@@ -6,6 +6,8 @@ import {axiosInstance} from "../../../api";
 import {useStateContext} from "../../../contexts";
 import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.tsx";
 import {IAllSpec, ICreateSpec, ISpec} from "../../../types/doctorSpec.ts";
+import {Spinner} from "../../Shared/Spinner";
+import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 
 interface DataType {
     key: string;
@@ -65,6 +67,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
             axiosInstance
                 .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
                 .then((response) => response?.data),
+        enabled: !!addressId && !!doctorData?.id
     });
 
     const { data: allSpecsList } = useQuery({
@@ -93,7 +96,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
     }
 
     const handleDeleteSpec = (id: number) => {
-        onDeleteSpec(id)
+        customConfirmAction({
+            message: 'Вы действительно хотите удалить специальность!',
+            action: () => onDeleteSpec(id),
+            okBtnText: 'Удалить'
+        })
+
     }
 
 
@@ -139,7 +147,9 @@ const DoctorAdditionalDataTable: React.FC = () => {
         },
     ];
 
-    if (isSpecLoading)
+    if (isSpecLoading) {
+        return <Spinner/>
+    }
 
     return <>
         <SpecProcTableAction
