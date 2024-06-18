@@ -2,20 +2,20 @@ export interface ISpec {
     doctor:             string;
     speciality:         string;
     is_active:          boolean;
-    medical_procedures: Med[];
+    medical_procedures: IMedProcedures[];
     doctor_procedures:  DoctorProcedure[];
     id:                 number;
 }
 
 export interface DoctorProcedure {
     id:               number;
-    med_proc_info:    Med;
+    med_proc_info:    IMedProcedures;
     is_active:        boolean;
     comission_amount: number;
     price:            Price;
 }
 
-export interface Med {
+export interface IMedProcedures {
     id:          number;
     title:       string;
     slug:        string;

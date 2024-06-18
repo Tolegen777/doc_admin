@@ -5,7 +5,7 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {useStateContext} from "../../../contexts";
 import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.tsx";
-import {IAllSpec, ICreateSpec, ISpec} from "../../../types/doctorSpec.ts";
+import {IAllSpec, ICreateSpec, IMedProcedures, ISpec, MedicalSpecialityProcedure} from "../../../types/doctorSpec.ts";
 import {Spinner} from "../../Shared/Spinner";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {customNotification} from "../../../utils/customNotification.ts";
@@ -25,6 +25,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     const {doctorData, addressId} = state
 
     const [activeSpecId, setActiveSpecId] = useState<number | null>(null)
+    const [activeSpecProcedures, setActiveSpecProcedures] = useState<IMedProcedures[]>([])
 
     const [open, setOpen] = useState(false);
 
@@ -120,8 +121,9 @@ const DoctorAdditionalDataTable: React.FC = () => {
         })
     }
 
-    const handleOpenProcedures = (id: number) => {
+    const handleOpenProcedures = (id: number, procedures: IMedProcedures[]) => {
         setActiveSpecId(id)
+        setActiveSpecProcedures(procedures)
         setOpen(true);
     };
 
@@ -175,7 +177,61 @@ const DoctorAdditionalDataTable: React.FC = () => {
             key: 'action',
             render: (item: ISpec) => (
                 <Button
-                    onClick={() => handleOpenProcedures(item?.id)}
+                    onClick={() => handleOpenProcedures(item?.id, item?.medical_procedures)}
+                    disabled={isSpecDeleteLoading}
+                >
+                    Открыть процедуры
+                </Button>
+            ),
+        },
+    ];
+
+    const procColumns: TableProps<DataType>['columns'] = [
+        {
+            title: 'ID процедуры врача',
+            dataIndex: 'id',
+            key: 'id',
+        },
+        {
+            title: 'Название процедуры',
+            dataIndex: 'speciality',
+            key: 'speciality',
+        },
+        {
+            title: 'Количество цен в процедуре',
+            dataIndex: 'doctor_procedures',
+            key: 'doctor_procedures',
+            render: (doctor_procedures: any[]) => <div>{doctor_procedures?.length}</div>
+        },
+        {
+            title: 'Активность',
+            key: 'is_active',
+            render: (item: ISpec) => (
+                <Switch
+                    checked={item?.is_active}
+                    onChange={() => handleUpdateSpec(item?.id, !item?.is_active)}
+                    disabled={isSpecUpdateLoading}
+                />
+            ),
+        },
+        {
+            title: 'Удалить',
+            key: 'action',
+            render: (item: ISpec) => (
+                <Button
+                    onClick={() => handleDeleteSpec(item?.id)}
+                    disabled={isSpecDeleteLoading}
+                >
+                    Удалить
+                </Button>
+            ),
+        },
+        {
+            title: 'Открыть цену процедуры',
+            key: 'action',
+            render: (item: ISpec) => (
+                <Button
+                    onClick={() => handleOpenProcedures(item?.id, item?.medical_procedures)}
                     disabled={isSpecDeleteLoading}
                 >
                     Открыть процедуры
@@ -203,7 +259,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
             width={'1000px'}
         >
             <SpecProcTableAction
-                data={specs}
+                data={activeSpecProcedures}
                 columns={specColumns}
                 onCreate={handleCreateSpec}
                 procSpecList={allSpecsList}
