@@ -1,20 +1,4 @@
 .container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  &_img {
-
-  }
-  &_info {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    line-height: 10px;
-    &_title {
-      font-size: 15px
-    }
-    &_subTitle {
-
-    }
-  }
+  width: 100%;
+  box-sizing: border-box;
 }

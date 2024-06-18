@@ -5,7 +5,8 @@ type Props = {
     action: () => void,
     okBtnText?: string,
     alignTop?: boolean,
-    hideCancelButton?: boolean
+    hideCancelButton?: boolean,
+    isCentered?: boolean
 }
 
 export const customConfirmAction = ({
@@ -13,7 +14,8 @@ export const customConfirmAction = ({
                                         action,
                                         okBtnText = 'Ok',
                                         alignTop = false,
-                                        hideCancelButton = false
+                                        hideCancelButton = false,
+                                        isCentered = false
                                     }: Props) => {
     Modal.confirm({
         title: 'Внимание',
@@ -29,5 +31,6 @@ export const customConfirmAction = ({
         cancelText: 'Отмена',
         style: alignTop ? {top: 0} : {},
         cancelButtonProps: hideCancelButton ? {style: {display: 'none'}} : {},
+        centered: isCentered
     });
 };

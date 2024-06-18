@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import type {TableProps} from 'antd';
-import {Button, Switch} from 'antd';
+import {Button, Drawer, Switch} from 'antd';
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {useStateContext} from "../../../contexts";
@@ -8,6 +8,7 @@ import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.ts
 import {IAllSpec, ICreateSpec, ISpec} from "../../../types/doctorSpec.ts";
 import {Spinner} from "../../Shared/Spinner";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
+import {customNotification} from "../../../utils/customNotification.ts";
 
 interface DataType {
     key: string;
@@ -25,6 +26,8 @@ const DoctorAdditionalDataTable: React.FC = () => {
 
     const [activeSpecId, setActiveSpecId] = useState<number | null>(null)
 
+    const [open, setOpen] = useState(false);
+
     const {
         mutate: onCreateSpec,
         isPending: isSpecCreateLoading,
@@ -32,7 +35,13 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['createSpec'],
         mutationFn: (body: ICreateSpec) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`, body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/`, body),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Специальность врача успешно создана!'
+            })
+        }
     });
 
     const {
@@ -42,13 +51,14 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['updateSpec'],
         mutationFn: (body: ICreateSpec) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`, body)
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${body?.med_spec_id}/`, body)
         },
-        onSuccess: (response: any) => {
-            console.log(response, 'RESPONSE');
-            // setIsModalOpen(false)
-            // queryClient.invalidateQueries({queryKey: ['calendarData']})
-        },
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Специальность врача успешно изменена!'
+            })
+        }
     });
 
     const {
@@ -59,6 +69,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
         mutationKey: ['deleteSpec'],
         mutationFn: (id: number) =>
             axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}`),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Специальность врача успешно удалена!'
+            })
+        }
     });
 
     const { data: specs, isLoading: isSpecLoading } = useQuery({
@@ -99,31 +115,40 @@ const DoctorAdditionalDataTable: React.FC = () => {
         customConfirmAction({
             message: 'Вы действительно хотите удалить специальность!',
             action: () => onDeleteSpec(id),
-            okBtnText: 'Удалить'
+            okBtnText: 'Удалить',
+            isCentered: true
         })
-
     }
+
+    const handleOpenProcedures = (id: number) => {
+        setActiveSpecId(id)
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
 
 
     const specColumns: TableProps<DataType>['columns'] = [
         {
-            title: 'Name',
+            title: 'ID специальности врача',
             dataIndex: 'id',
             key: 'id',
         },
         {
-            title: 'Age',
+            title: 'Название специальности',
             dataIndex: 'speciality',
             key: 'speciality',
         },
         {
-            title: 'Address',
+            title: 'Количество процедур',
             dataIndex: 'doctor_procedures',
             key: 'doctor_procedures',
             render: (doctor_procedures: any[]) => <div>{doctor_procedures?.length}</div>
         },
         {
-            title: 'Action',
+            title: 'Активность',
             key: 'is_active',
             render: (item: ISpec) => (
                 <Switch
@@ -134,7 +159,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
             ),
         },
         {
-            title: 'Action',
+            title: 'Удалить',
             key: 'action',
             render: (item: ISpec) => (
                 <Button
@@ -142,6 +167,18 @@ const DoctorAdditionalDataTable: React.FC = () => {
                     disabled={isSpecDeleteLoading}
                 >
                     Удалить
+                </Button>
+            ),
+        },
+        {
+            title: 'Открыть процедуры',
+            key: 'action',
+            render: (item: ISpec) => (
+                <Button
+                    onClick={() => handleOpenProcedures(item?.id)}
+                    disabled={isSpecDeleteLoading}
+                >
+                    Открыть процедуры
                 </Button>
             ),
         },
@@ -159,6 +196,20 @@ const DoctorAdditionalDataTable: React.FC = () => {
             procSpecList={allSpecsList}
             isLoading={isSpecLoading}
         />
+        <Drawer
+            title="Basic Drawer"
+            onClose={onClose}
+            open={open}
+            width={'1000px'}
+        >
+            <SpecProcTableAction
+                data={specs}
+                columns={specColumns}
+                onCreate={handleCreateSpec}
+                procSpecList={allSpecsList}
+                isLoading={isSpecLoading}
+            />
+        </Drawer>
         {/*{activeSpecId && <SpecProcTableAction data={specs} columns={specColumns} onCreate={handleCreateSpec}/>}*/}
     </>
 };
