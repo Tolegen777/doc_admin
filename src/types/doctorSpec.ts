@@ -1,41 +1,48 @@
 export interface ISpec {
-    doctor:             string;
-    speciality:         string;
-    is_active:          boolean;
+    doctor: string;
+    speciality: {
+        created_at: string,
+        description: string,
+        id: number,
+        slug: string,
+        title: string,
+        updated_at: string
+    };
+    is_active: boolean;
     medical_procedures: IMedProcedures[];
-    doctor_procedures:  DoctorProcedure[];
-    id:                 number;
+    doctor_procedures: DoctorProcedure[];
+    id: number;
 }
 
 export interface DoctorProcedure {
-    id:               number;
-    med_proc_info:    IMedProcedures;
-    is_active:        boolean;
+    id: number;
+    med_proc_info: IMedProcedures;
+    is_active: boolean;
     comission_amount: number;
-    price:            Price;
+    price: Price;
 }
 
 export interface IMedProcedures {
-    id:          number;
-    title:       string;
-    slug:        string;
+    id: number;
+    title: string;
+    slug: string;
     description: string;
-    created_at:  Date;
-    updated_at:  Date;
+    created_at: Date;
+    updated_at: Date;
 }
 
 export interface Price {
-    id:              number;
-    is_active:       boolean;
-    price_date:      Date;
-    default_price:   number;
-    discount:        number;
-    final_price:     number;
+    id: number;
+    is_active: boolean;
+    price_date: Date;
+    default_price: number;
+    discount: number;
+    final_price: number;
     is_for_children: boolean;
-    child_age_from:  ChildAgeFrom | null;
-    child_age_to:    null | string;
-    created_at:      Date;
-    updated_at:      Date;
+    child_age_from: ChildAgeFrom | null;
+    child_age_to: null | string;
+    created_at: Date;
+    updated_at: Date;
 }
 
 export enum ChildAgeFrom {
@@ -45,21 +52,27 @@ export enum ChildAgeFrom {
 }
 
 export interface IAllSpec {
-    medical_speciality_id:          number;
-    medical_speciality_title:       string;
-    medical_speciality_slug:        string;
+    medical_speciality_id: number;
+    medical_speciality_title: string;
+    medical_speciality_slug: string;
     medical_speciality_description: string;
-    medical_speciality_procedures:  MedicalSpecialityProcedure[];
+    medical_speciality_procedures: MedicalSpecialityProcedure[];
 }
 
 export interface MedicalSpecialityProcedure {
-    medical_procedure_id:          number;
-    medical_procedure_title:       string;
-    medical_procedure_slug:        string;
+    medical_procedure_id: number;
+    medical_procedure_title: string;
+    medical_procedure_slug: string;
     medical_procedure_description: string;
 }
 
 export interface ICreateSpec {
+    med_spec_id: number,
+    is_active: boolean
+}
+
+export interface IUpdateSpec {
+    id: number
     med_spec_id: number,
     is_active: boolean
 }

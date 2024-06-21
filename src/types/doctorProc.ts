@@ -28,3 +28,14 @@ export interface Price {
     created_at:      Date;
     updated_at:      Date;
 }
+
+export interface ICreateProc {
+    med_spec_id: number,
+    is_active: boolean
+}
+
+export interface IUpdateProc {
+    id: number
+    med_spec_id: number,
+    is_active: boolean
+}

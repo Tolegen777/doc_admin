@@ -5,10 +5,11 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {useStateContext} from "../../../contexts";
 import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.tsx";
-import {IAllSpec, ICreateSpec, IMedProcedures, ISpec, MedicalSpecialityProcedure} from "../../../types/doctorSpec.ts";
+import {DoctorProcedure, IAllSpec, ICreateSpec, IMedProcedures, ISpec, IUpdateSpec} from "../../../types/doctorSpec.ts";
 import {Spinner} from "../../Shared/Spinner";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {customNotification} from "../../../utils/customNotification.ts";
+import {ICreateProc, IUpdateProc} from "../../../types/doctorProc.ts";
 
 interface DataType {
     key: string;
@@ -29,6 +30,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
 
     const [open, setOpen] = useState(false);
 
+    // SPECIALITY POST PUT DELETE API
     const {
         mutate: onCreateSpec,
         isPending: isSpecCreateLoading,
@@ -51,8 +53,8 @@ const DoctorAdditionalDataTable: React.FC = () => {
         isSuccess: updateSpecSuccess
     } = useMutation({
         mutationKey: ['updateSpec'],
-        mutationFn: (body: ICreateSpec) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${body?.med_spec_id}/`, body)
+        mutationFn: ({id, ...body}: IUpdateSpec) => {
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}/`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -78,6 +80,57 @@ const DoctorAdditionalDataTable: React.FC = () => {
         }
     });
 
+    // PROCEDURE POST PUT DELETE API
+    const {
+        mutate: onCreateProc,
+        isPending: isProcCreateLoading,
+        isSuccess: createProcSuccess
+    } = useMutation({
+        mutationKey: ['createProc'],
+        mutationFn: (body: ICreateProc) =>
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/`, body),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Специальность врача успешно создана!'
+            })
+        }
+    });
+
+    const {
+        mutate: onUpdateProc,
+        isPending: isProcUpdateLoading,
+        isSuccess: updateProcSuccess
+    } = useMutation({
+        mutationKey: ['updateProc'],
+        mutationFn: (body: IUpdateProc) => {
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${body?.med_spec_id}/`, body)
+        },
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Специальность врача успешно изменена!'
+            })
+        }
+    });
+
+    const {
+        mutate: onDeleteProc,
+        isPending: isProcDeleteLoading,
+        isSuccess: deleteProcSuccess
+    } = useMutation({
+        mutationKey: ['deleteProc'],
+        mutationFn: (id: number) =>
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}`),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Специальность врача успешно удалена!'
+            })
+        }
+    });
+
+    // SPECIALITY GET API
     const { data: specs, isLoading: isSpecLoading } = useQuery({
         queryKey: ['doctorSpecsList', createSpecSuccess, updateSpecSuccess, deleteSpecSuccess],
         queryFn: () =>
@@ -95,9 +148,20 @@ const DoctorAdditionalDataTable: React.FC = () => {
                 .then((response) => response?.data),
     });
 
-    const handleUpdateSpec = (id:number, isActive: boolean) => {
+    // PROCEDURE GET API
+    const { data: procs, isLoading: isProcLoading } = useQuery({
+        queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess],
+        queryFn: () =>
+            axiosInstance
+                .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
+                .then((response) => response?.data),
+        enabled: !!addressId && !!doctorData?.id
+    });
+
+    const handleUpdateSpec = (id:number, specId: number, isActive: boolean) => {
         const payload = {
-            med_spec_id: id,
+            id: id,
+            med_spec_id: specId,
             is_active: isActive
         }
         onUpdateSpec(payload)
@@ -155,7 +219,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
             render: (item: ISpec) => (
                 <Switch
                     checked={item?.is_active}
-                    onChange={() => handleUpdateSpec(item?.id, !item?.is_active)}
+                    onChange={() => handleUpdateSpec(item?.id, item?.speciality?.id, !item?.is_active)}
                     disabled={isSpecUpdateLoading}
                 />
             ),
@@ -194,14 +258,14 @@ const DoctorAdditionalDataTable: React.FC = () => {
         },
         {
             title: 'Название процедуры',
-            dataIndex: 'speciality',
-            key: 'speciality',
+            dataIndex: 'med_proc_info',
+            key: 'med_proc_info',
+            render: (item: IMedProcedures) => <div>{item?.title}</div>
         },
         {
             title: 'Количество цен в процедуре',
             dataIndex: 'doctor_procedures',
-            key: 'doctor_procedures',
-            render: (doctor_procedures: any[]) => <div>{doctor_procedures?.length}</div>
+            render: (doctor_procedures: DoctorProcedure) => <div>{doctor_procedures?.comission_amount}</div>
         },
         {
             title: 'Активность',
@@ -251,6 +315,8 @@ const DoctorAdditionalDataTable: React.FC = () => {
             onCreate={handleCreateSpec}
             procSpecList={allSpecsList}
             isLoading={isSpecLoading}
+            entityType={'speciality'}
+            isDisabled={isSpecCreateLoading}
         />
         <Drawer
             title="Basic Drawer"
@@ -260,13 +326,13 @@ const DoctorAdditionalDataTable: React.FC = () => {
         >
             <SpecProcTableAction
                 data={activeSpecProcedures}
-                columns={specColumns}
+                columns={procColumns}
                 onCreate={handleCreateSpec}
                 procSpecList={allSpecsList}
                 isLoading={isSpecLoading}
+                entityType={'procedure'}
             />
         </Drawer>
-        {/*{activeSpecId && <SpecProcTableAction data={specs} columns={specColumns} onCreate={handleCreateSpec}/>}*/}
     </>
 };
 

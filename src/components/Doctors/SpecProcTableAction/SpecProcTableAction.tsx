@@ -1,4 +1,4 @@
-import {Button, Form, Select, Table, Typography} from 'antd';
+import {Button, Select, Table, Typography} from 'antd';
 import {TableType} from "../../../types/common.ts";
 import {selectOptionsParser} from "../../../utils/selectOptionsParser.ts";
 import {useState} from "react";
@@ -12,7 +12,8 @@ type Props = {
     onCreate: (id: number) => void
     procSpecList: any
     isLoading: boolean,
-    entityType: 'speciality' | 'procedure'
+    entityType: 'speciality' | 'procedure',
+    isDisabled: boolean
 }
 
 export const SpecProcTableAction = ({
@@ -21,7 +22,8 @@ export const SpecProcTableAction = ({
                                         onCreate,
                                         procSpecList,
                                         isLoading,
-                                        entityType
+                                        entityType,
+                                        isDisabled
                                     }: Props) => {
 
     const {Title} = Typography
@@ -78,7 +80,7 @@ export const SpecProcTableAction = ({
                 <Button
                     type={"primary"}
                     onClick={() => handleCreate()}
-                    disabled={!value}
+                    disabled={!value ?? isDisabled}
                 >
                     Создать
                 </Button>
