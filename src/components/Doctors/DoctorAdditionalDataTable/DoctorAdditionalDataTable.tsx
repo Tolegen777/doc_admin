@@ -26,9 +26,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
     const {doctorData, addressId} = state
 
     const [activeSpecId, setActiveSpecId] = useState<number | null>(null)
-    const [activeSpecProcedures, setActiveSpecProcedures] = useState<IMedProcedures[]>([])
+    const [activeProcId, setActiveProcId] = useState<number | null>(null)
 
     const [open, setOpen] = useState(false);
+    const [priceOpen, setPriceOpen] = useState(false);
+
+    const [allProcs, setAllProcs] = useState<IMedProcedures[]>([]);
 
     // SPECIALITY POST PUT DELETE API
     const {
@@ -88,11 +91,11 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['createProc'],
         mutationFn: (body: ICreateProc) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/`, body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Специальность врача успешно создана!'
+                message: 'Процедура врача успешно создана!'
             })
         }
     });
@@ -103,13 +106,13 @@ const DoctorAdditionalDataTable: React.FC = () => {
         isSuccess: updateProcSuccess
     } = useMutation({
         mutationKey: ['updateProc'],
-        mutationFn: (body: IUpdateProc) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${body?.med_spec_id}/`, body)
+        mutationFn: ({id, ...body}: IUpdateProc) => {
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`, body)
         },
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Специальность врача успешно изменена!'
+                message: 'Процедура врача успешно изменена!'
             })
         }
     });
@@ -121,11 +124,11 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['deleteProc'],
         mutationFn: (id: number) =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}`),
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Специальность врача успешно удалена!'
+                message: 'Процедура врача успешно удалена!'
             })
         }
     });
@@ -153,11 +156,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
         queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess],
         queryFn: () =>
             axiosInstance
-                .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
+                .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/`)
                 .then((response) => response?.data),
         enabled: !!addressId && !!doctorData?.id
     });
 
+    // SPEC methods
     const handleUpdateSpec = (id:number, specId: number, isActive: boolean) => {
         const payload = {
             id: id,
@@ -185,10 +189,43 @@ const DoctorAdditionalDataTable: React.FC = () => {
         })
     }
 
-    const handleOpenProcedures = (id: number, procedures: IMedProcedures[]) => {
+    const handleOpenProcedures = (id: number, procs:  IMedProcedures[]) => {
+        setAllProcs(procs)
         setActiveSpecId(id)
-        setActiveSpecProcedures(procedures)
         setOpen(true);
+    };
+
+    // PROC methods
+    const handleUpdateProc = (id:number, procId: number, isActive: boolean) => {
+        const payload = {
+            id: id,
+            med_proc_id: procId,
+            is_active: isActive
+        }
+        onUpdateProc(payload)
+    }
+
+    const handleCreateProc = (id: number) => {
+        const payload = {
+            med_proc_id: id,
+            is_active: true
+        }
+
+        onCreateProc(payload)
+    }
+
+    const handleDeleteProc = (id: number) => {
+        customConfirmAction({
+            message: 'Вы действительно хотите удалить специальность!',
+            action: () => onDeleteProc(id),
+            okBtnText: 'Удалить',
+            isCentered: true
+        })
+    }
+
+    const handleOpenProcedurePrices = (id: number) => {
+        setActiveProcId(id)
+        setPriceOpen(true);
     };
 
     const onClose = () => {
@@ -270,21 +307,21 @@ const DoctorAdditionalDataTable: React.FC = () => {
         {
             title: 'Активность',
             key: 'is_active',
-            render: (item: ISpec) => (
+            render: (item: DoctorProcedure) => (
                 <Switch
                     checked={item?.is_active}
-                    onChange={() => handleUpdateSpec(item?.id, !item?.is_active)}
-                    disabled={isSpecUpdateLoading}
+                    onChange={() => handleUpdateProc(item?.id, item?.med_proc_info?.id, !item?.is_active)}
+                    disabled={isProcUpdateLoading}
                 />
             ),
         },
         {
             title: 'Удалить',
             key: 'action',
-            render: (item: ISpec) => (
+            render: (item: DoctorProcedure) => (
                 <Button
-                    onClick={() => handleDeleteSpec(item?.id)}
-                    disabled={isSpecDeleteLoading}
+                    onClick={() => handleDeleteProc(item?.id)}
+                    disabled={isProcDeleteLoading}
                 >
                     Удалить
                 </Button>
@@ -293,9 +330,9 @@ const DoctorAdditionalDataTable: React.FC = () => {
         {
             title: 'Открыть цену процедуры',
             key: 'action',
-            render: (item: ISpec) => (
+            render: (item: DoctorProcedure) => (
                 <Button
-                    onClick={() => handleOpenProcedures(item?.id, item?.medical_procedures)}
+                    onClick={() => handleOpenProcedurePrices(item?.id)}
                     disabled={isSpecDeleteLoading}
                 >
                     Открыть процедуры
@@ -325,12 +362,13 @@ const DoctorAdditionalDataTable: React.FC = () => {
             width={'1000px'}
         >
             <SpecProcTableAction
-                data={activeSpecProcedures}
+                data={procs}
                 columns={procColumns}
-                onCreate={handleCreateSpec}
-                procSpecList={allSpecsList}
-                isLoading={isSpecLoading}
+                onCreate={handleCreateProc}
+                procSpecList={allProcs}
+                isLoading={isProcLoading}
                 entityType={'procedure'}
+                isDisabled={isProcCreateLoading}
             />
         </Drawer>
     </>

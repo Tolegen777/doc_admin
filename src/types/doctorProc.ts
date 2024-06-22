@@ -30,12 +30,12 @@ export interface Price {
 }
 
 export interface ICreateProc {
-    med_spec_id: number,
+    med_proc_id: number,
     is_active: boolean
 }
 
 export interface IUpdateProc {
     id: number
-    med_spec_id: number,
+    med_proc_id: number,
     is_active: boolean
 }
