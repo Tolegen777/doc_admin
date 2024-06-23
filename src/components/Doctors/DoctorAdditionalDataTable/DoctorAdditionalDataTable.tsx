@@ -5,11 +5,19 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {useStateContext} from "../../../contexts";
 import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.tsx";
-import {DoctorProcedure, IAllSpec, ICreateSpec, IMedProcedures, ISpec, IUpdateSpec} from "../../../types/doctorSpec.ts";
-import {Spinner} from "../../Shared/Spinner";
+import {
+    DoctorProcedure,
+    IAllSpec,
+    ICreateSpec,
+    IMedProcedures, IPrice,
+    ISpec,
+    ISpecContent,
+    IUpdateSpec
+} from "../../../types/doctorSpec.ts";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {customNotification} from "../../../utils/customNotification.ts";
-import {ICreateProc, IUpdateProc} from "../../../types/doctorProc.ts";
+import {ICreateProc, IProc, IUpdateProc} from "../../../types/doctorProc.ts";
+import DoctorProcedurePrices from "../DoctorProcedurePrices/DoctorProcedurePrices.tsx";
 
 interface DataType {
     key: string;
@@ -26,10 +34,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
     const {doctorData, addressId} = state
 
     const [activeSpecId, setActiveSpecId] = useState<number | null>(null)
+    const [activeSpecTitle, setActiveSpecTitle] = useState<string>('')
     const [activeProcId, setActiveProcId] = useState<number | null>(null)
+    const [activeProcTitle, setActiveProcTitle] = useState<string>('')
 
-    const [open, setOpen] = useState(false);
-    const [priceOpen, setPriceOpen] = useState(false);
+    const [isProcOpen, setIsProcOpen] = useState(false);
+    const [isPriceOpen, setPriceOpen] = useState(false);
 
     const [allProcs, setAllProcs] = useState<IMedProcedures[]>([]);
 
@@ -135,10 +145,10 @@ const DoctorAdditionalDataTable: React.FC = () => {
 
     // SPECIALITY GET API
     const { data: specs, isLoading: isSpecLoading } = useQuery({
-        queryKey: ['doctorSpecsList', createSpecSuccess, updateSpecSuccess, deleteSpecSuccess],
+        queryKey: ['doctorSpecsList', createSpecSuccess, updateSpecSuccess, deleteSpecSuccess, doctorData?.id, addressId],
         queryFn: () =>
             axiosInstance
-                .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
+                .get<ISpec[]>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
                 .then((response) => response?.data),
         enabled: !!addressId && !!doctorData?.id
     });
@@ -147,18 +157,18 @@ const DoctorAdditionalDataTable: React.FC = () => {
         queryKey: ['allSpecsList', createSpecSuccess, updateSpecSuccess],
         queryFn: () =>
             axiosInstance
-                .get<IAllSpec>(`partners/medical-specialties-list/`)
+                .get<IAllSpec[]>(`partners/medical-specialties-list/`)
                 .then((response) => response?.data),
     });
 
     // PROCEDURE GET API
     const { data: procs, isLoading: isProcLoading } = useQuery({
-        queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess],
+        queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess, activeSpecId, doctorData?.id, addressId],
         queryFn: () =>
             axiosInstance
-                .get<ISpec>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/`)
+                .get<IProc[]>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/`)
                 .then((response) => response?.data),
-        enabled: !!addressId && !!doctorData?.id
+        enabled: !!addressId && !!doctorData?.id && !!activeSpecId
     });
 
     // SPEC methods
@@ -189,10 +199,11 @@ const DoctorAdditionalDataTable: React.FC = () => {
         })
     }
 
-    const handleOpenProcedures = (id: number, procs:  IMedProcedures[]) => {
+    const handleOpenProcedures = (id: number, procs:  IMedProcedures[], title: string) => {
         setAllProcs(procs)
         setActiveSpecId(id)
-        setOpen(true);
+        setActiveSpecTitle(title)
+        setIsProcOpen(true);
     };
 
     // PROC methods
@@ -223,14 +234,29 @@ const DoctorAdditionalDataTable: React.FC = () => {
         })
     }
 
-    const handleOpenProcedurePrices = (id: number) => {
+    const handleOpenProcedurePrices = (id: number, title: string) => {
         setActiveProcId(id)
+        setActiveProcTitle(title)
         setPriceOpen(true);
     };
 
-    const onClose = () => {
-        setOpen(false);
+    const onProcClose = () => {
+        setIsProcOpen(false);
     };
+
+    const onPriceClose = () => {
+        setPriceOpen(false);
+    };
+
+    const filterAllFields = (type: 'spec' | 'proc') => {
+        if (type === 'spec') {
+            const doctorSpecIds = specs?.map(item => item?.speciality?.id);
+            return allSpecsList?.filter(item => !doctorSpecIds?.includes(item?.medical_speciality_id))
+        } else {
+            const doctorProcIds = procs?.map(item => item?.med_proc_info?.id);
+            return allProcs?.filter(item => !doctorProcIds?.includes(item?.id))
+        }
+    }
 
 
     const specColumns: TableProps<DataType>['columns'] = [
@@ -243,6 +269,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
             title: 'Название специальности',
             dataIndex: 'speciality',
             key: 'speciality',
+            render: (speciality: ISpecContent) => <div>{speciality?.title}</div>
         },
         {
             title: 'Количество процедур',
@@ -278,7 +305,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
             key: 'action',
             render: (item: ISpec) => (
                 <Button
-                    onClick={() => handleOpenProcedures(item?.id, item?.medical_procedures)}
+                    onClick={() => handleOpenProcedures(item?.id, item?.available_medical_procedures, item?.speciality?.title)}
                     disabled={isSpecDeleteLoading}
                 >
                     Открыть процедуры
@@ -300,9 +327,10 @@ const DoctorAdditionalDataTable: React.FC = () => {
             render: (item: IMedProcedures) => <div>{item?.title}</div>
         },
         {
-            title: 'Количество цен в процедуре',
-            dataIndex: 'doctor_procedures',
-            render: (doctor_procedures: DoctorProcedure) => <div>{doctor_procedures?.comission_amount}</div>
+            title: 'Конечная стоимость услуги',
+            dataIndex: 'price',
+            key: 'price',
+            render: (doctor_procedures: IPrice) => <div>{doctor_procedures?.final_price} Тг</div>
         },
         {
             title: 'Активность',
@@ -328,48 +356,52 @@ const DoctorAdditionalDataTable: React.FC = () => {
             ),
         },
         {
-            title: 'Открыть цену процедуры',
+            title: 'Открыть цены процедуры',
             key: 'action',
             render: (item: DoctorProcedure) => (
                 <Button
-                    onClick={() => handleOpenProcedurePrices(item?.id)}
+                    onClick={() => handleOpenProcedurePrices(item?.id, item?.med_proc_info?.title)}
                     disabled={isSpecDeleteLoading}
                 >
-                    Открыть процедуры
+                    Открыть цены процедуры
                 </Button>
             ),
         },
     ];
 
-    if (isSpecLoading) {
-        return <Spinner/>
-    }
-
     return <>
         <SpecProcTableAction
-            data={specs}
+            data={specs ?? []}
             columns={specColumns}
             onCreate={handleCreateSpec}
-            procSpecList={allSpecsList}
+            procSpecList={filterAllFields('spec') ?? []}
             isLoading={isSpecLoading}
             entityType={'speciality'}
             isDisabled={isSpecCreateLoading}
         />
         <Drawer
-            title="Basic Drawer"
-            onClose={onClose}
-            open={open}
-            width={'1000px'}
+            title={`Выбранная специальность: ${activeSpecTitle}`}
+            onClose={onProcClose}
+            open={isProcOpen}
+            width={'90%'}
         >
             <SpecProcTableAction
-                data={procs}
+                data={procs ?? []}
                 columns={procColumns}
                 onCreate={handleCreateProc}
-                procSpecList={allProcs}
+                procSpecList={filterAllFields('proc') ?? []}
                 isLoading={isProcLoading}
                 entityType={'procedure'}
                 isDisabled={isProcCreateLoading}
             />
+        </Drawer>
+        <Drawer
+            title={`Выбранная процедура: ${activeProcTitle}`}
+            onClose={onPriceClose}
+            open={isPriceOpen}
+            width={'90%'}
+        >
+            <DoctorProcedurePrices activeSpecId={activeSpecId} activeProcId={activeProcId}/>
         </Drawer>
     </>
 };

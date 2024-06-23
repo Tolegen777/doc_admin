@@ -43,7 +43,6 @@ const DoctorSlots = memo(({slots, doctorName}: Props) => {
             return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`, body)
         },
         onSuccess: (response: any) => {
-            console.log(response, 'RESPONSE');
             setIsModalOpen(false)
             queryClient.invalidateQueries({queryKey: ['calendarData']})
         },

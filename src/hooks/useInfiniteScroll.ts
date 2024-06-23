@@ -21,7 +21,6 @@ export const useInfiniteScroll = <T>(props: Props<T>) => {
 
     // Update data when the page number changes
     useEffect(() => {
-        console.log('bro')
         if (data?.next) {
             if (page > 1) {
                 setScrolledData([...scrolledData, ...data.results]);
@@ -37,7 +36,6 @@ export const useInfiniteScroll = <T>(props: Props<T>) => {
     // Handle scroll event
     useEffect(() => {
         const handleScroll = () => {
-            console.log(scrollContainerRef, 'rEF')
             if (!scrollContainerRef.current) return;
 
             const scrollContainer = scrollContainerRef.current;
@@ -50,7 +48,6 @@ export const useInfiniteScroll = <T>(props: Props<T>) => {
 
             // Threshold for scrolling, triggering a request for the next page when reached
             const threshold = 1;
-            console.log(scrollDistanceToBottom, 'JJJ')
 
             // Check if the threshold is reached and if there are more pages to load
             if (scrollDistanceToBottom < threshold && data) {

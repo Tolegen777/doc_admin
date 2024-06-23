@@ -22,7 +22,12 @@ export interface IDoctor {
 }
 
 export interface SpecialitiesAndProcedure {
-    speciality: string
+    speciality: {
+        doctor_speciality_object_id: number
+        is_active: boolean
+        medical_speciality_id: number
+        medical_speciality_title: string
+    }
     procedures: string[]
 }
 

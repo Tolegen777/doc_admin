@@ -97,8 +97,6 @@ const DoctorSurvey = () => {
 
     const {addressId, doctorData, doctorSurveyData} = state
 
-    console.log(doctorSurveyData, 'DOC')
-
     const {
         mutate: onUpdate,
         isPending: isUpdateLoading,
@@ -116,7 +114,6 @@ const DoctorSurvey = () => {
     });
 
     const handleUpdate = (value) => {
-        console.log(value, 'VALUES')
         onUpdate(value)
 
     }

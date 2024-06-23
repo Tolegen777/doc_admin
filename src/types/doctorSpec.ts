@@ -1,17 +1,19 @@
 export interface ISpec {
     doctor: string;
-    speciality: {
-        created_at: string,
-        description: string,
-        id: number,
-        slug: string,
-        title: string,
-        updated_at: string
-    };
+    speciality: ISpecContent;
     is_active: boolean;
-    medical_procedures: IMedProcedures[];
+    available_medical_procedures: IMedProcedures[];
     doctor_procedures: DoctorProcedure[];
     id: number;
+}
+
+export interface ISpecContent {
+    created_at: string,
+    description: string,
+    id: number,
+    slug: string,
+    title: string,
+    updated_at: string
 }
 
 export interface DoctorProcedure {
@@ -19,7 +21,7 @@ export interface DoctorProcedure {
     med_proc_info: IMedProcedures;
     is_active: boolean;
     comission_amount: number;
-    price: Price;
+    price: IPrice;
 }
 
 export interface IMedProcedures {
@@ -31,7 +33,7 @@ export interface IMedProcedures {
     updated_at: Date;
 }
 
-export interface Price {
+export interface IPrice {
     id: number;
     is_active: boolean;
     price_date: Date;

@@ -81,7 +81,7 @@ const DoctorsPage = () => {
                 <div style={{display: 'flex', alignItems: 'center', gap: 2}}>
                     <div style={getIsShowFull(index) ? {} : hiddenStyles}>
                         {data?.map((item, index) => {
-                            return `${item?.speciality}${index === data?.length - 1 ? '' : ','} `
+                            return `${item?.speciality?.medical_speciality_title}${index === data?.length - 1 ? '' : ','} `
                         })}
                     </div>
                     {/*<Button*/}
@@ -125,7 +125,7 @@ const DoctorsPage = () => {
         return data?.results?.filter(item => {
             const matchesQuery = query === '' || item.full_name.toLowerCase().includes(query.toLowerCase());
             const matchesSpecialities = specialities.length === 0 ||
-                specialities.every(spec => item.specialities_and_procedures?.map(item => item?.speciality).includes(spec));
+                specialities.every(spec => item.specialities_and_procedures?.map(item => item?.speciality?.medical_speciality_id).includes(spec));
             return matchesQuery && matchesSpecialities;
         });
     }

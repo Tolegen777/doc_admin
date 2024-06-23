@@ -51,8 +51,6 @@ export const SlotDetails = ({isSuccess, createLoading}: Props) => {
         } else {
             const data: AxiosResponse<ITimeSlot> = await onGetPrevWorkSchedule(prevDate)
             const workingHours = data?.data?.doctor_work_schedule_detailed_api_view?.working_hours_list
-
-            console.log(workingHours, 'WORK')
         }
 
 
