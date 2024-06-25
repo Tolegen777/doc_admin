@@ -18,9 +18,12 @@ const initialState: State = {
     doctorId: null,
     workScheduleId: null,
     title: '',
-    previousWorkScheduleId: null
+    previousWorkScheduleId: null,
+    panelColor: undefined
   },
-  selectedTimeSlotIds: []
+  selectedTimeSlotIds: [],
+  doctorData: null,
+  doctorSurveyData: []
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -94,6 +97,18 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         selectedTimeSlotIds: mergeAndRemoveDuplicates(state.selectedTimeSlotIds, action.payload),
+      }
+    }
+    case 'SET_DOCTOR_DATA': {
+      return {
+        ...state,
+        doctorData: action.payload,
+      }
+    }
+    case 'SET_DOCTOR_SURVEY_DATA': {
+      return {
+        ...state,
+        doctorSurveyData: action.payload,
       }
     }
     default: {

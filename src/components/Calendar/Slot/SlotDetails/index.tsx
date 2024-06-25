@@ -11,10 +11,11 @@ import {customNotification} from "../../../../utils/customNotification.ts";
 import {AxiosResponse} from "axios";
 
 type Props = {
-    isSuccess: boolean
+    isSuccess: boolean,
+    createLoading: boolean
 }
 
-export const SlotDetails = ({isSuccess}: Props) => {
+export const SlotDetails = ({isSuccess, createLoading}: Props) => {
 
     const {state} = useStateContext()
 
@@ -50,14 +51,12 @@ export const SlotDetails = ({isSuccess}: Props) => {
         } else {
             const data: AxiosResponse<ITimeSlot> = await onGetPrevWorkSchedule(prevDate)
             const workingHours = data?.data?.doctor_work_schedule_detailed_api_view?.working_hours_list
-
-            console.log(workingHours, 'WORK')
         }
 
 
     }
 
-    if (isLoading) {
+    if (isLoading || createLoading) {
         return  <div className={styles.loader}>
             <Spinner/>
         </div>

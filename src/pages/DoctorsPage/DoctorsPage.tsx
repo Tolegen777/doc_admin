@@ -10,6 +10,8 @@ import {useMemo, useState} from "react";
 import Filters from "../../components/Doctors/Filters/Filters.tsx";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 import {IGet} from "../../types/common.ts";
+import {Button} from "antd";
+import {useNavigate} from "react-router-dom";
 
 const hiddenStyles = {
     // whiteSpace: 'nowrap',
@@ -19,7 +21,9 @@ const hiddenStyles = {
 }
 const DoctorsPage = () => {
 
-    const {state} = useStateContext()
+    const {state, dispatch} = useStateContext()
+
+    const navigate = useNavigate()
 
     const {addressId, doctor} = state
 
@@ -30,6 +34,14 @@ const DoctorsPage = () => {
     const getIsShowFull = (number: number) => {
         return fullVisibleFullItems.includes(number);
 
+    }
+
+    const handleGoEditPage = (doctorData: IDoctor) => {
+        dispatch({
+            type: 'SET_DOCTOR_DATA',
+            payload: doctorData
+        })
+        navigate(`/doctor/${doctorData?.id}`)
     }
 
     // const handleSetFullVisibleFullItems = (index: number) => {
@@ -69,7 +81,7 @@ const DoctorsPage = () => {
                 <div style={{display: 'flex', alignItems: 'center', gap: 2}}>
                     <div style={getIsShowFull(index) ? {} : hiddenStyles}>
                         {data?.map((item, index) => {
-                            return `${item?.speciality}${index === data?.length - 1 ? '' : ','} `
+                            return `${item?.speciality?.medical_speciality_title}${index === data?.length - 1 ? '' : ','} `
                         })}
                     </div>
                     {/*<Button*/}
@@ -89,6 +101,15 @@ const DoctorsPage = () => {
             key: 'is_active',
             render: (is_active: boolean) => <p>{is_active ? 'Да' : 'Нет'}</p>
         },
+        {
+            title: 'Редактировать',
+            render: (data: IDoctor) => <Button
+                onClick={() => handleGoEditPage(data)}
+                type={"primary"}
+            >
+                Редактировать
+            </Button>
+        },
     ];
 
     const { data, isLoading } = useQuery({
@@ -104,7 +125,7 @@ const DoctorsPage = () => {
         return data?.results?.filter(item => {
             const matchesQuery = query === '' || item.full_name.toLowerCase().includes(query.toLowerCase());
             const matchesSpecialities = specialities.length === 0 ||
-                specialities.every(spec => item.specialities_and_procedures?.map(item => item?.speciality).includes(spec));
+                specialities.every(spec => item.specialities_and_procedures?.map(item => item?.speciality?.medical_speciality_id).includes(spec));
             return matchesQuery && matchesSpecialities;
         });
     }

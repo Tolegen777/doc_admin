@@ -1,3 +1,5 @@
+import type { TableProps } from 'antd';
+
 export interface IDate {
     day: number,
     month: string,
@@ -14,3 +16,10 @@ export interface IGet<T> {
 }
 
 export type ActionType = 'create' | 'update' | ''
+
+export type TableType<T> = TableProps<T>['columns']
+
+export type FormInitialFieldsParamsType = {
+    name: string;
+    value: string | number | boolean | [] | object | null | undefined;
+};

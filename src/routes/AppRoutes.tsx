@@ -17,7 +17,7 @@ export const AppRoutes = () => {
               type: 'SET_AUTH_STATUS',
               payload: true
           })
-          // navigate('/calendar')
+          navigate('/calendar')
       }
   }, [accessToken])
 
