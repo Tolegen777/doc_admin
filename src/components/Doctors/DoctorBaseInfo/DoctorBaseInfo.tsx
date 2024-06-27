@@ -105,19 +105,21 @@ const DoctorBaseInfo = ({}: Props) => {
                 <div className={styles.container_info_title}>
                     {doctorData?.full_name}
                 </div>
-                {doctorData?.specialities.map((item, index) => <div
-                    key={item?.id}
-                    className={styles.container_info_sub_title}
-                >
-                        {item?.speciality}{index < doctorData?.specialities?.length ? ',': ''}
+                <div className={styles.container_specs}>
+                    {doctorData?.specialities.map((item, index) => <div
+                            key={item?.doctor_profile_id}
+                            className={styles.container_info_sub_title}
+                        >
+                            {item?.medical_speciality_title}{index + 1 < doctorData?.specialities?.length ? ',': ''}
+                        </div>
+                    )}
                 </div>
-                )}
                 <GapContainer gap={10}>
-                    <div className={styles.container_info_sub_title}>h3. Ant Design 2</div>
-                    <div className={styles.container_info_sub_title}>h3. Ant Design 2</div>
+                    <div className={styles.container_info_sub_title}>Стаж: {doctorData?.experience_years} лет</div>
+                    {/*<div className={styles.container_info_sub_title}>Пол</div>*/}
                 </GapContainer>
                     <div className={styles.container_info_action}>
-                        <div className={styles.container_info_sub_title}>Активен</div>
+                        <div className={styles.container_info_sub_title}>{doctorData?.is_active ? 'Активен' : 'Неактивен'}</div>
                         <Switch checked={doctorData?.is_active} onChange={onChange}/>
                     </div>
                 <Button

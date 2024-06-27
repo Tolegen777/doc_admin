@@ -2,7 +2,7 @@ import styles from './styles.module.scss'
 import {Dropdown, MenuProps, Select, Space} from "antd";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
-import {IFranchise} from "../../types/franchiseTypes.ts";
+import {IFranchise, IFranchiseInfo} from "../../types/franchiseTypes.ts";
 import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
 import {useEffect} from "react";
 import {useStateContext} from "../../contexts";
@@ -33,6 +33,16 @@ const Header = () => {
                 .then((response) => response?.data),
     });
 
+    const { data: franchiseInfo, isLoading: franchiseInfoLoading } = useQuery({
+        queryKey: ['franchiseInfo'],
+        queryFn: () =>
+            axiosInstance
+                .get<IFranchiseInfo[]>('partners/franchise-info/')
+                .then((response) => response?.data),
+    });
+
+    console.log(franchiseInfo, 'll')
+
     const items: MenuProps['items'] = [
         {
             key: '4',
@@ -58,19 +68,21 @@ const Header = () => {
     const options =
         selectOptionsParser<IFranchise>(data ?? [], 'title', 'id')
 
+    const franchiseData = franchiseInfo?.find(item => item)
+
     return (
         <div className={styles.container}>
             <div className={styles.container_info}>
                 <div className={styles.container_info_logo}>
                     <div className={styles.container_info_logo_icon}>
-                        DOQ
+                        Партнерский админ панель
                     </div>
-                    <div className={styles.container_info_logo_lang}>
-                        RU
-                    </div>
+                    {/*<div className={styles.container_info_logo_lang}>*/}
+                    {/*    RU*/}
+                    {/*</div>*/}
                 </div>
                 <div className={styles.container_info_user}>
-                    Ваш менеджер: Манарбек +77777777777
+                    {franchiseInfoLoading ? <Spinner text/> : franchiseData?.short_description}
                 </div>
             </div>
             <div className={styles.container_action}>
@@ -112,7 +124,7 @@ const Header = () => {
                                 e.preventDefault()
                             }}>
                                 <Space style={{marginRight: 20, textTransform: "uppercase", cursor: 'pointer'}}>
-                                    Эмирмед
+                                    {franchiseData?.title}
                                 </Space>
                             </a>
                         </Dropdown>

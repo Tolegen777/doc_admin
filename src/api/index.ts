@@ -39,6 +39,7 @@ axiosInstance.defaults.headers.common['Content-Type'] = 'application/json';
 // @ts-ignore
 axiosInstance.interceptors.request.use((config) => {
     const accessToken = tokenService.getLocalAccessToken()
+    console.log(config, 'CONFIG')
 
     // console.log(accessToken, 'ACCESS')
 
@@ -116,11 +117,13 @@ axiosInstance.interceptors.response.use(
             })
         }
 
+        console.log(error, 'EEEE')
+
         if (errorStatus !== 401) {
-            const errorMessage = error.response?.data?.detail
+            const errorMessage = error?.response?.data?.errors?.non_field_errors?.find((item: string) => item)
             customNotification({
                 type: 'error',
-                message: errorMessage.length ? errorMessage : 'Ошибка сервера'
+                message: errorMessage?.length ? errorMessage : 'Ошибка сервера'
             })
         }
 

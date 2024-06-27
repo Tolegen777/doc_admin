@@ -20,7 +20,7 @@ const items: MenuItem[] = [
     },
     {
         label: 'Сверка',
-        key: '/reconciliation',
+        key: '/monthly_summary',
     },
     {
         label: 'Отзывы',

@@ -6,6 +6,7 @@ import {LoginPage} from "../pages/LoginPage/LoginPage.tsx";
 import DoctorEditPage from "../pages/DoctorEditPage/DoctorEditPage.tsx";
 import DoctorSurveyPage from "../pages/DoctorSurveyPage/DoctorSurveyPage.tsx";
 import DailySummary from "../pages/DailySummary/DailySummary.tsx";
+import MonthSummaryPage from "../pages/MonthSummaryPage/MonthSummaryPage.tsx";
 
 export const routesList = [
   {
@@ -25,6 +26,14 @@ export const routesList = [
     element: <DoctorsPage />,
   },
   {
+    path: '/payment',
+    element: <div></div>,
+  },
+  {
+    path: '/reviews',
+    element: <div></div>,
+  },
+  {
     path: '/doctor/:id',
     element: <DoctorEditPage />,
   },
@@ -39,6 +48,10 @@ export const routesList = [
   {
     path: '/daily_summary',
     element: <DailySummary />,
+  },
+  {
+    path: '/monthly_summary',
+    element: <MonthSummaryPage />,
   },
   {
     path: '/login',
