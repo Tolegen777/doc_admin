@@ -5,6 +5,7 @@ import {useMutation} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {ICreateUpdateDoctor} from "../../types/doctor.ts";
 import {customNotification} from "../../utils/customNotification.ts";
+import styles from './styles.module.scss'
 
 const formItemLayout = {
     labelCol: {
@@ -113,20 +114,22 @@ const DoctorSurvey = () => {
         },
     });
 
-    const handleUpdate = (value) => {
+    const handleUpdate = (value: ICreateUpdateDoctor) => {
         onUpdate(value)
 
     }
 
     return (
-        <div>
+        <div className={styles.container}>
             <Form
                 {...formItemLayout}
                 variant="filled"
                 fields={doctorSurveyData}
                 form={form}
-                layout="vertical"
                 onFinish={value => handleUpdate(value)}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                style={{ maxWidth: 800 }}
 
             >
                 {formFields.map(field => (
@@ -144,6 +147,7 @@ const DoctorSurvey = () => {
                     type={'primary'}
                     onClick={form.submit}
                     disabled={isUpdateLoading}
+                    className={styles.submit}
                 >
                     Сохранить
                 </Button>

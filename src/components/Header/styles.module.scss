@@ -22,6 +22,11 @@
       gap: 10px;
       align-items: center;
     }
+    &_user {
+      //max-width: 300px;
+      //overflow: hidden;
+      //text-overflow: ellipsis;
+    }
   }
   &_action {
     display: flex;

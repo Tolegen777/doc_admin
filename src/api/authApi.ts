@@ -17,7 +17,8 @@ export const authApi = {
 
   refreshAccessToken: async (refresh_token: string): Promise<IAuthResponse | null> => {
     try {
-      const response = await axios.post<IAuthResponse>('https://sandbox.sootki.com/api/v1/partners/auth/refresh-token/', { refresh: refresh_token });
+      const BASE_URL = import.meta.env.VITE_BASE_URL;
+      const response = await axios.post<IAuthResponse>(BASE_URL + 'partners/auth/refresh-token/', { refresh: refresh_token });
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error)) {

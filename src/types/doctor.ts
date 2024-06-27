@@ -32,12 +32,11 @@ export interface SpecialitiesAndProcedure {
 }
 
 export interface Speciality {
-    id: number
+    doctor_profile_id: number
+    doctor_speciality_object_id: number
     is_active: boolean
-    created_at: string
-    updated_at: string
-    doctor: number
-    speciality: number
+    medical_speciality_id: number
+    medical_speciality_title: string
 }
 
 export interface ICreateUpdateDoctor {
