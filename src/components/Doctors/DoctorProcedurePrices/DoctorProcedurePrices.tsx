@@ -1,21 +1,47 @@
-import React, { useState } from 'react';
-import {Button, Switch, TableProps} from 'antd';
-import { Form, Popconfirm, Table, Typography } from 'antd';
-import {EditableCell} from "../../Shared/EditableCell/EditableCell.tsx";
+import React, {useState} from 'react';
+import {Button, Form, Modal, Switch, Table} from 'antd';
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {customNotification} from "../../../utils/customNotification.ts";
-import {IDoctorProcPrice, ICreatePrice, IUpdatePrice} from "../../../types/doctorProcPrice.ts";
+import {ICreatePrice, IDoctorProcPrice, IUpdatePrice} from "../../../types/doctorProcPrice.ts";
 import {useStateContext} from "../../../contexts";
 import {DoctorProcedure} from "../../../types/doctorSpec.ts";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
-import CustomModal from "../../Shared/CustomModal/CustomModal.tsx";
 import {DoctorProcPriceCreateForm} from "./DoctorProcPriceCreateForm/DoctorProcPriceCreateForm.tsx";
+import {FormInitialFieldsParamsType} from "../../../types/common.ts";
+import {changeFormFieldsData} from "../../../utils/changeFormFieldsData.ts";
 
 type Props = {
     activeSpecId: number | null,
     activeProcId: number | null
 }
+
+const initialValues: FormInitialFieldsParamsType[] = [
+    {
+        name: 'default_price',
+        value: '',
+    },
+    {
+        name: 'discount',
+        value: null
+    },
+    {
+        name: 'final_price',
+        value: null
+    },
+    {
+        name: 'child_age_to',
+        value: null
+    },
+    {
+        name: 'child_age_from',
+        value: null
+    },
+    {
+        name: 'is_for_children',
+        value: false
+    },
+];
 
 const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) => {
 
@@ -24,9 +50,12 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     const {doctorData, addressId} = state
 
     const [form] = Form.useForm();
-    const [editingKey, setEditingKey] = useState<number | null>(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const isEditing = (record: IDoctorProcPrice) => record.id === editingKey;
+
+    const [formType, setFormType] = useState<'create' | 'update'>('create')
+
+    const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues)
 
     // SPECIALITY POST PUT DELETE API
     const {
@@ -80,7 +109,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     });
 
     // PRICE GET API
-    const { data, isLoading: isPriceLoading } = useQuery({
+    const {data, isLoading: isPriceLoading} = useQuery({
         queryKey: [
             'doctorPricesList',
             createPriceSuccess,
@@ -99,19 +128,12 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         enabled: !!addressId && !!doctorData?.id && !!activeProcId && !!activeSpecId
     });
 
-    const handleOnUpdate = (record: Partial<IDoctorProcPrice>) => {
-        form.setFieldsValue({ ...record });
-        setEditingKey(record?.id as number);
-    };
-
-    const cancel = () => {
-        setEditingKey(null);
-    };
-
-    const handleCreatePrice = () => {
-        const values = form.getFieldsValue()
-
-        onCreatePrice(values)
+    const handleCreateUpdatePrice = (values: any) => {
+        if (formType === 'update') {
+            onUpdatePrice(values)
+        } else {
+            onCreatePrice(values)
+        }
     }
 
     const handleDeletePrice = (id: number) => {
@@ -123,29 +145,21 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         })
     }
 
-    const handleSave = (id: number) => {
-        const formErrors = form.getFieldsError()
-        const isError = formErrors?.some(item => item?.errors?.length)
-        if (isError) {
-            customConfirmAction({
-                message: 'Заполните все поля правильно',
-                isCentered: true,
-                hideCancelButton: true,
-                action: () => {}
-            })
-        } else {
-            const values = form.getFieldsValue()
-            onUpdatePrice({
-                id: id,
-                ...values
-            })
-        }
-    };
-
     const handleCloseModal = () => {
         setIsModalOpen(false)
+        setCreateUpdateFormInitialFields(initialValues)
+        setFormType('create')
         form.resetFields()
     }
+
+    const onOpenCreateUpdateModal = (formType: 'create' | 'update', value?: IDoctorProcPrice) => {
+        if ((formType === 'update') && value) {
+            setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, value))
+        }
+
+        setFormType(formType)
+        setIsModalOpen(true)
+    };
 
     const procColumns = [
         {
@@ -223,53 +237,32 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         },
         {
             title: 'Действие',
-            render: (_: any, record: IDoctorProcPrice) => {
-                const editable = isEditing(record);
-                return editable ? (
-                    <span>
-            <Typography.Link onClick={() => handleSave(record?.id)} style={{ marginRight: 8 }}>
-              Сохранить
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Отмена</a>
-            </Popconfirm>
-          </span>
-                ) : (
-                    <Typography.Link disabled={editingKey !== null} onClick={() => handleOnUpdate(record)}>
-                        Изменить
-                    </Typography.Link>
-                );
-            },
+            render: (item: any) => <Button
+                type={"primary"}
+                onClick={() => {
+                    onOpenCreateUpdateModal('update', item)
+                }
+                }
+            >
+                Изменить
+            </Button>,
         },
     ];
 
-    const mergedColumns: TableProps['columns'] = procColumns.map((col) => {
-        if (!col?.editable) {
-            return col;
-        }
-        return {
-            ...col,
-            onCell: (record: IDoctorProcPrice) => ({
-                record,
-                inputType: col?.inputType,
-                dataIndex: col?.dataIndex,
-                title: col?.title,
-                editing: isEditing(record),
-            }),
-        };
-    });
-
     return (
         <div>
-            <CustomModal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                onConfirm={() => handleCreatePrice()}
+            <Modal
+                open={isModalOpen}
                 title={'Создание цена процедуры'}
-                isLoading={isPriceCreateLoading}
+                footer={<></>}
+                onCancel={handleCloseModal}
             >
-                <DoctorProcPriceCreateForm form={form}/>
-            </CustomModal>
+                <DoctorProcPriceCreateForm
+                    form={form}
+                    onSubmit={handleCreateUpdatePrice}
+                    initialFields={createUpdateFormInitialFields}
+                />
+            </Modal>
             <Button
                 onClick={() => setIsModalOpen(true)}
                 style={{float: 'right', marginBottom: 20}}
@@ -278,23 +271,11 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
             >
                 Создать
             </Button>
-            <Form form={form} component={false}>
-                <Table
-                    components={{
-                        body: {
-                            cell: EditableCell,
-                        },
-                    }}
-                    bordered
-                    dataSource={data}
-                    columns={mergedColumns}
-                    rowClassName="editable-row"
-                    pagination={{
-                        onChange: cancel,
-                    }}
-                    loading={isPriceLoading}
-                />
-            </Form>
+            <Table
+                dataSource={data}
+                columns={procColumns}
+                loading={isPriceLoading}
+            />
         </div>
     );
 

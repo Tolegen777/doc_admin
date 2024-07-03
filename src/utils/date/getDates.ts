@@ -160,3 +160,12 @@ export function getPreviousDate(dateString: string): string {
 }
 
 export const datePickerFormatter = (date: string | number, format = 'YYYY-MM-DD HH:mm'): dayjs.Dayjs => dayjs(date, format);
+
+export function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+    });
+}

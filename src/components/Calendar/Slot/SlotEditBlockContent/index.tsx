@@ -39,7 +39,7 @@ export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
             payload: reservedWorkingHours ?? []
         })
-    }, [workingHours])
+    }, [workingHours?.length])
 
     const finishSelection: TFinishSelectionCallback = (items) => {
         const selectedIds = items

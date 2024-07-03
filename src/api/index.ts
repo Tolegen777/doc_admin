@@ -39,7 +39,6 @@ axiosInstance.defaults.headers.common['Content-Type'] = 'application/json';
 // @ts-ignore
 axiosInstance.interceptors.request.use((config) => {
     const accessToken = tokenService.getLocalAccessToken()
-    console.log(config, 'CONFIG')
 
     // console.log(accessToken, 'ACCESS')
 

@@ -3,15 +3,13 @@ import {CustomTable} from "../../components/Shared/CustomTable";
 import {useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {useStateContext} from "../../contexts";
-import {addCountsToData} from "../../utils/addCountsToData.ts";
-import {useMemo} from "react";
-import {Button} from 'antd'
 import {IVisit} from "../../types/visits.ts";
 import Filters from "../../components/Visits/Filters/Filters.tsx";
 import {formatDateTime} from "../../utils/date/getDates.ts";
-import {TextButton} from "../../components/Shared/Buttons/TextButton";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 import {IGet} from "../../types/common.ts";
+import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
+import {useState} from "react";
 
 const VisitsPage = () => {
 
@@ -19,14 +17,16 @@ const VisitsPage = () => {
 
     const {addressId, visitsQuery} = state
 
+    const [page, setPage] = useState(1)
+
     const columns = [
         {
             title: 'Дата визита',
             key: 'date',
-            render: (visit: IVisit) => !visit?.date ? <p>{formatDateTime({
+            render: (visit: IVisit) => <p>{formatDateTime({
                 inputDate: visit?.date,
                 inputTime: visit?.visit_time_slot
-            })}</p> : <TextButton text={'Новая заявка'} type={'primary'} action={() => {}} />
+            })}</p>
         },
         {
             title: 'Врач',
@@ -39,12 +39,11 @@ const VisitsPage = () => {
         },
         {
             title: 'Статус',
-            key: 'visit_status',
-            dataIndex: 'visit_status',
-            render: (status: string) => (
+            key: 'status',
+            render: (status: any) => (
                 <div>
-                    <div>{status}</div>
-                    <TextButton text={'Изменить'} type={'primary'} action={() => {}} />
+                    <div>{status?.status?.status_title}</div>
+                    {/*<TextButton text={'Изменить'} type={'primary'} action={() => {}} />*/}
                 </div>
 
             ),
@@ -53,16 +52,11 @@ const VisitsPage = () => {
             title: 'Пациент',
             key: 'patient_full_name',
             render: (visit: IVisit) => {
-                if (!visit.patient_id) {
                     return <div>
                         <div>{visit?.patient_full_name}</div>
                         <div>{visit?.patient_phone_number}</div>
                         <div>{visit?.patient_iin_number}</div>
                     </div>
-                } else {
-                    return <Button type="primary" ghost>Показать информацию</Button>
-                }
-
             },
         },
         {
@@ -84,31 +78,26 @@ const VisitsPage = () => {
     ];
 
     const {data, isLoading} = useQuery({
-        queryKey: ['visitsData', addressId],
+        queryKey: ['visitsData', addressId, visitsQuery, page],
         queryFn: () =>
             axiosInstance
-                .get<IGet<IVisit>>(`partners/franchise-branches/${addressId}/visits/`)
+                .get<IGet<IVisit>>(`partners/franchise-branches/${addressId}/visits/?page=${page}&${objectToQueryParams({
+                    part_of_name: visitsQuery
+                })}`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
 
-    function filterByQueryAndSpecialities() {
-        return data?.results?.filter(item => {
-            return visitsQuery === '' ||
-                item.doctor_full_name.toLowerCase().includes(visitsQuery.toLowerCase()) ||
-                item.procedure_title.toLowerCase().includes(visitsQuery.toLowerCase());
-        });
-    }
-
-    const filteredData = useMemo(filterByQueryAndSpecialities, [visitsQuery, data])
-
     return (
         <div className={styles.container}>
-            <Filters/>
+            {/*<Filters/>*/}
             <CustomTable
                 columns={columns}
-                dataSource={addCountsToData(filteredData ?? [])}
+                dataSource={data?.results}
                 loading={isLoading}
+                setPage={setPage}
+                total={data?.count ?? 0}
+                current={page}
             />
         </div>
     );

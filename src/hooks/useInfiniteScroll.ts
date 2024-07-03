@@ -6,12 +6,13 @@ type Props<T> = {
     data: IGet<T> | null;
     page: number;
     setPage: React.Dispatch<React.SetStateAction<number>>;
+    additionalField?: any
 };
 
 // Hook for implementing infinite scrolling
 export const useInfiniteScroll = <T>(props: Props<T>) => {
     // Destructuring props
-    const { data, setPage, page } = props;
+    const { data, setPage, page, additionalField } = props;
 
     // State to store scrolled data
     const [scrolledData, setScrolledData] = useState<T[]>([]);
@@ -25,10 +26,11 @@ export const useInfiniteScroll = <T>(props: Props<T>) => {
             if (page > 1) {
                 setScrolledData([...scrolledData, ...data.results]);
             } else {
+                console.log(data, 'DAGA')
                 setScrolledData(data.results);
             }
         }
-    }, [data]);
+    }, [data?.results, additionalField, data?.results?.length]);
 
     // Reset the page when the component is unmounted
     useEffect(() => () => setPage(1), []);

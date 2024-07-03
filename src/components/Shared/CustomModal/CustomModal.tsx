@@ -1,29 +1,35 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import ReactDOM from "react-dom";
 import styles from "./styles.module.scss";
-import {Spinner} from "../Spinner";
+import { Spinner } from "../Spinner";
 
 type CustomModalProps = {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
     children: React.ReactNode;
-    title: string
-    isLoading: boolean
+    title: string;
+    isLoading: boolean;
 };
 
 const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, children, title, isLoading }) => {
+    const handleEscape = useCallback((event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+            onClose();
+        }
+    }, [onClose]);
+
     useEffect(() => {
-        const handleEscape = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                onClose();
-            }
-        };
-        document.addEventListener("keydown", handleEscape);
+        if (isOpen) {
+            document.addEventListener("keydown", handleEscape);
+        } else {
+            document.removeEventListener("keydown", handleEscape);
+        }
+
         return () => {
             document.removeEventListener("keydown", handleEscape);
         };
-    }, [onClose]);
+    }, [isOpen, handleEscape]);
 
     if (!isOpen) {
         return null;
@@ -54,7 +60,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ isOpen, onClose, onConfirm, c
                         onClick={onConfirm}
                         disabled={isLoading}
                     >
-                        {isLoading ? <Spinner text/> : 'Подтвердить'}
+                        {isLoading ? <Spinner text /> : 'Подтвердить'}
                     </button>
                 </div>
             </div>

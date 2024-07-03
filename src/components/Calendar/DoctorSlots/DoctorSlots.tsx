@@ -11,9 +11,10 @@ import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 type Props = {
     slots: WorkSchedule[],
-    doctorName: string
+    doctorName: string,
+    doctorId: number
 }
-const DoctorSlots = memo(({slots, doctorName}: Props) => {
+const DoctorSlots = memo(({slots, doctorName, doctorId}: Props) => {
 
     const queryClient = useQueryClient()
 
@@ -57,8 +58,9 @@ const DoctorSlots = memo(({slots, doctorName}: Props) => {
     });
 
     const onSlotOpen = async (item: WorkSchedule) => {
+        console.log(item, 'item')
         setIsModalOpen(true)
-        const {doctor_work_schedule_object_id, doctor_id, work_date, panel_colour} = item
+        const {doctor_work_schedule_object_id, work_date, panel_colour} = item
 
         if (panel_colour === 'white') {
             await onCreateWorkSchedule({
@@ -70,7 +72,7 @@ const DoctorSlots = memo(({slots, doctorName}: Props) => {
         dispatch({
             type: 'SET_SLOT_DATA',
             payload: {
-                doctorId: doctor_id,
+                doctorId: doctorId,
                 workScheduleId: doctor_work_schedule_object_id,
                 title: `${doctorName}, ${formatDateToDayMonth(work_date ?? '')}`,
                 panelColor: panel_colour

@@ -7,6 +7,7 @@ import DoctorEditPage from "../pages/DoctorEditPage/DoctorEditPage.tsx";
 import DoctorSurveyPage from "../pages/DoctorSurveyPage/DoctorSurveyPage.tsx";
 import DailySummary from "../pages/DailySummary/DailySummary.tsx";
 import MonthSummaryPage from "../pages/MonthSummaryPage/MonthSummaryPage.tsx";
+import MonthSummaryByIdPage from "../pages/MonthSummaryByIdPage/MonthSummaryByIdPage.tsx";
 
 export const routesList = [
   {
@@ -27,11 +28,15 @@ export const routesList = [
   },
   {
     path: '/payment',
-    element: <div></div>,
+    element: <div style={{padding: 20, fontSize: 16}}>
+      Страница еще в разработке...
+    </div>,
   },
   {
     path: '/reviews',
-    element: <div></div>,
+    element: <div style={{padding: 20, fontSize: 16}}>
+      Страница еще в разработке...
+    </div>,
   },
   {
     path: '/doctor/:id',
@@ -52,6 +57,10 @@ export const routesList = [
   {
     path: '/monthly_summary',
     element: <MonthSummaryPage />,
+  },
+  {
+    path: '/monthly_summary/:id',
+    element: <MonthSummaryByIdPage />,
   },
   {
     path: '/login',

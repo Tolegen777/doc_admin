@@ -50,3 +50,8 @@ export interface ICreateUpdateDoctor {
     for_child: boolean,
     is_active: boolean
 }
+
+export type AgeType = {
+    value: string
+    display: string
+}

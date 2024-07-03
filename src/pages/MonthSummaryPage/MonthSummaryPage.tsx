@@ -6,12 +6,16 @@ import {useStateContext} from "../../contexts";
 import {TextButton} from "../../components/Shared/Buttons/TextButton";
 import {IMonthSummary, IPatientClinicVisits} from "../../types/monthSummary.ts";
 import {useNavigate} from "react-router-dom";
+import {IGet} from "../../types/common.ts";
+import {useState} from "react";
 
 const MonthSummaryPage = () => {
 
     const {state} = useStateContext()
 
     const {addressId} = state
+
+    const [page, setPage] = useState(1)
 
     const navigate = useNavigate()
 
@@ -20,7 +24,7 @@ const MonthSummaryPage = () => {
             title: 'Месяц визита',
             key: 'month_name',
             render: (item: IMonthSummary) => <TextButton text={item?.month_name} type={'primary'}
-                                                         action={() => navigate(`${item?.month_name}`)}/>
+                                                         action={() => navigate(`${item?.id}`)}/>
         },
         {
             title: 'Всего визитов',
@@ -63,7 +67,7 @@ const MonthSummaryPage = () => {
         queryKey: ['monthSummaryData', addressId],
         queryFn: () =>
             axiosInstance
-                .get<IMonthSummary[]>(`partners/franchise-branches/${addressId}/monthly-summaries/`)
+                .get<IGet<IMonthSummary>>(`partners/franchise-branches/${addressId}/monthly-summaries/?page=${page}`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
@@ -72,8 +76,11 @@ const MonthSummaryPage = () => {
         <div className={styles.container}>
             <CustomTable
                 columns={columns}
-                dataSource={data ?? []}
+                dataSource={data?.results ?? []}
                 loading={isLoading}
+                setPage={setPage}
+                current={page}
+                total={data?.count ?? 0}
             />
         </div>
     );

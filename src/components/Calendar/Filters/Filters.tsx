@@ -3,7 +3,7 @@ import {Button} from "antd";
 import {ReloadOutlined} from '@ant-design/icons';
 import PaginationButton from "../../Shared/PaginationButton/PaginationButton.tsx";
 import {useStateContext} from "../../../contexts";
-import {useQueryClient} from "@tanstack/react-query";
+// import {useQueryClient} from "@tanstack/react-query";
 import {CustomSearchInput} from "../../Shared/CustomSearchInput";
 
 type Props = {}
@@ -11,10 +11,11 @@ const Filters = ({}: Props) => {
 
     const {dispatch, state} = useStateContext()
 
-    const queryClient = useQueryClient()
+    // const queryClient = useQueryClient()
 
     const handleReload = () => {
-        queryClient.invalidateQueries({ queryKey: ['calendarData'] })
+        // queryClient.invalidateQueries({ queryKey: ['calendarData'] })
+        window?.location?.reload()
     }
 
     return (

@@ -31,6 +31,7 @@ const Header = () => {
             axiosInstance
                 .get<IFranchise[]>('partners/franchise-branches/')
                 .then((response) => response?.data),
+        refetchOnMount: false
     });
 
     const { data: franchiseInfo, isLoading: franchiseInfoLoading } = useQuery({
@@ -39,6 +40,7 @@ const Header = () => {
             axiosInstance
                 .get<IFranchiseInfo[]>('partners/franchise-info/')
                 .then((response) => response?.data),
+        refetchOnMount: false
     });
 
     console.log(franchiseInfo, 'll')

@@ -1,6 +1,7 @@
 export interface ICalendar {
-    doctor: string
-    work_schedule: WorkSchedule[]
+    doctor_profile_id: number
+    doctor_profile_full_name: string
+    work_schedule_data: WorkSchedule[]
 }
 
 export interface WorkSchedule {
@@ -10,7 +11,6 @@ export interface WorkSchedule {
     working_hours_count: number
     visits_count: number
     panel_colour: PanelColourType
-    doctor_id: number
 }
 
 export interface ITimeSlot {

@@ -5,13 +5,12 @@ import {useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {useStateContext} from "../../contexts";
 import {IDoctor, SpecialitiesAndProcedure} from "../../types/doctor.ts";
-import {addCountsToData} from "../../utils/addCountsToData.ts";
-import {useMemo, useState} from "react";
-import Filters from "../../components/Doctors/Filters/Filters.tsx";
+import {useState} from "react";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 import {IGet} from "../../types/common.ts";
 import {Button} from "antd";
 import {useNavigate} from "react-router-dom";
+import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
 
 const hiddenStyles = {
     // whiteSpace: 'nowrap',
@@ -28,6 +27,9 @@ const DoctorsPage = () => {
     const {addressId, doctor} = state
 
     const {specialities, query} = doctor
+    console.log(specialities, 'SPEc')
+
+    const [page, setPage] = useState(1)
 
     const [fullVisibleFullItems] = useState<number[]>([])
 
@@ -113,32 +115,26 @@ const DoctorsPage = () => {
     ];
 
     const { data, isLoading } = useQuery({
-        queryKey: ['doctorsData', addressId],
+        queryKey: ['doctorsData', addressId, page, query],
         queryFn: () =>
             axiosInstance
-                .get<IGet<IDoctor>>(`partners/franchise-branches/${addressId}/doctors/`)
+                .get<IGet<IDoctor>>(`partners/franchise-branches/${addressId}/doctors/?page=${page}&${objectToQueryParams({
+                    part_of_name: query
+                })}`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
 
-    function filterByQueryAndSpecialities() {
-        return data?.results?.filter(item => {
-            const matchesQuery = query === '' || item.full_name.toLowerCase().includes(query.toLowerCase());
-            const matchesSpecialities = specialities.length === 0 ||
-                specialities.every(spec => item.specialities_and_procedures?.map(item => item?.speciality?.medical_speciality_id).includes(spec));
-            return matchesQuery && matchesSpecialities;
-        });
-    }
-
-    const filteredData = useMemo(filterByQueryAndSpecialities, [specialities, query, data])
-
     return (
         <div className={styles.container}>
-            <Filters/>
+            {/*<Filters/>*/}
             <CustomTable
                 columns={columns}
-                dataSource={addCountsToData(filteredData ?? [])}
+                dataSource={data?.results}
                 loading={isLoading}
+                setPage={setPage}
+                total={data?.count ?? 0}
+                current={page}
             />
         </div>
     );
