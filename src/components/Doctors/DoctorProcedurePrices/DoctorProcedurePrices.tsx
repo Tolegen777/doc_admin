@@ -60,7 +60,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     // SPECIALITY POST PUT DELETE API
     const {
         mutate: onCreatePrice,
-        isPending: isPriceCreateLoading,
+        // isPending: isPriceCreateLoading,
         isSuccess: createPriceSuccess
     } = useMutation({
         mutationKey: ['createPrice'],
@@ -77,7 +77,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
 
     const {
         mutate: onUpdatePrice,
-        isPending: isPriceUpdateLoading,
+        // isPending: isPriceUpdateLoading,
         isSuccess: updatePriceSuccess
     } = useMutation({
         mutationKey: ['updatePrice'],

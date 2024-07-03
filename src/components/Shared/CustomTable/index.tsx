@@ -2,9 +2,9 @@ import {Table, TableProps} from 'antd';
 import React from "react";
 
 type Props = TableProps & {
-    setPage: React.Dispatch<React.SetStateAction<number>>,
-    current: number,
-    total: number
+    setPage?: React.Dispatch<React.SetStateAction<number>>,
+    current?: number,
+    total?: number
 }
 
 export const CustomTable = ({setPage, current, total, ...props}: Props) => {

@@ -4,7 +4,6 @@ import {useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {useStateContext} from "../../contexts";
 import {IVisit} from "../../types/visits.ts";
-import Filters from "../../components/Visits/Filters/Filters.tsx";
 import {formatDateTime} from "../../utils/date/getDates.ts";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
 import {IGet} from "../../types/common.ts";

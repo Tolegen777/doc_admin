@@ -6,12 +6,9 @@ import userIcon from '../../../assets/userIcon.svg'
 import {changeFormFieldsData} from "../../../utils/changeFormFieldsData.ts";
 import {FormInitialFieldsParamsType} from "../../../types/common.ts";
 import {useStateContext} from "../../../contexts";
-import {ICreateUpdateDoctor, IDoctor} from "../../../types/doctor.ts";
+import {IDoctor} from "../../../types/doctor.ts";
 import {datePickerFormatter} from "../../../utils/date/getDates.ts";
 import GapContainer from "../../Shared/GapContainer/GapContainer.tsx";
-import {axiosInstance} from "../../../api";
-import {customNotification} from "../../../utils/customNotification.ts";
-import {useMutation} from "@tanstack/react-query";
 
 type Props = {}
 
@@ -60,23 +57,23 @@ const DoctorBaseInfo = ({}: Props) => {
 
     const {state, dispatch} = useStateContext()
 
-    const {doctorData, addressId} = state
+    const {doctorData} = state
 
-    const {
-        mutate: onUpdate,
-        isPending: isUpdateLoading,
-    } = useMutation({
-        mutationKey: ['updateDoctor'],
-        mutationFn: (body: ICreateUpdateDoctor) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/`, body)
-        },
-        onSuccess: () => {
-            customNotification({
-                type: 'success',
-                message: 'Изменеия успешно сохранены!'
-            })
-        },
-    });
+    // const {
+    //     mutate: onUpdate,
+    //     isPending: isUpdateLoading,
+    // } = useMutation({
+    //     mutationKey: ['updateDoctor'],
+    //     mutationFn: (body: ICreateUpdateDoctor) => {
+    //         return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/`, body)
+    //     },
+    //     onSuccess: () => {
+    //         customNotification({
+    //             type: 'success',
+    //             message: 'Изменеия успешно сохранены!'
+    //         })
+    //     },
+    // });
 
     const onChange = (checked: boolean) => {
         console.log(`switch to ${checked}`);
