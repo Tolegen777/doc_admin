@@ -1,10 +1,11 @@
 import styles from './styles.module.scss';
-import {Spinner} from "../Spinner";
+import {Spin} from "antd";
+
 export const FullSpinner = () => {
     return (
         <div className={styles.container}>
             <div className={styles.container_content_wrapper}>
-                <Spinner />
+                <Spin size={'large'}/>
             </div>
         </div>
     );

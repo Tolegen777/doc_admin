@@ -8,6 +8,7 @@ import DoctorSurveyPage from "../pages/DoctorSurveyPage/DoctorSurveyPage.tsx";
 import DailySummary from "../pages/DailySummary/DailySummary.tsx";
 import MonthSummaryPage from "../pages/MonthSummaryPage/MonthSummaryPage.tsx";
 import MonthSummaryByIdPage from "../pages/MonthSummaryByIdPage/MonthSummaryByIdPage.tsx";
+import ReviewsPage from "../pages/ReviewsPage/ReviewsPage.tsx";
 
 export const routesList = [
   {
@@ -34,9 +35,7 @@ export const routesList = [
   },
   {
     path: '/reviews',
-    element: <div style={{padding: 20, fontSize: 16}}>
-      Страница еще в разработке...
-    </div>,
+    element: <ReviewsPage/>,
   },
   {
     path: '/doctor/:id',

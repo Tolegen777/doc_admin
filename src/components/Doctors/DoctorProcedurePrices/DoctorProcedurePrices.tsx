@@ -56,6 +56,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     const [formType, setFormType] = useState<'create' | 'update'>('create')
 
     const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues)
+    const [editEntity, setEditEntity] = useState<IDoctorProcPrice | null>(null)
 
     // SPECIALITY POST PUT DELETE API
     const {
@@ -130,7 +131,11 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
 
     const handleCreateUpdatePrice = (values: any) => {
         if (formType === 'update') {
-            onUpdatePrice(values)
+            const payload = {
+                id: editEntity?.id,
+                ...values
+            }
+            onUpdatePrice(payload)
         } else {
             onCreatePrice(values)
         }
@@ -149,6 +154,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         setIsModalOpen(false)
         setCreateUpdateFormInitialFields(initialValues)
         setFormType('create')
+        setEditEntity(null)
         form.resetFields()
     }
 
@@ -159,6 +165,9 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
 
         setFormType(formType)
         setIsModalOpen(true)
+        if (value) {
+            setEditEntity(value)
+        }
     };
 
     const procColumns = [
