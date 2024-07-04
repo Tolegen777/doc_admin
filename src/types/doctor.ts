@@ -55,3 +55,10 @@ export type AgeType = {
     value: string
     display: string
 }
+
+export interface ICategory {
+    title: string
+    slug: string
+    description: string
+    doctor_category_id: number
+}

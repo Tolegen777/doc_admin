@@ -4,7 +4,7 @@ export const gender = [
         value: 'MALE'
     },
     {
-        label: 'Мужчина',
+        label: 'Женшина',
         value: 'FEMALE'
     },
 ]
