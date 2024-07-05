@@ -3,10 +3,11 @@ import {Pagination} from 'antd';
 
 type Props = {
     totalCount: number,
-    setPage: (page: number) => void
+    setPage: (page: number) => void,
+    size?: number
 }
 
-const CustomPagination = ({totalCount, setPage} : Props) => {
+const CustomPagination = ({totalCount, setPage, size = 10} : Props) => {
 
     const handleChange = (val: number) => {
        setPage(val)
@@ -20,6 +21,7 @@ const CustomPagination = ({totalCount, setPage} : Props) => {
                     onChange={handleChange}
                     showSizeChanger={false}
                     size={'default'}
+                    pageSize={size}
                 />
         </div>
     );

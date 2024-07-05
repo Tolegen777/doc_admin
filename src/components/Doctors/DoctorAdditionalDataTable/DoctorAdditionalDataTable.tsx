@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import type {TableProps} from 'antd';
 import {Button, Drawer, Switch} from 'antd';
 import {useMutation, useQuery} from "@tanstack/react-query";
@@ -9,7 +9,8 @@ import {
     DoctorProcedure,
     IAllSpec,
     ICreateSpec,
-    IMedProcedures, IPrice,
+    IMedProcedures,
+    IPrice,
     ISpec,
     ISpecContent,
     IUpdateSpec
@@ -18,6 +19,7 @@ import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {customNotification} from "../../../utils/customNotification.ts";
 import {ICreateProc, IProc, IUpdateProc} from "../../../types/doctorProc.ts";
 import DoctorProcedurePrices from "../DoctorProcedurePrices/DoctorProcedurePrices.tsx";
+import {IDoctor} from "../../../types/doctor.ts";
 
 interface DataType {
     key: string;
@@ -27,11 +29,15 @@ interface DataType {
     tags: string[];
 }
 
-const DoctorAdditionalDataTable: React.FC = () => {
+type Props = {
+    doctorDetails: IDoctor | undefined
+}
+
+const DoctorAdditionalDataTable = ({doctorDetails}: Props) => {
 
     const {state} = useStateContext()
 
-    const {doctorData, addressId} = state
+    const {addressId} = state
 
     const [activeSpecId, setActiveSpecId] = useState<number | null>(null)
     const [activeSpecTitle, setActiveSpecTitle] = useState<string>('')
@@ -51,7 +57,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['createSpec'],
         mutationFn: (body: ICreateSpec) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/`, body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -67,7 +73,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['updateSpec'],
         mutationFn: ({id, ...body}: IUpdateSpec) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}/`, body)
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${id}/`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -84,7 +90,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['deleteSpec'],
         mutationFn: (id: number) =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${id}`),
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -101,7 +107,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['createProc'],
         mutationFn: (body: ICreateProc) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/`, body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -117,7 +123,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['updateProc'],
         mutationFn: ({id, ...body}: IUpdateProc) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`, body)
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -134,7 +140,7 @@ const DoctorAdditionalDataTable: React.FC = () => {
     } = useMutation({
         mutationKey: ['deleteProc'],
         mutationFn: (id: number) =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`),
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -145,12 +151,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
 
     // SPECIALITY GET API
     const { data: specs, isLoading: isSpecLoading } = useQuery({
-        queryKey: ['doctorSpecsList', createSpecSuccess, updateSpecSuccess, deleteSpecSuccess, doctorData?.id, addressId],
+        queryKey: ['doctorSpecsList', createSpecSuccess, updateSpecSuccess, deleteSpecSuccess, doctorDetails?.id, addressId],
         queryFn: () =>
             axiosInstance
-                .get<ISpec[]>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec`)
+                .get<ISpec[]>(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec`)
                 .then((response) => response?.data),
-        enabled: !!addressId && !!doctorData?.id
+        enabled: !!addressId && !!doctorDetails?.id
     });
 
     const { data: allSpecsList } = useQuery({
@@ -163,12 +169,12 @@ const DoctorAdditionalDataTable: React.FC = () => {
 
     // PROCEDURE GET API
     const { data: procs, isLoading: isProcLoading } = useQuery({
-        queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess, activeSpecId, doctorData?.id, addressId],
+        queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess, activeSpecId, doctorDetails?.id, addressId],
         queryFn: () =>
             axiosInstance
-                .get<IProc[]>(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/`)
+                .get<IProc[]>(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/`)
                 .then((response) => response?.data),
-        enabled: !!addressId && !!doctorData?.id && !!activeSpecId
+        enabled: !!addressId && !!doctorDetails?.id && !!activeSpecId
     });
 
     // SPEC methods
