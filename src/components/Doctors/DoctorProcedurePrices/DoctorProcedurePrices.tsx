@@ -10,6 +10,7 @@ import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {DoctorProcPriceCreateForm} from "./DoctorProcPriceCreateForm/DoctorProcPriceCreateForm.tsx";
 import {FormInitialFieldsParamsType} from "../../../types/common.ts";
 import {changeFormFieldsData} from "../../../utils/changeFormFieldsData.ts";
+import {useParams} from "react-router-dom";
 
 type Props = {
     activeSpecId: number | null,
@@ -47,7 +48,9 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
 
     const {state} = useStateContext()
 
-    const {doctorData, addressId} = state
+    const {addressId} = state
+
+    const pathname = useParams()
 
     const [form] = Form.useForm();
 
@@ -66,7 +69,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['createPrice'],
         mutationFn: (body: ICreatePrice) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/`, body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -83,7 +86,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['updatePrice'],
         mutationFn: ({id, ...body}: IUpdatePrice) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`, body)
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -100,7 +103,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['deletePrice'],
         mutationFn: (id: number) =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`),
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -116,7 +119,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
             createPriceSuccess,
             updatePriceSuccess,
             deletePriceSuccess,
-            doctorData?.id,
+            pathname?.id,
             addressId,
             activeSpecId,
             activeProcId
@@ -124,9 +127,9 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         queryFn: () =>
             axiosInstance
                 .get<IDoctorProcPrice[]>(
-                    `partners/franchise-branches/${addressId}/doctors/${doctorData?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices`)
+                    `partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices`)
                 .then((response) => response?.data),
-        enabled: !!addressId && !!doctorData?.id && !!activeProcId && !!activeSpecId
+        enabled: !!addressId && !!pathname?.id && !!activeProcId && !!activeSpecId
     });
 
     const handleCreateUpdatePrice = (values: any) => {

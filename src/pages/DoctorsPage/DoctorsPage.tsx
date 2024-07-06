@@ -20,14 +20,13 @@ const hiddenStyles = {
 }
 const DoctorsPage = () => {
 
-    const {state, dispatch} = useStateContext()
+    const {state} = useStateContext()
 
     const navigate = useNavigate()
 
     const {addressId, doctor} = state
 
-    const {specialities, query} = doctor
-    console.log(specialities, 'SPEc')
+    const {query} = doctor
 
     const [page, setPage] = useState(1)
 
@@ -38,12 +37,8 @@ const DoctorsPage = () => {
 
     }
 
-    const handleGoEditPage = (doctorData: IDoctor) => {
-        dispatch({
-            type: 'SET_DOCTOR_DATA',
-            payload: doctorData
-        })
-        navigate(`/doctor/${doctorData?.id}`)
+    const handleGoEditPage = (doctorDetails: IDoctor) => {
+        navigate(`/doctor/${doctorDetails?.id}`)
     }
 
     // const handleSetFullVisibleFullItems = (index: number) => {

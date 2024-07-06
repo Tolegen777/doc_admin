@@ -1,19 +1,17 @@
 import styles from './styles.module.scss'
 import userIcon from '../../../assets/userIcon.svg'
-import {useStateContext} from "../../../contexts";
 import GapContainer from "../../Shared/GapContainer/GapContainer.tsx";
 import {Button} from "antd";
 import {useNavigate} from "react-router-dom";
+import {IDoctor} from "../../../types/doctor.ts";
 
-type Props = {}
+type Props = {
+    doctorDetails: IDoctor | undefined
+}
 
-const DoctorBaseInfo = ({}: Props) => {
+const DoctorBaseInfo = ({doctorDetails}: Props) => {
 
     const navigate = useNavigate()
-
-    const {state} = useStateContext()
-
-    const {doctorData} = state
 
     const onClick = () => {
         navigate('survey')
@@ -26,23 +24,23 @@ const DoctorBaseInfo = ({}: Props) => {
             </div>
             <div className={styles.container_info}>
                 <div className={styles.container_info_title}>
-                    {doctorData?.full_name}
+                    {doctorDetails?.full_name}
                 </div>
                 <div className={styles.container_specs}>
-                    {doctorData?.specialities.map((item, index) => <div
+                    {doctorDetails?.specialities.map((item, index) => <div
                             key={item?.doctor_profile_id}
                             className={styles.container_info_sub_title}
                         >
-                            {item?.medical_speciality_title}{index + 1 < doctorData?.specialities?.length ? ',': ''}
+                            {item?.medical_speciality_title}{index + 1 < doctorDetails?.specialities?.length ? ',': ''}
                         </div>
                     )}
                 </div>
                 <GapContainer gap={10}>
-                    <div className={styles.container_info_sub_title}>Стаж: {doctorData?.experience_years} лет</div>
+                    <div className={styles.container_info_sub_title}>Стаж: {doctorDetails?.experience_years} лет</div>
                     {/*<div className={styles.container_info_sub_title}>Пол</div>*/}
                 </GapContainer>
                     <div className={styles.container_info_action}>
-                        <div className={styles.container_info_sub_title}>{doctorData?.is_active ? 'Активен' : 'Неактивен'}</div>
+                        <div className={styles.container_info_sub_title}>{doctorDetails?.is_active ? 'Активен' : 'Неактивен'}</div>
                         {/*<Switch checked={doctorData?.is_active} onChange={onChange}/>*/}
                     </div>
                 <Button

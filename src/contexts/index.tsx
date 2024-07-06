@@ -22,7 +22,6 @@ const initialState: State = {
     panelColor: undefined
   },
   selectedTimeSlotIds: [],
-  doctorData: null,
   doctorSurveyData: []
 };
 
@@ -97,12 +96,6 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         selectedTimeSlotIds: mergeAndRemoveDuplicates(state.selectedTimeSlotIds, action.payload),
-      }
-    }
-    case 'SET_DOCTOR_DATA': {
-      return {
-        ...state,
-        doctorData: action.payload,
       }
     }
     case 'SET_DOCTOR_SURVEY_DATA': {
