@@ -72,7 +72,7 @@ export const SpecProcTableAction = ({
                     <Button
                         type={"primary"}
                         onClick={() => handleCreate()}
-                        disabled={!value ?? isDisabled}
+                        disabled={!value || isDisabled}
                     >
                         Создать
                     </Button>
