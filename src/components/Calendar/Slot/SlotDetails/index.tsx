@@ -11,6 +11,7 @@ import {customNotification} from "../../../../utils/customNotification.ts";
 import {AxiosResponse} from "axios";
 import {ActionType} from "../../../../types/common.ts";
 import {useMemo} from "react";
+import {IVisitById} from "../../../../types/visits.ts";
 
 type Props = {
     isSuccess: boolean,
@@ -23,9 +24,18 @@ export const SlotDetails = ({isSuccess, createLoading, actionType, times}: Props
 
     const {state, dispatch} = useStateContext()
 
-    const {addressId, slot} = state
+    const {addressId, slot, visitId} = state
 
     const {doctorId, workScheduleId} = slot
+
+    const { data: visitData, isLoading: isVisitLoading } = useQuery({
+        queryKey: ['visitDetailsById', visitId],
+        queryFn: () =>
+            axiosInstance
+                .get<IVisitById>(`/partners/franchise-branches/${addressId}/visits/${visitId}`)
+                .then((response) => response?.data),
+        enabled: !!visitId
+    });
 
     const { data, isLoading } = useQuery({
         queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId, isSuccess],
@@ -92,7 +102,10 @@ export const SlotDetails = ({isSuccess, createLoading, actionType, times}: Props
                 handleCopyPreviousDay={handleCopyPreviousDay}
                 isLoading={isUpdateLoading}
             />
-            <SlotAdditionalInfoBlock slotInfoData={data?.doctor_work_schedule_detailed_api_view}/>
+            <SlotAdditionalInfoBlock
+                data={visitId ? visitData : undefined}
+                isLoading={isVisitLoading}
+            />
         </div>
     );
 };

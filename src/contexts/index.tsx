@@ -22,7 +22,8 @@ const initialState: State = {
     panelColor: undefined
   },
   selectedTimeSlotIds: [],
-  doctorSurveyData: []
+  doctorSurveyData: [],
+  visitId: null
 };
 
 const StateContext = createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
@@ -102,6 +103,12 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         doctorSurveyData: action.payload,
+      }
+    }
+    case 'SET_VISIT_ID': {
+      return {
+        ...state,
+        visitId: action.payload,
       }
     }
     default: {

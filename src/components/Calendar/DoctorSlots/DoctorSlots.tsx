@@ -90,14 +90,6 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
         },
     });
 
-    const {
-        mutateAsync: onDeleteWorkSchedule,
-    } = useMutation({
-        mutationKey: ['doctorTimeSlotDetailsDelete'],
-        mutationFn: () =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`),
-    });
-
     const onSlotOpen = async (item: WorkSchedule) => {
         setIsModalOpen(true);
         const {doctor_work_schedule_object_id, work_date, panel_colour} = item;
@@ -139,9 +131,11 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
 
     const handleCloseModal = async () => {
         setIsModalOpen(false);
-        if (slot.panelColor && !selectedTimeSlotIds.length) {
-            await onDeleteWorkSchedule();
-        }
+
+        dispatch({
+            type: 'SET_VISIT_ID',
+            payload: null
+        })
     };
 
     return (

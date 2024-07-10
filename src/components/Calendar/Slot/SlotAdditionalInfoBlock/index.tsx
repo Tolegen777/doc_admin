@@ -1,27 +1,50 @@
 import styles from './styles.module.scss';
 import {memo} from "react";
-import {Descriptions} from "antd";
-import {DoctorWorkScheduleDetailedApiView} from "../../../../types/calendar.ts";
+import {Descriptions, Spin} from "antd";
+import {IVisitById} from "../../../../types/visits.ts";
+import {formatDateTime} from "../../../../utils/date/getDates.ts";
 
 type Props = {
-    slotInfoData: DoctorWorkScheduleDetailedApiView | undefined
+    data: IVisitById | undefined,
+    isLoading: boolean
 }
 
-export const SlotAdditionalInfoBlock = memo(({slotInfoData}: Props) => {
+export const SlotAdditionalInfoBlock = memo(({data, isLoading}: Props) => {
 
     return (
         <div className={styles.container}>
             <div className={styles.container_title}>
                 Информация о записи
             </div>
-            <Descriptions
+            {isLoading ? <div style={{display: "flex", alignItems: 'center', justifyContent: "center"}}>
+                <Spin/>
+            </div> : data && <Descriptions
                 column={1}
             >
-                <Descriptions.Item label="Франшиза">{slotInfoData?.clinic_branch}</Descriptions.Item>
-                <Descriptions.Item label="Идентификатор франшизы">{slotInfoData?.clinic_branch_id}</Descriptions.Item>
-                <Descriptions.Item label="Доктор">{slotInfoData?.doctor_profile}</Descriptions.Item>
-                <Descriptions.Item label="Дата работы">{slotInfoData?.work_date}</Descriptions.Item>
-            </Descriptions>
+                <Descriptions.Item label="Франшиза">{data?.clinic_branch_title}</Descriptions.Item>
+                <Descriptions.Item label="Оплачен">{data?.paid ? 'Да' : 'Нет'}</Descriptions.Item>
+                <Descriptions.Item label="Пациент">{data?.patient_full_name}</Descriptions.Item>
+                <Descriptions.Item label="День рожение пациента">{data?.patient_birth_date}</Descriptions.Item>
+                {data?.patient_iin_number &&
+                    <Descriptions.Item label="ИИН пациента">{data?.patient_iin_number}</Descriptions.Item>}
+                {data?.patient_phone_number &&
+                    <Descriptions.Item label="Телефон пациента">{data?.patient_phone_number}</Descriptions.Item>}
+                <Descriptions.Item label="Статус">{data?.status?.status_title}</Descriptions.Item>
+                <Descriptions.Item label="Описание статуса">{data?.status?.status_description}</Descriptions.Item>
+                <Descriptions.Item label="Дата создания">
+                    {formatDateTime({
+                        isoDateTime: data?.created_at
+                    })}
+                </Descriptions.Item>
+                <Descriptions.Item label="Дата обновления">
+                    {formatDateTime({
+                        isoDateTime: data?.updated_at
+                    })}
+                </Descriptions.Item>
+                <Descriptions.Item
+                    label="Одобрено клиникой">{data?.approved_by_clinic ? 'Да' : 'Нет'}</Descriptions.Item>
+                <Descriptions.Item label="Одобрено">{data?.approved ? 'Да' : 'Нет'}</Descriptions.Item>
+            </Descriptions>}
         </div>
     );
 });

@@ -27,6 +27,11 @@ export const TimeSlotContent = memo(({timeSlot}: Props) => {
             type: 'SET_SELECTED_TIME_SLOTS_IDS',
             payload: newState
         })
+
+        dispatch({
+            type: 'SET_VISIT_ID',
+            payload: null
+        })
     };
 
     return (
@@ -37,7 +42,16 @@ export const TimeSlotContent = memo(({timeSlot}: Props) => {
                 [styles.container_not_available]: timeSlot?.panel_colour === 'grey',
                 ['mouse-select__selectable']: true
             })}
-            onClick={() => handleChangeTimeSlot(timeSlot)}
+            onClick={() => {
+                if (timeSlot?.panel_colour === 'grey') {
+                    dispatch({
+                        type: 'SET_VISIT_ID',
+                        payload: timeSlot?.patient_clinic_visit_id ?? null
+                    })
+                } else {
+                    handleChangeTimeSlot(timeSlot)
+                }
+            }}
             data-id={!timeSlot?.reserved ? timeSlot?.time_slot_id : null}
         >
             {removeSeconds(timeSlot?.start_time)}

@@ -15,6 +15,7 @@ export type State = {
   slot: ISlotPayload
   selectedTimeSlotIds: number[]
   doctorSurveyData: FormInitialFieldsParamsType[]
+  visitId: number | null
 };
 
 
@@ -73,10 +74,15 @@ type SetDoctorSurveyDataActionType = {
   payload: FormInitialFieldsParamsType[]
 }
 
+type SetVisitIdActionType = {
+  type: 'SET_VISIT_ID'
+  payload: number | null
+}
+
 export type Action = AuthUserActionType | SetPageActionType | SetSearchQueryActionType |
     SetAddressIdActionType | SetDoctorSearchQueryActionType | SetDoctorSpecilititesActionType |
     SetVisitsQueryActionType | SetSlotDataActionType | SetSelectedTimeSlotIdsActionType |
-    AddSelectedTimeSlotIdsActionType | SetDoctorSurveyDataActionType
+    AddSelectedTimeSlotIdsActionType | SetDoctorSurveyDataActionType | SetVisitIdActionType
 
 export type Dispatch = (action: Action) => void;
 
