@@ -14,9 +14,9 @@ export function getDates(page: number) {
 
     // Вычисляем начальную дату для данной страницы
     const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() + (page - 1) * 30);
+    startDate.setDate(startDate.getDate() + (page - 1) * 40);
 
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 40; i++) {
         let date = new Date(startDate);
         date.setDate(startDate.getDate() + i);
 
@@ -40,11 +40,11 @@ export function getDateRange(page: number): string {
 
     // Вычисляем начальную дату для данной страницы
     const startDate = new Date(currentDate);
-    startDate.setDate(startDate.getDate() + (page - 1) * 30);
+    startDate.setDate(startDate.getDate() + (page - 1) * 40);
 
     // Вычисляем конечную дату для данной страницы
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 29); // Поскольку каждая страница содержит 30 дней, последняя дата будет через 29 дней
+    endDate.setDate(startDate.getDate() + 39); // Поскольку каждая страница содержит 40 дней, последняя дата будет через 39 дней
 
     // Форматируем даты
     const formattedStartDate = startDate.getFullYear() + '-' + ('0' + (startDate.getMonth() + 1)).slice(-2) + '-' + ('0' + startDate.getDate()).slice(-2);

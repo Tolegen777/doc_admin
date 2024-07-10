@@ -33,8 +33,8 @@ export const TimeSlotContent = memo(({timeSlot}: Props) => {
         <div
             className={clsx({
                 [styles.container]: true,
-                [styles.container_active]: selectedTimeSlotIds.includes(timeSlot?.time_slot_id) && !timeSlot?.reserved,
-                [styles.container_not_available]: timeSlot?.reserved,
+                [styles.container_active]: selectedTimeSlotIds.includes(timeSlot?.time_slot_id) && timeSlot?.panel_colour !== 'grey',
+                [styles.container_not_available]: timeSlot?.panel_colour === 'grey',
                 ['mouse-select__selectable']: true
             })}
             onClick={() => handleChangeTimeSlot(timeSlot)}

@@ -7,7 +7,7 @@ export interface ICalendar {
 export interface WorkSchedule {
     work_date: string
     clinic_branch_id: number
-    doctor_work_schedule_object_id: number
+    doctor_work_schedule_object_id: number | null
     working_hours_count: number
     visits_count: number
     panel_colour: PanelColourType
@@ -35,6 +35,7 @@ export interface WorkingHoursList {
     reserved: boolean
     patient_clinic_visit_id?: number
     isActive?: boolean
+    panel_colour: 'full_blue' | 'empty_blue' | 'grey'
 }
 
 export interface ISlotPayload {
@@ -56,6 +57,12 @@ export interface IWorkScheduleCreate {
     working_hours: {
         time_slot_id: number
     }[]
+}
+
+export interface ITime {
+    start_time: string,
+    code: string,
+    time_slot_id: number
 }
 
 export type PanelColourType = 'red' | 'green' | 'white'

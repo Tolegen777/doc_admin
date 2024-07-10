@@ -40,8 +40,6 @@ axiosInstance.defaults.headers.common['Content-Type'] = 'application/json';
 axiosInstance.interceptors.request.use((config) => {
     const accessToken = tokenService.getLocalAccessToken()
 
-    // console.log(accessToken, 'ACCESS')
-
     if (accessToken) {
         return {
             ...config,
@@ -67,7 +65,6 @@ axiosInstance.interceptors.response.use(
         const errorStatus = error.response.status;
         const errorCode = error.response.data?.code;
 
-        // console.log(errorStatus, !originalRequest._retry, tokenService.getLocalAccessToken())
         if (errorStatus === 401 && !originalRequest._retry && tokenService.getLocalAccessToken() && errorCode === 'token_not_valid') {
 
             if (isRefreshing) {
@@ -116,10 +113,9 @@ axiosInstance.interceptors.response.use(
             })
         }
 
-        console.log(error, 'EEEE')
-
         if (errorStatus !== 401) {
-            const errorMessage = error?.response?.data?.errors?.non_field_errors?.find((item: string) => item)
+            const errorMessage = error?.response?.data?.non_field_errors?.find((item: string) => item) ||
+                error?.response?.data?.errors?.non_field_errors?.find((item: string) => item)
             customNotification({
                 type: 'error',
                 message: errorMessage?.length ? errorMessage : 'Ошибка сервера'

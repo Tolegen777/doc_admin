@@ -37,6 +37,7 @@ const CalendarContent = ({isLoading, data}: Props) => {
                         slots={item?.work_schedule_data ?? []}
                         doctorName={item?.doctor_profile_full_name ?? ''}
                         doctorId={item?.doctor_profile_id}
+                        dates={dates}
                     />
                 </div>)
             }
