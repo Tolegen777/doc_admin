@@ -3,9 +3,9 @@ import {Button} from "antd";
 import {ReloadOutlined} from '@ant-design/icons';
 import PaginationButton from "../../Shared/PaginationButton/PaginationButton.tsx";
 import {useStateContext} from "../../../contexts";
-// import {useQueryClient} from "@tanstack/react-query";
 import {CustomSearchInput} from "../../Shared/CustomSearchInput";
 import CustomPagination from "../../Shared/CustomPagination";
+import {useQueryClient} from "@tanstack/react-query";
 
 type Props = {
     setPage: (page: number) => void,
@@ -15,9 +15,10 @@ const Filters = ({setPage, total}: Props) => {
 
     const {dispatch, state} = useStateContext()
 
+    const queryClient = useQueryClient();
+
     const handleReload = () => {
-        // queryClient.invalidateQueries({ queryKey: ['calendarData'] })
-        window?.location?.reload()
+        queryClient.invalidateQueries({ queryKey: ['calendarData'] })
     }
 
     return (

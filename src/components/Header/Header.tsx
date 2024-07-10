@@ -43,8 +43,6 @@ const Header = () => {
         refetchOnMount: false
     });
 
-    console.log(franchiseInfo, 'll')
-
     const items: MenuProps['items'] = [
         {
             key: '4',

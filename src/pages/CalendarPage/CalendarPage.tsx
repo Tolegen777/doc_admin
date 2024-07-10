@@ -20,7 +20,7 @@ const CalendarPage = () => {
 
     const searchDates = useMemo(() => getDateRange(state?.page), [state?.page])
 
-    const { data, isLoading } = useQuery({
+    const { data, isFetching: isLoading } = useQuery({
         queryKey: ['calendarData', searchDates, addressId, page, searchQuery],
         queryFn: () =>
             axiosInstance

@@ -26,7 +26,6 @@ export const useInfiniteScroll = <T>(props: Props<T>) => {
             if (page > 1) {
                 setScrolledData([...scrolledData, ...data.results]);
             } else {
-                console.log(data, 'DAGA')
                 setScrolledData(data.results);
             }
         }

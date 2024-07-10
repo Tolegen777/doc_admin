@@ -1,37 +1,78 @@
-import styles from './styles.module.scss'
-import {IWorkScheduleCreate, IWorkScheduleUpdate, WorkSchedule} from "../../../types/calendar.ts";
-import Slot from "../Slot/Slot.tsx";
-import {memo, useState} from "react";
+import React, {memo, useMemo, useState} from 'react';
+import styles from './styles.module.scss';
+import {ITime, IWorkScheduleCreate, IWorkScheduleUpdate, WorkSchedule} from "../../../types/calendar";
+import Slot from "../Slot/Slot";
 import {SlotDetails} from "../Slot/SlotDetails";
-import CustomModal from "../../Shared/CustomModal/CustomModal.tsx";
+import CustomModal from "../../Shared/CustomModal/CustomModal";
 import {useStateContext} from "../../../contexts";
-import {formatDateToDayMonth} from "../../../utils/date/getDates.ts";
+import {formatDateToDayMonth} from "../../../utils/date/getDates";
 import {axiosInstance} from "../../../api";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {ActionType} from "../../../types/common.ts";
+
+type DateType = {
+    day: number,
+    month: string,
+    weekday: string,
+    date: string,
+    time: string
+};
 
 type Props = {
     slots: WorkSchedule[],
     doctorName: string,
-    doctorId: number
-}
-const DoctorSlots = memo(({slots, doctorName, doctorId}: Props) => {
+    doctorId: number,
+    dates: DateType[]
+};
 
-    const queryClient = useQueryClient()
+const fillEmptySlots = (slots: WorkSchedule[], dates: DateType[], clinicBranchId: number): (WorkSchedule)[] => {
+    return dates.map(date => {
+        const foundSlot = slots.find(slot => slot.work_date === date.date);
+        if (foundSlot) {
+            return foundSlot;
+        }
+        return {
+            clinic_branch_id: clinicBranchId,
+            doctor_work_schedule_object_id: null,
+            panel_colour: "white",
+            visits_count: 0,
+            work_date: date.date,
+            working_hours_count: 0
+        };
+    });
+};
 
-    const {state, dispatch} = useStateContext()
-
-    const {selectedTimeSlotIds, slot, addressId} = state
-
+const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates}) => {
+    const queryClient = useQueryClient();
+    const {state, dispatch} = useStateContext();
+    const {selectedTimeSlotIds, slot, addressId} = state;
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [actionType, setActionType] = useState<ActionType>('')
+    const [activeWorkDate, setActiveWorkDate] = useState<string>('')
+
+    const filledSlots = useMemo(() => fillEmptySlots(slots, dates, addressId as number), [slots, dates, addressId]);
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['TimeSlotsList'],
+        queryFn: () =>
+            axiosInstance
+                .get<ITime[]>(`/partners/time-slots/`)
+                .then((response) => response?.data),
+        refetchOnMount: false
+    });
 
     const {
-        mutateAsync: onCreateWorkSchedule,
+        mutate: onCreateWorkSchedule,
         isPending: isCreateLoading,
         isSuccess: createSuccess
     } = useMutation({
         mutationKey: ['doctorTimeSlotDetailsCreate'],
         mutationFn: (body: IWorkScheduleCreate) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`, body),
+            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/`, body),
+        onSuccess: () => {
+            setIsModalOpen(false);
+            queryClient.invalidateQueries({queryKey: ['calendarData']});
+        },
     });
 
     const {
@@ -44,60 +85,57 @@ const DoctorSlots = memo(({slots, doctorName, doctorId}: Props) => {
             return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`, body)
         },
         onSuccess: () => {
-            setIsModalOpen(false)
-            queryClient.invalidateQueries({queryKey: ['calendarData']})
+            setIsModalOpen(false);
+            queryClient.invalidateQueries({queryKey: ['calendarData']});
         },
     });
 
-    const {
-        mutateAsync: onDeleteWorkSchedule,
-    } = useMutation({
-        mutationKey: ['doctorTimeSlotDetailsDelete'],
-        mutationFn: () =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`),
-    });
-
     const onSlotOpen = async (item: WorkSchedule) => {
-        console.log(item, 'item')
-        setIsModalOpen(true)
-        const {doctor_work_schedule_object_id, work_date, panel_colour} = item
+        setIsModalOpen(true);
+        const {doctor_work_schedule_object_id, work_date, panel_colour} = item;
 
         if (panel_colour === 'white') {
-            await onCreateWorkSchedule({
-                work_date,
-                working_hours: []
-            })
+            setActionType('create')
+            setActiveWorkDate(work_date)
+        } else {
+            setActionType('update')
+            dispatch({
+                type: 'SET_SLOT_DATA',
+                payload: {
+                    doctorId: doctorId,
+                    workScheduleId: doctor_work_schedule_object_id,
+                    title: `${doctorName}, ${formatDateToDayMonth(work_date ?? '')}`,
+                    panelColor: panel_colour
+                }
+            });
         }
 
-        dispatch({
-            type: 'SET_SLOT_DATA',
-            payload: {
-                doctorId: doctorId,
-                workScheduleId: doctor_work_schedule_object_id,
-                title: `${doctorName}, ${formatDateToDayMonth(work_date ?? '')}`,
-                panelColor: panel_colour
-            }
-        })
-
-    }
+    };
 
     const handleConfirm = () => {
         const payload = selectedTimeSlotIds?.map(item => ({
             time_slot_id: item
-        }))
+        }));
 
-        onUpdateWorkSchedule({
-            working_hours: payload
-        })
-
-        setIsModalOpen(false);
+        if (actionType === 'create') {
+            onCreateWorkSchedule({
+                work_date: activeWorkDate,
+                working_hours: payload
+            })
+        } else {
+            onUpdateWorkSchedule({
+                working_hours: payload
+            });
+        }
     };
 
     const handleCloseModal = async () => {
         setIsModalOpen(false);
-        if (slot.panelColor && !selectedTimeSlotIds.length) {
-            await onDeleteWorkSchedule()
-        }
+
+        dispatch({
+            type: 'SET_VISIT_ID',
+            payload: null
+        })
     };
 
     return (
@@ -107,18 +145,25 @@ const DoctorSlots = memo(({slots, doctorName, doctorId}: Props) => {
                 onClose={handleCloseModal}
                 onConfirm={handleConfirm}
                 title={state?.slot?.title ?? ''}
-                isLoading={isUpdateLoading || isCreateLoading}
+                isLoading={isUpdateLoading || isCreateLoading || isLoading}
             >
-                <SlotDetails isSuccess={createSuccess || updateSuccess} createLoading={isCreateLoading}/>
+                <SlotDetails
+                    isSuccess={createSuccess || updateSuccess}
+                    createLoading={isCreateLoading}
+                    actionType={actionType}
+                    times={data ?? []}
+                />
             </CustomModal>
             <div className={styles.container}>
-                {slots?.map((item, index) => <Slot
-                    key={index}
-                    panelColour={item?.panel_colour}
-                    workingHoursCount={item?.working_hours_count}
-                    visitsCount={item?.visits_count}
-                    onSlotOpen={() => onSlotOpen(item)}
-                />)}
+                {filledSlots.map((item, index) => (
+                    <Slot
+                        key={index}
+                        panelColour={item?.panel_colour}
+                        workingHoursCount={item?.working_hours_count}
+                        visitsCount={item?.visits_count}
+                        onSlotOpen={() => onSlotOpen(item)}
+                    />
+                ))}
             </div>
         </>
     );
