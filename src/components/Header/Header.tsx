@@ -11,6 +11,7 @@ import {authApi} from "../../api/authApi.ts";
 import userIcon from '../../assets/userIcon.svg'
 import {DownOutlined} from '@ant-design/icons'
 import {Spinner} from "../Shared/Spinner";
+import {IGet} from "../../types/common.ts";
 
 const Header = () => {
 
@@ -29,10 +30,12 @@ const Header = () => {
         queryKey: ['franchiseBranches'],
         queryFn: () =>
             axiosInstance
-                .get<IFranchise[]>('partners/franchise-branches/')
+                .get<IGet<IFranchise>>('partners/franchise-branches/')
                 .then((response) => response?.data),
         refetchOnMount: false
     });
+
+    console.log(data, 'DATA')
 
     const { data: franchiseInfo, isLoading: franchiseInfoLoading } = useQuery({
         queryKey: ['franchiseInfo'],
@@ -57,7 +60,7 @@ const Header = () => {
 
     useEffect(() => {
         if (data && !addressId) {
-            const defaultId = data?.find(item => item)?.id ?? null
+            const defaultId = data?.results?.find(item => item)?.id ?? null
             dispatch({
                 type: 'SET_ADDRESS_ID',
                 payload: defaultId as number
@@ -66,7 +69,7 @@ const Header = () => {
     }, [data])
 
     const options =
-        selectOptionsParser<IFranchise>(data ?? [], 'title', 'id')
+        selectOptionsParser<IFranchise>(data?.results ?? [], 'title', 'id')
 
     const franchiseData = franchiseInfo?.find(item => item)
 
