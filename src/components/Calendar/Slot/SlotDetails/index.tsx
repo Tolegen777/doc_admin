@@ -14,13 +14,12 @@ import {useMemo} from "react";
 import {IVisitById} from "../../../../types/visits.ts";
 
 type Props = {
-    isSuccess: boolean,
     createLoading: boolean,
     actionType: ActionType,
     times: ITime[]
 }
 
-export const SlotDetails = ({isSuccess, createLoading, actionType, times}: Props) => {
+export const SlotDetails = ({createLoading, actionType, times}: Props) => {
 
     const {state, dispatch} = useStateContext()
 
@@ -37,8 +36,8 @@ export const SlotDetails = ({isSuccess, createLoading, actionType, times}: Props
         enabled: !!visitId
     });
 
-    const { data, isLoading } = useQuery({
-        queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId, isSuccess],
+    const { data, isFetching: isLoading } = useQuery({
+        queryKey: ['doctorTimeSlotDetails', doctorId, addressId, workScheduleId],
         queryFn: () =>
             axiosInstance
                 .get<ITimeSlot>(`/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/${workScheduleId}`)

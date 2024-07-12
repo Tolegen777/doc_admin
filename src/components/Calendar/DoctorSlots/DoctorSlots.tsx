@@ -64,7 +64,6 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
     const {
         mutate: onCreateWorkSchedule,
         isPending: isCreateLoading,
-        isSuccess: createSuccess
     } = useMutation({
         mutationKey: ['doctorTimeSlotDetailsCreate'],
         mutationFn: (body: IWorkScheduleCreate) =>
@@ -72,13 +71,13 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
         onSuccess: () => {
             setIsModalOpen(false);
             queryClient.invalidateQueries({queryKey: ['calendarData']});
+            queryClient.invalidateQueries({queryKey: ['doctorTimeSlotDetails']});
         },
     });
 
     const {
         mutate: onUpdateWorkSchedule,
         isPending: isUpdateLoading,
-        isSuccess: updateSuccess
     } = useMutation({
         mutationKey: ['doctorTimeSlotDetailsUpdate'],
         mutationFn: (body: IWorkScheduleUpdate) => {
@@ -87,6 +86,7 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
         onSuccess: () => {
             setIsModalOpen(false);
             queryClient.invalidateQueries({queryKey: ['calendarData']});
+            queryClient.invalidateQueries({queryKey: ['doctorTimeSlotDetails']});
         },
     });
 
@@ -148,7 +148,6 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
                 isLoading={isUpdateLoading || isCreateLoading || isLoading}
             >
                 <SlotDetails
-                    isSuccess={createSuccess || updateSuccess}
                     createLoading={isCreateLoading}
                     actionType={actionType}
                     times={data ?? []}
