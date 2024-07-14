@@ -46,7 +46,7 @@ export interface ICreateUpdateDoctor {
     description: string,
     category: number,
     gender: "MALE" | "FEMALE",
-    works_since: string,
+    works_since: any,
     for_child: boolean,
     is_active: boolean
 }
@@ -61,4 +61,23 @@ export interface ICategory {
     slug: string
     description: string
     doctor_category_id: number
+}
+
+export interface IDoctorCreate {
+    first_name: string
+    last_name: string
+    patronymic_name: string
+    description: string
+    category: number
+    gender: string
+    works_since: any
+    for_child: boolean
+    is_active: boolean
+    photos: Photo[]
+}
+
+export interface Photo {
+    photo: string
+    title_code: string
+    doctor_profile: number
 }

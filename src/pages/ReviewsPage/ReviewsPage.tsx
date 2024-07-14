@@ -1,21 +1,129 @@
 import styles from './styles.module.scss'
 import {CustomTable} from "../../components/Shared/CustomTable";
-import {useQuery} from "@tanstack/react-query";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {useStateContext} from "../../contexts";
 import {formatDateTime} from "../../utils/date/getDates.ts";
 import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
-import {IGet} from "../../types/common.ts";
+import {FormInitialFieldsParamsType, IGet} from "../../types/common.ts";
 import {useState} from "react";
-import {IReview} from "../../types/reviewTypes.ts";
+import {IReview, IReviewPayload} from "../../types/reviewTypes.ts";
+import {customNotification} from "../../utils/customNotification.ts";
+import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
+import {Button, Drawer} from "antd";
+import {IDoctor} from "../../types/doctor.ts";
+import {ReviewUpdateForm} from "../../components/Review/ReviewUpdateForm/ReviewUpdateForm.tsx";
+
+const initialValues: FormInitialFieldsParamsType[] = [
+    {
+        name: 'text',
+        value: 'string',
+    },
+    {
+        name: 'rating',
+        value: 1,
+    },
+    {
+        name: 'is_reply',
+        value: true,
+    },
+    {
+        name: 'parent_comment',
+        value: 0,
+    },
+    {
+        name: 'visit',
+        value: 0,
+    },
+];
+
 
 const ReviewsPage = () => {
+
+    const queryClient = useQueryClient();
 
     const {state} = useStateContext()
 
     const {addressId} = state
 
     const [page, setPage] = useState(1)
+    const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false)
+    const [editEntity, setEditEntity] = useState<IReview | null>(null)
+    const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues)
+
+    const {
+        mutate: onUpdate,
+        isPending: isUpdateLoading,
+    } = useMutation({
+        mutationKey: ['updateReview'],
+        mutationFn: ({id, ...body}: IReviewPayload) => {
+            return axiosInstance.put(`partners/franchise-branches/${addressId}/reviews/manage/${id}/`, body)
+        },
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Отзыв успешно изменен!'
+            })
+            queryClient.invalidateQueries({queryKey: ['reviewsData']});
+        },
+    });
+
+    const {
+        mutate: onDelete,
+        isPending: isDeleteLoading,
+    } = useMutation({
+        mutationKey: ['deleteReview'],
+        mutationFn: (id: number) =>
+            axiosInstance.delete(`partners/franchise-branches/${addressId}/reviews/manage/${id}/`),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Отзыв успешно удален!'
+            })
+            queryClient.invalidateQueries({queryKey: ['reviewsData']});
+        }
+    });
+
+    const {data, isLoading} = useQuery({
+        queryKey: ['reviewsData', addressId, page],
+        queryFn: () =>
+            axiosInstance
+                .get<IGet<IReview>>(`partners/franchise-branches/${addressId}/reviews/?page=${page}`)
+                .then((response) => response?.data),
+        enabled: !!addressId
+    });
+
+    const onClose = () => {
+        setCreateUpdateModalOpen(false);
+        setCreateUpdateFormInitialFields(initialValues)
+        setEditEntity(null)
+    };
+
+    const onOpenCreateUpdateModal = (data: IReview) => {
+        if (data) {
+            setEditEntity(data)
+            setCreateUpdateFormInitialFields(changeFormFieldsData<object>(initialValues,
+                data
+            ))
+        }
+
+        setCreateUpdateModalOpen(true);
+    };
+
+    const onSubmitCreateUpdateModal = async (formData: IReviewPayload) => {
+
+        const payload = {
+            ...formData,
+            id: editEntity?.id
+        };
+
+        onUpdate(payload);
+        onClose();
+    };
+
+    const handleDelete = (id: number) => {
+        onDelete(id)
+    }
 
     const columns = [
         {
@@ -80,28 +188,53 @@ const ReviewsPage = () => {
                 </div>
             ),
         },
+        {
+            title: 'Редактировать',
+            render: (data: IReview) => <Button
+                onClick={() => onOpenCreateUpdateModal(data)}
+                type={"primary"}
+            >
+                Редактировать
+            </Button>
+        },
+        {
+            title: 'Удалить',
+            render: (data: IDoctor) => <Button
+                onClick={() => handleDelete(data?.id as number)}
+                disabled={isDeleteLoading}
+            >
+                Удалить
+            </Button>
+        },
     ];
 
-    const {data, isLoading} = useQuery({
-        queryKey: ['reviewsData', addressId, page],
-        queryFn: () =>
-            axiosInstance
-                .get<IGet<IReview>>(`partners/franchise-branches/${addressId}/reviews/?page=${page}`)
-                .then((response) => response?.data),
-        enabled: !!addressId
-    });
-
     return (
-        <div className={styles.container}>
-            <CustomTable
-                columns={columns}
-                dataSource={data?.results}
-                loading={isLoading}
-                setPage={setPage}
-                total={data?.count ?? 0}
-                current={page}
-            />
-        </div>
+        <>
+            <Drawer
+                title={'Редактирование записи'}
+                onClose={onClose}
+                open={createUpdateModalOpen}
+                width="500px"
+            >
+                <ReviewUpdateForm
+                    formType={'update'}
+                    initialFields={createUpdateFormInitialFields}
+                    onSubmit={onSubmitCreateUpdateModal}
+                    onClose={onClose}
+                    isLoading={isUpdateLoading}
+                />
+            </Drawer>
+            <div className={styles.container}>
+                <CustomTable
+                    columns={columns}
+                    dataSource={data?.results}
+                    loading={isLoading}
+                    setPage={setPage}
+                    total={data?.count ?? 0}
+                    current={page}
+                />
+            </div>
+        </>
     );
 };
 

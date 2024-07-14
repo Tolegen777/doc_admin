@@ -159,7 +159,10 @@ export function getPreviousDate(dateString: string): string {
     return `${year}-${month}-${dayOfMonth}`;
 }
 
-export const datePickerFormatter = (date: string | number, format = 'YYYY-MM-DD HH:mm'): dayjs.Dayjs => dayjs(date, format);
+export const datePickerFormatter = (
+    date: string | number,
+    format = 'YYYY-MM-DD'
+): dayjs.Dayjs => dayjs(date, format);
 
 export function formatDate(dateString: string): string {
     const date = new Date(dateString);
@@ -169,3 +172,15 @@ export function formatDate(dateString: string): string {
         day: '2-digit',
     });
 }
+
+export const formatDateToString = (date: Date | string | number | null, format = 'YYYY-MM-DD') => {
+    if (!date) {
+        return undefined;
+    }
+
+    return moment(date).format(format);
+};
+
+// Пример использования
+// Output: Date => '2024-07-13'
+

@@ -18,5 +18,6 @@ export const CustomTable = ({setPage, current, total, ...props}: Props) => {
             showSizeChanger: false,
             onChange: setPage
         }}
+        locale={{ emptyText: 'Данных нет...' }}
     />
 };

@@ -150,7 +150,13 @@ export const LoginPage = () => {
                         />
                     </Form.Item>
                     <Form.Item style={{ marginBottom: "0px" }}>
-                        <Button block type="primary" htmlType="submit" disabled={isLoading}>
+                        <Button
+                            block
+                            type="primary"
+                            htmlType="submit"
+                            disabled={isLoading}
+                            size={'large'}
+                        >
                             Войти
                         </Button>
                     </Form.Item>

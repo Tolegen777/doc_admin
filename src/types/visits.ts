@@ -56,3 +56,19 @@ export interface Status {
     status_title: string
     status_description: string
 }
+
+export interface IVisitCreate {
+    date: any;
+    is_child: boolean;
+    note: string;
+    paid: boolean;
+    approved_by_clinic: boolean;
+    approved: boolean;
+    doctor_id: number;
+    doctor_procedure_id: number;
+    visit_time_id: number;
+    clinic_branch_id: number;
+    patient_id: number;
+    status_id: number;
+    id?: number
+}

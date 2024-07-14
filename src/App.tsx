@@ -11,6 +11,17 @@ const App: FC = () =>  (
                 fontFamily: 'Museo Sans Cyrl, sans-serif',
                 colorPrimary: '#5194C1',
             },
+            components: {
+                Input: {
+                    controlHeight: 44
+                },
+                Select: {
+                    controlHeight: 44
+                },
+                DatePicker: {
+                    controlHeight: 44
+                }
+            }
         }}
     >
         <BrowserRouter>

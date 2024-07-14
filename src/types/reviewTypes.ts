@@ -15,3 +15,10 @@ export interface IReview {
     updated_at: string
     author_name: string
 }
+
+export interface IReviewPayload {
+    text: string
+    rating: number
+    is_reply: boolean
+    id?: number
+}

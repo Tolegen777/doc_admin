@@ -11,6 +11,7 @@ import {useState} from "react";
 import {useParams} from "react-router-dom";
 import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
 import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
+import {datePickerFormatter, formatDateToString} from "../../utils/date/getDates.ts";
 
 const formItemLayout = {
     labelCol: {
@@ -108,7 +109,11 @@ const DoctorSurvey = () => {
                 .get<IDoctor>(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}`)
                 .then((response) => {
                     if (response) {
-                        setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, response?.data))
+                        setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, {
+                            ...response?.data,
+                            // @ts-ignore
+                            works_since: datePickerFormatter(response?.data?.works_since ?? '')
+                    }))
                     }
                     return response?.data
                 }),
@@ -181,18 +186,21 @@ const DoctorSurvey = () => {
             }],
         },
         {
-            name: 'work_since',
+            name: 'works_since',
             element: <DatePicker
                 placeholder="Выберите дату начала трудовой деятельности"
-                showTime
-                format="YYYY/MM/DD HH:mm"
+                format="YYYY-MM-DD"
             />,
             label: 'Дата начала трудовой деятельности',
         },
     ];
 
     const handleUpdate = (value: ICreateUpdateDoctor) => {
-        onUpdate(value)
+        const payload = {
+            ...value,
+            works_since: formatDateToString(value?.works_since?.$d ?? null) ?? ''
+        }
+        onUpdate(payload)
     }
 
 
@@ -218,7 +226,6 @@ const DoctorSurvey = () => {
                         key={field.name}
                         name={field.name}
                         label={field.label}
-                        hidden={field.name === 'work_since'}
                     >
                         {field.element}
                     </Form.Item>
