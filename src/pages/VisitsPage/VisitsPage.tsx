@@ -135,7 +135,6 @@ const VisitsPage = () => {
             id: editEntity?.visit_id
         };
 
-        console.log(payload, 'PAYLOAD');
         onUpdate(payload);
         onClose();
     };

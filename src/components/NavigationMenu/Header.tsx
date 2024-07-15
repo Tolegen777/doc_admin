@@ -31,6 +31,10 @@ const items: MenuItem[] = [
         key: '/doctors',
     },
     {
+        label: 'Франшизы',
+        key: '/franchises',
+    },
+    {
         label: 'Счет на оплату',
         key: '/payment',
     },

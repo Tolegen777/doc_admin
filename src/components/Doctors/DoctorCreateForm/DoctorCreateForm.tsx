@@ -112,8 +112,6 @@ export const DoctorCreateForm = (props: Props) => {
         },
     ];
 
-    console.log(form.getFieldsValue(), 'VALS')
-
     return (
         <div className={styles.container}>
             <Form

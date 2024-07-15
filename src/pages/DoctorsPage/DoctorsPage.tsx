@@ -202,7 +202,6 @@ const DoctorsPage = () => {
             }))
         };
 
-        console.log(payload, 'PAYLOAD');
         // @ts-ignore
         onCreate(payload);
         onClose();
