@@ -34,6 +34,10 @@ const items: MenuItem[] = [
         label: 'Франшизы',
         key: '/franchises',
     },
+    // {
+    //     label: 'Удобства франшизы',
+    //     key: '/amenities',
+    // },
     {
         label: 'Счет на оплату',
         key: '/payment',

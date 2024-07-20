@@ -1,18 +1,21 @@
-import {CustomTable} from "../../components/Shared/CustomTable";
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
-import {axiosInstance} from "../../api";
-import {useStateContext} from "../../contexts";
-import {IDoctor, IDoctorCreate, SpecialitiesAndProcedure} from "../../types/doctor.ts";
-import {useState} from "react";
-import {DoctorProfile} from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
-import {FormInitialFieldsParamsType, IGet} from "../../types/common.ts";
-import {Button, Drawer} from "antd";
-import {useNavigate} from "react-router-dom";
-import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
-import {DoctorCreateForm} from "../../components/Doctors/DoctorCreateForm/DoctorCreateForm.tsx";
-import {customNotification} from "../../utils/customNotification.ts";
-import styles from './styles.module.scss'
-import {formatDateToString} from "../../utils/date/getDates.ts";
+import { CustomTable } from "../../components/Shared/CustomTable";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { axiosInstance } from "../../api";
+import { useStateContext } from "../../contexts";
+import { IDoctor, IDoctorCreate, SpecialitiesAndProcedure } from "../../types/doctor.ts";
+import { useState } from "react";
+import { DoctorProfile } from "../../components/Doctors/DoctorProfile/DoctorProfile.tsx";
+import {ActionType, FormInitialFieldsParamsType, IGet} from "../../types/common.ts";
+import { Button, Drawer } from "antd";
+import { useNavigate } from "react-router-dom";
+import { objectToQueryParams } from "../../utils/objectToQueryParams.ts";
+import { DoctorCreateForm } from "../../components/Doctors/DoctorCreateForm/DoctorCreateForm.tsx";
+import { customNotification } from "../../utils/customNotification.ts";
+import styles from './styles.module.scss';
+import { formatDateToString } from "../../utils/date/getDates.ts";
+import { PhotoForm } from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
+import { IFranchisePhoto } from "../../types/franchiseTypes.ts";
+import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -51,28 +54,44 @@ const initialValues: FormInitialFieldsParamsType[] = [
         name: 'is_active',
         value: false,
     },
-    // {
-    //     name: 'photos',
-    //     value: [],
-    // },
 ];
 
+const photoInitialValues: FormInitialFieldsParamsType[] = [
+    {
+        name: 'branch',
+        value: null,
+    },
+    {
+        name: 'doctor_profile',
+        value: null,
+    },
+    {
+        name: 'photo',
+        value: '',
+    },
+    {
+        name: 'title_code',
+        value: '',
+    },
+];
 
 const DoctorsPage = () => {
-
     const queryClient = useQueryClient();
+    const { state } = useStateContext();
+    const navigate = useNavigate();
+    const { addressId, doctor } = state;
+    const { query } = doctor;
 
-    const {state} = useStateContext()
-
-    const navigate = useNavigate()
-
-    const {addressId, doctor} = state
-
-    const {query} = doctor
-
-    const [page, setPage] = useState(1)
-    const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false)
-    const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues)
+    const [page, setPage] = useState(1);
+    const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false);
+    const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues);
+    const [photoModalOpen, setPhotoModalOpen] = useState<boolean>(false);
+    const [photoFormInitialFields, setPhotoFormInitialFields] = useState<FormInitialFieldsParamsType[]>(photoInitialValues);
+    const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
+    const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
+    const [photosDrawerOpen, setPhotosDrawerOpen] = useState<boolean>(false);
+    const [photoFormType, setPhotoFormType] = useState<ActionType>('');
+    const [photoEditEntity, setPhotoEditEntity] = useState<IFranchisePhoto | null>(null);
 
     const {
         mutate: onCreate,
@@ -80,14 +99,14 @@ const DoctorsPage = () => {
     } = useMutation({
         mutationKey: ['createDoctor'],
         mutationFn: (body: IDoctorCreate) => {
-            return axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/`, body)
+            return axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/`, body);
         },
         onSuccess: () => {
             customNotification({
                 type: 'success',
                 message: 'Врач успешно создан!'
-            })
-            queryClient.invalidateQueries({queryKey: ['doctorsData']});
+            });
+            queryClient.invalidateQueries({ queryKey: ['doctorsData'] });
         },
     });
 
@@ -102,12 +121,52 @@ const DoctorsPage = () => {
             customNotification({
                 type: 'success',
                 message: 'Врач успешно удален!'
-            })
-            queryClient.invalidateQueries({queryKey: ['doctorsData']});
+            });
+            queryClient.invalidateQueries({ queryKey: ['doctorsData'] });
         }
     });
 
-    const {data, isFetching: isLoading} = useQuery({
+    const {
+        mutate: onPhotoCreateUpdate,
+        isPending: isPhotoCreateUpdateLoading,
+    } = useMutation({
+        mutationKey: ['createUpdatePhoto'],
+        mutationFn: (body: any) => {
+            const url = body.id ?
+                `partners/franchise-branches/${body?.branch}/doctors/${body?.doctor_profile}/doctor_profile_photos/${body?.id}/` :
+                `partners/franchise-branches/${body?.branch}/doctors/${body?.doctor_profile}/doctor_profile_photos/`;
+            return axiosInstance({
+                method: body.id ? 'put' : 'post',
+                url,
+                data: body,
+            });
+        },
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: `Фото успешно ${photoFormType === 'update' ? 'изменено' : 'создано'}!`
+            });
+            queryClient.invalidateQueries({ queryKey: ['doctorPhotos', selectedDoctorId] });
+        },
+    });
+
+    const {
+        mutate: onPhotoDelete,
+        isPending: isPhotoDeleteLoading,
+    } = useMutation({
+        mutationKey: ['deletePhoto'],
+        mutationFn: ({ branchId, doctorId, photoId }: { branchId: number, doctorId: number, photoId: number }) =>
+            axiosInstance.delete(`partners/franchise-branches/${branchId}/doctors/${doctorId}/doctor_profile_photos/${photoId}/`),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Фото успешно удалено!'
+            });
+            queryClient.invalidateQueries({ queryKey: ['doctorPhotos', selectedDoctorId] });
+        }
+    });
+
+    const { data, isFetching: isLoading } = useQuery({
         queryKey: ['doctorsData', addressId, page, query],
         queryFn: () =>
             axiosInstance
@@ -118,13 +177,64 @@ const DoctorsPage = () => {
         enabled: !!addressId
     });
 
+    const { data: photos, isFetching: isPhotosLoading } = useQuery({
+        queryKey: ['doctorPhotos', selectedDoctorId],
+        queryFn: () =>
+            axiosInstance
+                .get<IFranchisePhoto[]>(`partners/franchise-branches/${selectedBranchId}/doctors/${selectedDoctorId}/doctor_profile_photos/`)
+                .then((response) => response?.data),
+        enabled: !!selectedDoctorId && photosDrawerOpen,
+    });
+
     const handleGoEditPage = (doctorDetails: IDoctor) => {
-        navigate(`/doctor/${doctorDetails?.id}`)
-    }
+        navigate(`/doctor/${doctorDetails?.id}`);
+    };
 
     const handleDeleteDoctor = (id: number) => {
-        onDeleteDoctor(id)
-    }
+        onDeleteDoctor(id);
+    };
+
+    const openPhotosDrawer = (branchId: number, doctorId: number) => {
+        setPhotosDrawerOpen(true);
+        setSelectedBranchId(branchId);
+        setSelectedDoctorId(doctorId);
+    };
+
+    const closePhotosDrawer = () => {
+        setPhotosDrawerOpen(false);
+    };
+
+    const onOpenPhotoModal = (branchId: number, doctorId: number, photoData: any | null = null, type: ActionType) => {
+        setSelectedBranchId(branchId);
+        setSelectedDoctorId(doctorId);
+        if (photoData) {
+            setPhotoFormInitialFields(changeFormFieldsData<object>(photoInitialValues, photoData));
+            setPhotoEditEntity(photoData);
+        } else {
+            setPhotoFormInitialFields(photoInitialValues);
+        }
+        setPhotoModalOpen(true);
+        setPhotoFormType(type);
+    };
+
+    const onSubmitPhotoModal = async (formData: any) => {
+        const payload = {
+            branch: selectedBranchId,
+            doctor_profile: selectedDoctorId,
+            photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
+            title_code: formData?.title_code
+        };
+        console.log(payload, 'PAYLOAAD')
+        onPhotoCreateUpdate(photoFormType === 'create' ? payload : {
+            id: photoEditEntity?.id,
+            ...payload
+        });
+        setPhotoModalOpen(false);
+    };
+
+    const handlePhotoDelete = (branchId: number, doctorId: number, photoId: number) => {
+        onPhotoDelete({ branchId, doctorId, photoId });
+    };
 
     const columns = [
         {
@@ -146,14 +256,13 @@ const DoctorsPage = () => {
             key: 'specialities_and_procedures',
             dataIndex: 'specialities_and_procedures',
             render: (data: SpecialitiesAndProcedure[], _: any) => (
-                <div style={{display: 'flex', alignItems: 'center', gap: 2}}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <div>
                         {data?.map((item, index) => {
-                            return `${item?.speciality?.medical_speciality_title}${index === data?.length - 1 ? '' : ','} `
+                            return `${item?.speciality?.medical_speciality_title}${index === data?.length - 1 ? '' : ','} `;
                         })}
                     </div>
                 </div>
-
             ),
         },
         {
@@ -180,11 +289,56 @@ const DoctorsPage = () => {
                 Удалить
             </Button>
         },
+        {
+            title: 'Фотографии',
+            render: (data: IDoctor) => (
+                <Button onClick={() => openPhotosDrawer(addressId as number, data.id)}>
+                    Просмотреть фото
+                </Button>
+            )
+        },
+    ];
+
+    const photoColumns = [
+        {
+            title: 'ID',
+            key: 'id',
+            dataIndex: 'id',
+        },
+        {
+            title: 'Фото',
+            key: 'photo',
+            dataIndex: 'photo',
+            render: (photo: string) => <img src={photo} alt="фото" style={{ width: '100px' }} />,
+        },
+        {
+            title: 'Название',
+            key: 'title_code',
+            dataIndex: 'title_code',
+        },
+        {
+            title: 'Редактировать',
+            render: (photo: IFranchisePhoto) => <Button
+                onClick={() => onOpenPhotoModal(selectedBranchId as number, selectedDoctorId as number, photo, 'update')}
+                type={"primary"}
+            >
+                Редактировать
+            </Button>
+        },
+        {
+            title: 'Удалить',
+            render: (photo: IFranchisePhoto) => <Button
+                onClick={() => handlePhotoDelete(selectedBranchId as number, selectedDoctorId as number, photo.id)}
+                disabled={isPhotoDeleteLoading}
+            >
+                Удалить
+            </Button>
+        },
     ];
 
     const onClose = () => {
         setCreateUpdateModalOpen(false);
-        setCreateUpdateFormInitialFields(initialValues)
+        setCreateUpdateFormInitialFields(initialValues);
     };
 
     const onOpenCreateUpdateModal = () => {
@@ -192,19 +346,10 @@ const DoctorsPage = () => {
     };
 
     const onSubmitCreateUpdateModal = async (formData: IDoctorCreate) => {
-
         const payload = {
             ...formData,
             works_since: formatDateToString(formData?.works_since?.$d) ?? '',
-            // photos: formData?.photos.map(photo => ({
-            //     franchise: 0,
-            //     // @ts-ignore
-            //     photo: photo?.thumbUrl,
-            //     title_code: 'string',
-            // }))
         };
-
-        // @ts-ignore
         onCreate(payload);
         onClose();
     };
@@ -225,6 +370,40 @@ const DoctorsPage = () => {
                     isLoading={isCreateLoading}
                 />
             </Drawer>
+            <Drawer
+                title={photoFormInitialFields.some(field => field.name === 'id' && field.value) ? 'Редактирование фото' : 'Добавление фото'}
+                onClose={() => setPhotoModalOpen(false)}
+                open={photoModalOpen}
+                width="500px"
+            >
+                <PhotoForm
+                    initialFields={photoFormInitialFields}
+                    onSubmit={onSubmitPhotoModal}
+                    onClose={() => setPhotoModalOpen(false)}
+                    isLoading={isPhotoCreateUpdateLoading}
+                />
+            </Drawer>
+            <Drawer
+                title="Фотографии"
+                onClose={closePhotosDrawer}
+                open={photosDrawerOpen}
+                width="600px"
+            >
+                <div className={styles.action}>
+                    <Button
+                        onClick={() => onOpenPhotoModal(selectedBranchId as number, selectedDoctorId as number, null, 'create')}
+                        type={"primary"}
+                        size={"large"}
+                    >
+                        Добавить фото
+                    </Button>
+                </div>
+                <CustomTable
+                    columns={photoColumns}
+                    dataSource={photos}
+                    loading={isPhotosLoading || isPhotoCreateUpdateLoading || isPhotoDeleteLoading}
+                />
+            </Drawer>
             <div className={styles.container}>
                 <div className={styles.action}>
                     <Button
@@ -235,7 +414,6 @@ const DoctorsPage = () => {
                         Создать
                     </Button>
                 </div>
-                {/*<Filters/>*/}
                 <CustomTable
                     columns={columns}
                     dataSource={data?.results}
