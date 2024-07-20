@@ -73,7 +73,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Специальность врача успешно создана!'
+                message: 'Цена процедуры врача успешно создана!'
             })
             setIsModalOpen(false)
         }
@@ -91,7 +91,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Специальность врача успешно изменена!'
+                message: 'Цена процедуры врача успешно изменена!'
             })
         }
     });
@@ -107,7 +107,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Специальность врача успешно удалена!'
+                message: 'Цена процедуры врача успешно удалена!'
             })
         }
     });

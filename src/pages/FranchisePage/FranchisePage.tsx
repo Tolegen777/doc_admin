@@ -124,6 +124,7 @@ const FranchisePage = () => {
                 message: 'Франшиза успешно удалена!'
             });
             queryClient.invalidateQueries({ queryKey: ['franchiseData'] });
+            setPage(1)
         }
     });
 

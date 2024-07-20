@@ -86,7 +86,7 @@ const DoctorSurvey = () => {
         onSuccess: () => {
             customNotification({
                 type: 'success',
-                message: 'Изменеия успешно сохранены!'
+                message: 'Изменения успешно сохранены!'
             })
         },
     });
@@ -205,7 +205,9 @@ const DoctorSurvey = () => {
 
 
     if (isLoading) {
-        return <Spin/>
+        return <div className={styles.loader}>
+            <Spin/>
+        </div>
     }
 
     return (

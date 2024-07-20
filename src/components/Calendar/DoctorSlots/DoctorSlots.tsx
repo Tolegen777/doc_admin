@@ -9,6 +9,7 @@ import {formatDateToDayMonth} from "../../../utils/date/getDates";
 import {axiosInstance} from "../../../api";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {ActionType} from "../../../types/common.ts";
+import {customNotification} from "../../../utils/customNotification.ts";
 
 type DateType = {
     day: number,
@@ -70,6 +71,10 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
             axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule/`, body),
         onSuccess: () => {
             setIsModalOpen(false);
+            customNotification({
+                type: 'success',
+                message: 'Успешно выполнено!'
+            })
             queryClient.invalidateQueries({queryKey: ['calendarData']});
             queryClient.invalidateQueries({queryKey: ['doctorTimeSlotDetails']});
         },
@@ -85,6 +90,10 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
         },
         onSuccess: () => {
             setIsModalOpen(false);
+            customNotification({
+                type: 'success',
+                message: 'Успешно выполнено!'
+            })
             queryClient.invalidateQueries({queryKey: ['calendarData']});
             queryClient.invalidateQueries({queryKey: ['doctorTimeSlotDetails']});
         },

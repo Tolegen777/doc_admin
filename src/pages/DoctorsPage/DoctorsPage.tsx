@@ -17,7 +17,7 @@ import {formatDateToString} from "../../utils/date/getDates.ts";
 const initialValues: FormInitialFieldsParamsType[] = [
     {
         name: 'first_name',
-        value: '1',
+        value: '',
     },
     {
         name: 'last_name',
@@ -51,10 +51,10 @@ const initialValues: FormInitialFieldsParamsType[] = [
         name: 'is_active',
         value: false,
     },
-    {
-        name: 'photos',
-        value: [],
-    },
+    // {
+    //     name: 'photos',
+    //     value: [],
+    // },
 ];
 
 
@@ -72,6 +72,7 @@ const DoctorsPage = () => {
 
     const [page, setPage] = useState(1)
     const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false)
+    const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues)
 
     const {
         mutate: onCreate,
@@ -183,6 +184,7 @@ const DoctorsPage = () => {
 
     const onClose = () => {
         setCreateUpdateModalOpen(false);
+        setCreateUpdateFormInitialFields(initialValues)
     };
 
     const onOpenCreateUpdateModal = () => {
@@ -194,12 +196,12 @@ const DoctorsPage = () => {
         const payload = {
             ...formData,
             works_since: formatDateToString(formData?.works_since?.$d) ?? '',
-            photos: formData?.photos.map(photo => ({
-                franchise: 0,
-                // @ts-ignore
-                photo: photo?.thumbUrl,
-                title_code: 'string',
-            }))
+            // photos: formData?.photos.map(photo => ({
+            //     franchise: 0,
+            //     // @ts-ignore
+            //     photo: photo?.thumbUrl,
+            //     title_code: 'string',
+            // }))
         };
 
         // @ts-ignore
@@ -217,7 +219,7 @@ const DoctorsPage = () => {
             >
                 <DoctorCreateForm
                     formType={'create'}
-                    initialFields={initialValues}
+                    initialFields={createUpdateFormInitialFields}
                     onSubmit={onSubmitCreateUpdateModal}
                     onClose={onClose}
                     isLoading={isCreateLoading}

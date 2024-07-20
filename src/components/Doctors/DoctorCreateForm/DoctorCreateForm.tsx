@@ -1,4 +1,4 @@
-import {Button, DatePicker, Form, Input, Select, Space, Switch, Upload} from 'antd';
+import {Button, DatePicker, Form, Input, Select, Space, Switch} from 'antd';
 import {useQuery} from "@tanstack/react-query";
 import styles from './styles.module.scss'
 import {ActionType, FormInitialFieldsParamsType} from "../../../types/common.ts";
@@ -6,7 +6,6 @@ import {ICategory, IDoctorCreate} from "../../../types/doctor.ts";
 import {axiosInstance} from "../../../api";
 import {selectOptionsParser} from "../../../utils/selectOptionsParser.ts";
 import {gender} from "../../../const/common.ts";
-import {PlusOutlined} from "@ant-design/icons";
 
 type Props = {
     formType: ActionType
@@ -15,13 +14,6 @@ type Props = {
     onClose: () => void
     isLoading: boolean
 }
-
-const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-        return e;
-    }
-    return e?.fileList;
-};
 
 export const DoctorCreateForm = (props: Props) => {
     const {
@@ -118,7 +110,9 @@ export const DoctorCreateForm = (props: Props) => {
                 fields={initialFields}
                 form={form}
                 layout="vertical"
-                onFinish={value => onSubmit(value, formType)}
+                onFinish={value => {
+                    onSubmit(value, formType)
+                }}
                 className={styles.form}
             >
                 <Space size="small" direction="vertical" style={{width: '100%'}}>
@@ -132,14 +126,14 @@ export const DoctorCreateForm = (props: Props) => {
                             {field.element}
                         </Form.Item>
                     ))}
-                    <Form.Item label="Upload" valuePropName="fileList"  name="photos" getValueFromEvent={normFile}>
-                        <Upload action="/upload.do" listType="picture-card">
-                            <button style={{ border: 0, background: 'none' }} type="button">
-                                <PlusOutlined />
-                                <div style={{ marginTop: 8 }}>Upload</div>
-                            </button>
-                        </Upload>
-                    </Form.Item>
+                    {/*<Form.Item label="Upload" valuePropName="fileList"  name="photos" getValueFromEvent={normFile}>*/}
+                    {/*    <Upload action="/upload.do" listType="picture-card">*/}
+                    {/*        <button style={{ border: 0, background: 'none' }} type="button">*/}
+                    {/*            <PlusOutlined />*/}
+                    {/*            <div style={{ marginTop: 8 }}>Upload</div>*/}
+                    {/*        </button>*/}
+                    {/*    </Upload>*/}
+                    {/*</Form.Item>*/}
                     <Form.Item
                         name={"for_child"}
                         label="Принимает ли детей"
@@ -158,7 +152,9 @@ export const DoctorCreateForm = (props: Props) => {
             </Form>
             <div className={styles.action}>
                 <Button
-                    onClick={onClose}
+                    onClick={() => {
+                        onClose()
+                    }}
                     size={"large"}
                 >
                     Отмена
