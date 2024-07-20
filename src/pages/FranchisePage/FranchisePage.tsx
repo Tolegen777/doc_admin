@@ -1,17 +1,19 @@
 import styles from './styles.module.scss';
-import { CustomTable } from "../../components/Shared/CustomTable";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { axiosInstance } from "../../api";
-import { useStateContext } from "../../contexts";
-import { ActionType, FormInitialFieldsParamsType, IGet } from "../../types/common.ts";
-import { useState } from "react";
-import { customNotification } from "../../utils/customNotification.ts";
-import { Button, Drawer } from "antd";
-import { changeFormFieldsData } from "../../utils/changeFormFieldsData.ts";
-import { IFranchiseCreateUpdate, IFranchiseResponce, IFranchisePhoto } from "../../types/franchiseTypes.ts";
-import { FranchiseCreateUpdateForm } from "../../components/Franchise/FranchiseCreateUpdateForm/FranchiseCreateUpdateForm.tsx";
-import { PhotoForm } from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
-import { CityTypes } from "../../types/cityTypes.ts";
+import {CustomTable} from "../../components/Shared/CustomTable";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {axiosInstance} from "../../api";
+import {useStateContext} from "../../contexts";
+import {ActionType, FormInitialFieldsParamsType, IGet} from "../../types/common.ts";
+import {useState} from "react";
+import {customNotification} from "../../utils/customNotification.ts";
+import {Button, Drawer} from "antd";
+import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
+import {IFranchiseCreateUpdate, IFranchisePhoto, IFranchiseResponce} from "../../types/franchiseTypes.ts";
+import {
+    FranchiseCreateUpdateForm
+} from "../../components/Franchise/FranchiseCreateUpdateForm/FranchiseCreateUpdateForm.tsx";
+import {PhotoForm} from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
+import {CityTypes} from "../../types/cityTypes.ts";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -43,7 +45,7 @@ const initialValues: FormInitialFieldsParamsType[] = [
 const photoInitialValues: FormInitialFieldsParamsType[] = [
     {
         name: 'branch',
-        value: 0,
+        value: null,
     },
     {
         name: 'photo',
@@ -63,7 +65,7 @@ const FranchisePage = () => {
     const queryClient = useQueryClient();
     const { state } = useStateContext();
     const { addressId } = state;
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false);
     const [editEntity, setEditEntity] = useState<IFranchiseResponce | null>(null);
     const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues);
@@ -72,7 +74,6 @@ const FranchisePage = () => {
     const [photoFormInitialFields, setPhotoFormInitialFields] = useState<FormInitialFieldsParamsType[]>(photoInitialValues);
     const [selectedBranchId, setSelectedBranchId] = useState<number | null>(null);
     const [photosDrawerOpen, setPhotosDrawerOpen] = useState<boolean>(false);
-    const [selectedPhotos, setSelectedPhotos] = useState<IFranchisePhoto[]>([]);
     const [photoFormType, setPhotoFormType] = useState<ActionType>('');
     const [photoEditEntity, setPhotoEditEntity] = useState<IFranchisePhoto | null>(null);
 
@@ -146,7 +147,7 @@ const FranchisePage = () => {
                 type: 'success',
                 message: `Фото успешно ${photoFormInitialFields.some(field => field.name === 'id' && field.value) ? 'изменено' : 'создано'}!`
             });
-            queryClient.invalidateQueries({ queryKey: ['franchiseData'] });
+            queryClient.invalidateQueries({ queryKey: ['franchisePhotos', selectedBranchId] });
         },
     });
 
@@ -162,7 +163,7 @@ const FranchisePage = () => {
                 type: 'success',
                 message: 'Фото успешно удалено!'
             });
-            queryClient.invalidateQueries({ queryKey: ['franchiseData'] });
+            queryClient.invalidateQueries({ queryKey: ['franchisePhotos', selectedBranchId] });
         }
     });
 
@@ -184,6 +185,15 @@ const FranchisePage = () => {
         refetchOnMount: false
     });
 
+    const { data: photos, isFetching: isPhotosLoading } = useQuery({
+        queryKey: ['franchisePhotos', selectedBranchId],
+        queryFn: () =>
+            axiosInstance
+                .get<IFranchisePhoto[]>(`partners/franchise-branches/${selectedBranchId}/photos/`)
+                .then((response) => response?.data),
+        enabled: !!selectedBranchId && photosDrawerOpen,
+    });
+
     const onClose = () => {
         setCreateUpdateModalOpen(false);
         setCreateUpdateFormInitialFields(initialValues);
@@ -194,13 +204,7 @@ const FranchisePage = () => {
     const onClosePhotoModal = () => {
         setPhotoModalOpen(false);
         setPhotoFormInitialFields(photoInitialValues);
-        setSelectedBranchId(null);
     };
-
-    const onClosePhotoTableModal = () => {
-        setSelectedBranchId(null)
-        setPhotosDrawerOpen(false)
-    }
 
     const onOpenCreateUpdateModal = (data: IFranchiseResponce | null, type: ActionType) => {
         if (data && type === 'update') {
@@ -214,15 +218,16 @@ const FranchisePage = () => {
 
     const onOpenPhotoModal = (branchId: number, photoData: any | null = null, type: ActionType) => {
         setSelectedBranchId(branchId);
+        debugger
         if (photoData) {
             setPhotoFormInitialFields(changeFormFieldsData<object>(photoInitialValues, photoData));
-            setPhotoEditEntity(photoData)
+            setPhotoEditEntity(photoData);
         } else {
-            setPhotoFormInitialFields(photoInitialValues)
+            setPhotoFormInitialFields(photoInitialValues);
         }
 
         setPhotoModalOpen(true);
-        setPhotoFormType(type)
+        setPhotoFormType(type);
     };
 
     const onSubmitCreateUpdateModal = async (formData: IFranchiseCreateUpdate) => {
@@ -243,7 +248,7 @@ const FranchisePage = () => {
     const onSubmitPhotoModal = async (formData: any) => {
         const payload = {
             branch: selectedBranchId,
-            photo: formData?.photo?.find(item => item)?.thumbUrl,
+            photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
             title_code: formData?.title_code
         };
         onPhotoCreateUpdate(photoFormType === 'create' ? payload : {
@@ -261,15 +266,13 @@ const FranchisePage = () => {
         onPhotoDelete({ branchId, photoId });
     };
 
-    const openPhotosDrawer = (data: IFranchiseResponce) => {
-        setSelectedPhotos(data?.photos ?? []);
+    const openPhotosDrawer = (branchId: number) => {
         setPhotosDrawerOpen(true);
-        setSelectedBranchId(data?.id)
+        setSelectedBranchId(branchId);
     };
 
     const closePhotosDrawer = () => {
         setPhotosDrawerOpen(false);
-        setSelectedPhotos([]);
     };
 
     const columns = [
@@ -324,7 +327,7 @@ const FranchisePage = () => {
         {
             title: 'Фотографии',
             render: (data: IFranchiseResponce) => (
-                <Button onClick={() => openPhotosDrawer(data ?? [])}>
+                <Button onClick={() => openPhotosDrawer(data.id)}>
                     Просмотреть фото
                 </Button>
             )
@@ -397,7 +400,6 @@ const FranchisePage = () => {
                     onSubmit={onSubmitPhotoModal}
                     onClose={onClosePhotoModal}
                     isLoading={isPhotoCreateUpdateLoading}
-                    type={photoFormType}
                 />
             </Drawer>
             <Drawer
@@ -417,8 +419,8 @@ const FranchisePage = () => {
                 </div>
                 <CustomTable
                     columns={photoColumns}
-                    dataSource={selectedPhotos}
-                    loading={isLoading}
+                    dataSource={photos}
+                    loading={isPhotosLoading || isPhotoCreateUpdateLoading || isPhotoDeleteLoading}
                 />
             </Drawer>
             <div className={styles.container}>

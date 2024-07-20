@@ -1,7 +1,7 @@
 import { Button, Form, Input, Upload, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
-import {ActionType, FormInitialFieldsParamsType} from "../../../types/common.ts";
+import {FormInitialFieldsParamsType} from "../../../types/common.ts";
 import { useEffect, useState } from 'react';
 
 type Props = {
@@ -9,7 +9,6 @@ type Props = {
     onSubmit: (data: any) => void
     onClose: () => void
     isLoading: boolean,
-    type: ActionType
 }
 
 const normFile = (e: any) => {
@@ -25,7 +24,6 @@ export const PhotoForm = (props: Props) => {
         onSubmit,
         onClose,
         isLoading,
-        type
     } = props;
 
     const [form] = Form.useForm();
@@ -33,15 +31,12 @@ export const PhotoForm = (props: Props) => {
 
     useEffect(() => {
         const initialValues = initialFields.reduce((acc, field) => {
+            // @ts-ignore
             acc[field.name] = field.value;
             return acc;
         }, {});
 
         form.setFieldsValue(initialValues);
-
-        if (type === 'create') {
-            setFileList([])
-        }
 
         const photoField = initialFields.find(field => field.name === 'photo');
         if (photoField && photoField.value) {
@@ -52,7 +47,7 @@ export const PhotoForm = (props: Props) => {
                 url: photoField.value,
             }]);
         }
-    }, [initialFields, form, type]);
+    }, [initialFields, form]);
 
     const handleFileChange = ({ fileList }: any) => setFileList(fileList);
 
@@ -61,7 +56,11 @@ export const PhotoForm = (props: Props) => {
             <Form
                 form={form}
                 layout="vertical"
-                onFinish={onSubmit}
+                onFinish={(values) => {
+                    form.resetFields(['title_code', 'photo'])
+                    setFileList([])
+                    onSubmit(values)
+                }}
                 className={styles.form}
                 fields={initialFields}
             >
@@ -98,7 +97,11 @@ export const PhotoForm = (props: Props) => {
             </Form>
             <div className={styles.action}>
                 <Button
-                    onClick={onClose}
+                    onClick={() => {
+                        form.resetFields(['title_code', 'photo'])
+                        setFileList([])
+                        onClose()
+                    }}
                     size={"large"}
                 >
                     Отмена
