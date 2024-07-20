@@ -9,6 +9,7 @@ import DailySummary from "../pages/DailySummary/DailySummary.tsx";
 import MonthSummaryPage from "../pages/MonthSummaryPage/MonthSummaryPage.tsx";
 import MonthSummaryByIdPage from "../pages/MonthSummaryByIdPage/MonthSummaryByIdPage.tsx";
 import ReviewsPage from "../pages/ReviewsPage/ReviewsPage.tsx";
+import FranchisePage from "../pages/FranchisePage/FranchisePage.tsx";
 
 export const routesList = [
   {
@@ -48,6 +49,10 @@ export const routesList = [
   {
     path: '/visits',
     element: <VisitsPage />,
+  },
+  {
+    path: '/franchises',
+    element: <FranchisePage />,
   },
   {
     path: '/daily_summary',

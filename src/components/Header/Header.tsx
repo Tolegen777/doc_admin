@@ -35,8 +35,6 @@ const Header = () => {
         refetchOnMount: false
     });
 
-    console.log(data, 'DATA')
-
     const { data: franchiseInfo, isLoading: franchiseInfoLoading } = useQuery({
         queryKey: ['franchiseInfo'],
         queryFn: () =>
