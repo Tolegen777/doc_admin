@@ -11,6 +11,7 @@ import MonthSummaryByIdPage from "../pages/MonthSummaryByIdPage/MonthSummaryById
 import ReviewsPage from "../pages/ReviewsPage/ReviewsPage.tsx";
 import FranchisePage from "../pages/FranchisePage/FranchisePage.tsx";
 import AmenitiesPage from "../pages/AmenityPage/AmenityPage.tsx";
+import AllDoctorsPage from "../pages/AllDoctorsPage/AllDoctorsPage.tsx";
 
 export const routesList = [
   {
@@ -28,6 +29,10 @@ export const routesList = [
   {
     path: '/doctors',
     element: <DoctorsPage />,
+  },
+  {
+    path: '/all-doctors',
+    element: <AllDoctorsPage />,
   },
   {
     path: '/payment',
