@@ -228,7 +228,6 @@ const VisitsPage = () => {
                 />
             </Drawer>
             <div className={styles.container}>
-                {/*<Filters/>*/}
                 <CustomTable
                     columns={columns}
                     dataSource={data?.results}
