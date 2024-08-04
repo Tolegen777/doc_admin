@@ -13,7 +13,12 @@ import {CustomTable} from "../../Shared/CustomTable";
 import {IAllDoctorSchedule, ICreateAllDoctorSchedule, IUpdateAllDoctorSchedule} from "../../../types/allDoctors.ts";
 import {IFranchise} from "../../../types/franchiseTypes.ts";
 import {ITime} from "../../../types/calendar.ts";
-import {datePickerFormatter, formatDateToString} from "../../../utils/date/getDates.ts";
+import {
+    datePickerFormatter,
+    formatDateToString,
+    getRussianDayOfWeek,
+    removeSeconds
+} from "../../../utils/date/getDates.ts";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -102,7 +107,7 @@ const DoctorWorkSchedulesPage = ({ doctorId }: Props) => {
         queryKey: ['franchiseBranches'],
         queryFn: () =>
             axiosInstance
-                .get<IGet<IFranchise>>('partners/franchise-branches/')
+                .get<IGet<IFranchise>>('partners/franchise-branches/?page_size=100')
                 .then((response) => response.data),
         refetchOnMount: false,
     });
@@ -112,7 +117,10 @@ const DoctorWorkSchedulesPage = ({ doctorId }: Props) => {
         queryFn: () =>
             axiosInstance
                 .get<ITime[]>(`/partners/time-slots/`)
-                .then((response) => response?.data),
+                .then((response) => response?.data?.map(item => ({
+                    ...item,
+                    start_time: removeSeconds(item?.start_time ?? '')
+                }))),
         refetchOnMount: false
     });
 
@@ -191,6 +199,7 @@ const DoctorWorkSchedulesPage = ({ doctorId }: Props) => {
             title: 'День недели',
             key: 'day_of_week',
             dataIndex: 'day_of_week',
+            render: (day: string) => getRussianDayOfWeek(day ?? '')
         },
         {
             title: 'Редактировать',

@@ -1,5 +1,5 @@
 import styles from './styles.module.scss'
-import {Dropdown, MenuProps, Select, Space} from "antd";
+import {Button, Dropdown, MenuProps, Select, Space} from "antd";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {IFranchise, IFranchiseInfo} from "../../types/franchiseTypes.ts";
@@ -12,12 +12,15 @@ import userIcon from '../../assets/userIcon.svg'
 import {DownOutlined} from '@ant-design/icons'
 import {Spinner} from "../Shared/Spinner";
 import {IGet} from "../../types/common.ts";
+import {useNavigate} from "react-router-dom";
 
 const Header = () => {
 
     const {state, dispatch} = useStateContext()
 
     const {addressId} = state
+
+    const router = useNavigate()
 
     const {
         mutate: onLogout,
@@ -30,7 +33,7 @@ const Header = () => {
         queryKey: ['franchiseBranches'],
         queryFn: () =>
             axiosInstance
-                .get<IGet<IFranchise>>('partners/franchise-branches/')
+                .get<IGet<IFranchise>>('partners/franchise-branches/?page_size=100')
                 .then((response) => response?.data),
         refetchOnMount: false
     });
@@ -87,6 +90,9 @@ const Header = () => {
                 </div>
             </div>
             <div className={styles.container_action}>
+                <Button onClick={() => router('/all-doctors')}>
+                    Показать все врачи клиники
+                </Button>
                 <div>
                     <Select
                         onChange={(value: number) => {

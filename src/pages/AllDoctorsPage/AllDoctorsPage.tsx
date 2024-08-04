@@ -4,7 +4,7 @@ import {axiosInstance} from "../../api";
 import {CustomTable} from "../../components/Shared/CustomTable";
 import {ActionType, FormInitialFieldsParamsType, IGet} from "../../types/common";
 import {customNotification} from "../../utils/customNotification";
-import {Button, Drawer} from "antd";
+import {Button, Drawer, Tag} from "antd";
 import {changeFormFieldsData} from "../../utils/changeFormFieldsData";
 import {IAllDoctors, ICreateDoctors, IUpdateDoctors} from "../../types/allDoctors.ts";
 import AllDoctorCreateUpdateForm
@@ -14,10 +14,15 @@ import {datePickerFormatter, formatDateToString} from "../../utils/date/getDates
 import AllDoctorAdditionalDataTable
     from "../../components/AllDoctors/AllDoctorAdditionalDataTable/AllDoctorAdditionalDataTable.tsx";
 import {IDoctor} from "../../types/doctor.ts";
-import {IFranchisePhoto} from "../../types/franchiseTypes.ts";
+import {IFranchise, IFranchisePhoto} from "../../types/franchiseTypes.ts";
 import {PhotoForm} from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
 import AllDoctorWorkSchedulesPage
     from "../../components/AllDoctors/AllDoctorWorkSchedulesPage/AllDoctorWorkSchedulesPage.tsx";
+import AllDoctorsFilter from "../../components/AllDoctors/AllDoctorsFilter/AllDoctorsFilter.tsx";
+import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
+import {IAllSpec} from "../../types/doctorSpec.ts";
+import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
+import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -105,13 +110,15 @@ const AllDoctorsPage = () => {
 
     const [scheduleModalOpen, setScheduleModalOpen] = useState<boolean>(false);
 
+    const [params, setParams] = useState<string>('');
+
 
     const {
         mutate: onUpdate,
         isPending: isUpdateLoading,
     } = useMutation({
         mutationKey: ['updateDoctor'],
-        mutationFn: ({ id, ...body }: IUpdateDoctors) => {
+        mutationFn: ({id, ...body}: IUpdateDoctors) => {
             return axiosInstance.put(`partners/franchise-info/all-doctors/${id}/`, body);
         },
         onSuccess: () => {
@@ -119,7 +126,7 @@ const AllDoctorsPage = () => {
                 type: 'success',
                 message: 'Данные врача успешно обновлены!'
             });
-            queryClient.invalidateQueries({ queryKey: ['doctorsData'] });
+            queryClient.invalidateQueries({queryKey: ['doctorsData']});
         },
     });
 
@@ -136,7 +143,7 @@ const AllDoctorsPage = () => {
                 type: 'success',
                 message: 'Врач успешно создан!'
             });
-            queryClient.invalidateQueries({ queryKey: ['doctorsData'] });
+            queryClient.invalidateQueries({queryKey: ['doctorsData']});
         },
     });
 
@@ -152,7 +159,7 @@ const AllDoctorsPage = () => {
                 type: 'success',
                 message: 'Врач успешно удален!'
             });
-            queryClient.invalidateQueries({ queryKey: ['doctorsData'] });
+            queryClient.invalidateQueries({queryKey: ['doctorsData']});
         }
     });
 
@@ -176,7 +183,7 @@ const AllDoctorsPage = () => {
                 type: 'success',
                 message: `Фото успешно ${photoFormType === 'update' ? 'изменено' : 'создано'}!`
             });
-            queryClient.invalidateQueries({ queryKey: ['doctorPhotos', selectedDoctorId] });
+            queryClient.invalidateQueries({queryKey: ['doctorPhotos', selectedDoctorId]});
         },
     });
 
@@ -185,26 +192,26 @@ const AllDoctorsPage = () => {
         isPending: isPhotoDeleteLoading,
     } = useMutation({
         mutationKey: ['deletePhoto'],
-        mutationFn: ({ doctorId, photoId }: { doctorId: number, photoId: number }) =>
+        mutationFn: ({doctorId, photoId}: { doctorId: number, photoId: number }) =>
             axiosInstance.delete(`partners/franchise-info/all-doctors/${doctorId}/doctor-photos/${photoId}/`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
                 message: 'Фото успешно удалено!'
             });
-            queryClient.invalidateQueries({ queryKey: ['doctorPhotos', selectedDoctorId] });
+            queryClient.invalidateQueries({queryKey: ['doctorPhotos', selectedDoctorId]});
         }
     });
 
-    const { data, isLoading } = useQuery({
-        queryKey: ['doctorsData', page],
+    const {data, isLoading} = useQuery({
+        queryKey: ['doctorsData', page, params],
         queryFn: () =>
             axiosInstance
-                .get<IGet<IAllDoctors>>(`partners/franchise-info/all-doctors/`)
+                .get<IGet<IAllDoctors>>(`partners/franchise-info/all-doctors/?page=${page}${params}`)
                 .then((response) => response?.data),
     });
 
-    const { data: photos, isFetching: isPhotosLoading } = useQuery({
+    const {data: photos, isFetching: isPhotosLoading} = useQuery({
         queryKey: ['doctorPhotos', selectedDoctorId],
         queryFn: () =>
             axiosInstance
@@ -212,6 +219,47 @@ const AllDoctorsPage = () => {
                 .then((response) => response?.data),
         enabled: !!selectedDoctorId && photosDrawerOpen,
     });
+
+    const {data: clinics, isLoading: clinicsLoading} = useQuery({
+        queryKey: ['franchiseBranches'],
+        queryFn: () =>
+            axiosInstance
+                .get<IGet<IFranchise>>('partners/franchise-branches/?page_size=100')
+                .then((response) => response.data),
+        refetchOnMount: false,
+    });
+
+    const {data: cities, isLoading: citiesLoading} = useQuery({
+        queryKey: ['doctorCitiesData'],
+        queryFn: () =>
+            axiosInstance
+                .get('patients/cities/')
+                .then((response) => response.data),
+        refetchOnMount: false,
+    });
+
+    const {data: allSpecsList, isLoading: allSpecLoading} = useQuery({
+        queryKey: ['allSpecsList',],
+        queryFn: () =>
+            axiosInstance
+                .get<IAllSpec[]>(`partners/medical-specialties-list/`)
+                .then((response) => response?.data),
+    });
+
+    const {data: categories, isLoading: categoryLoading} = useQuery({
+        queryKey: ['doctorCategoriesData'],
+        queryFn: () =>
+            axiosInstance
+                .get('partners/doctor-categories/')
+                .then((response) => response.data),
+        refetchOnMount: false,
+    });
+
+
+    const clinicOptions = selectOptionsParser(clinics?.results ?? [], 'title', 'id')
+    const cityOptions = selectOptionsParser(cities ?? [], 'title', 'id')
+    const specOptions = selectOptionsParser(allSpecsList ?? [], 'medical_speciality_title', 'medical_speciality_id')
+    const categoryOptions = selectOptionsParser(categories ?? [], 'title', 'doctor_category_id')
 
     const onClose = () => {
         setCreateUpdateModalOpen(false);
@@ -310,15 +358,24 @@ const AllDoctorsPage = () => {
     };
 
     const handlePhotoDelete = (doctorId: number, photoId: number) => {
-        onPhotoDelete({ doctorId, photoId });
+        onPhotoDelete({doctorId, photoId});
     };
+
+    const handleFilter = (formData: any) => {
+        if (formData) {
+            console.log(formData, 'FROM')
+            const urlParams = objectToQueryParams(formData)
+            console.log(urlParams, 'PAR')
+            setParams(`&${urlParams}`)
+        }
+    }
 
     const columns = [
         {
             title: 'Фото',
             key: 'latest_photo',
             dataIndex: 'latest_photo',
-            render: (photo: string) => <img src={photo} alt="doctor" style={{ width: 50, height: 50 }} />,
+            render: (photo: string) => <img src={photo} alt="doctor" style={{width: 50, height: 50}}/>,
         },
         {
             title: 'ФИО',
@@ -339,13 +396,23 @@ const AllDoctorsPage = () => {
             title: 'Специализации',
             key: 'specialities',
             dataIndex: 'specialities',
-            render: (specialities: string[]) => specialities.join(', '),
+            render: (specialities: string[]) => {
+                return <div className={styles.tag_wrapper}>
+                    {specialities?.map((item, index) => <Tag key={index} color="#108ee9">{item}</Tag>)}
+                </div>
+            },
         },
         {
             title: 'Процедуры',
             key: 'procedures',
             dataIndex: 'procedures',
-            render: (procedures: string[]) => procedures.join(', '),
+            render: (procedures: string[]) => {
+                return <ShowMoreContainer>
+                    <div className={styles.tag_wrapper}>
+                        {procedures?.map((item, index) => <Tag key={index} color="#108ee9">{item}</Tag>)}
+                    </div>
+                </ShowMoreContainer>
+            },
         },
         {
             title: 'Опыт (лет)',
@@ -361,7 +428,9 @@ const AllDoctorsPage = () => {
             title: 'Филиалы клиник',
             key: 'clinic_branches',
             dataIndex: 'clinic_branches',
-            render: (branches: string[]) => branches.join(', '),
+            render: (branches: string[]) => <ShowMoreContainer>
+                {branches.join(', ')}
+            </ShowMoreContainer>
         },
         {
             title: 'Редактировать',
@@ -420,7 +489,7 @@ const AllDoctorsPage = () => {
             title: 'Фото',
             key: 'photo',
             dataIndex: 'photo',
-            render: (photo: string) => <img src={photo} alt="фото" style={{ width: '100px' }} />,
+            render: (photo: string) => <img src={photo} alt="фото" style={{width: '100px'}}/>,
         },
         {
             title: 'Название',
@@ -448,7 +517,7 @@ const AllDoctorsPage = () => {
     ];
 
     return (
-        <>
+        <div className={styles.wrapper}>
             <Drawer
                 title={photoFormInitialFields.some(field => field.name === 'id' && field.value) ? 'Редактирование фото' : 'Добавление фото'}
                 onClose={() => setPhotoModalOpen(false)}
@@ -474,7 +543,7 @@ const AllDoctorsPage = () => {
                 title="Фотографии"
                 onClose={closePhotosDrawer}
                 open={photosDrawerOpen}
-                width="600px"
+                width={'80%'}
             >
                 <div className={styles.action}>
                     <Button
@@ -495,7 +564,7 @@ const AllDoctorsPage = () => {
                 title={formType === 'create' ? 'Создание врача' : 'Редактирование врача'}
                 onClose={onClose}
                 open={createUpdateModalOpen}
-                width="500px"
+                width="800px"
             >
                 <AllDoctorCreateUpdateForm
                     formType={formType}
@@ -523,6 +592,18 @@ const AllDoctorsPage = () => {
                         Создать
                     </Button>
                 </div>
+                <AllDoctorsFilter
+                    branchesOptions={clinicOptions}
+                    specialitiesOptions={specOptions}
+                    citiesOptions={cityOptions}
+                    categoriesOptions={categoryOptions}
+                    branchesLoading={clinicsLoading}
+                    categoriesLoading={categoryLoading}
+                    citiesLoading={citiesLoading}
+                    specLoading={allSpecLoading}
+                    onFilter={handleFilter}
+
+                />
                 <CustomTable
                     columns={columns}
                     dataSource={data?.results}
@@ -533,7 +614,7 @@ const AllDoctorsPage = () => {
                     total={data?.count ?? 0}
                 />
             </div>
-        </>
+        </div>
     );
 };
 

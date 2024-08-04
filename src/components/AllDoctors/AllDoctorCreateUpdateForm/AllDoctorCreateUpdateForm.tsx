@@ -75,7 +75,7 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
         },
         {
             name: 'description',
-            element: <Input.TextArea placeholder="Введите описание" rows={4} />,
+            element: <Input.TextArea placeholder="Введите описание" rows={12} />,
             label: 'Описание',
             rules: [{
                 required: true,

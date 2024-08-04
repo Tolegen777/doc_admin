@@ -19,5 +19,6 @@ export const CustomTable = ({setPage, current, total, ...props}: Props) => {
             onChange: setPage
         }}
         locale={{ emptyText: 'Данных нет...' }}
+        scroll={{ x: 1000 }}
     />
 };

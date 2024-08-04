@@ -184,3 +184,22 @@ export const formatDateToString = (date: Date | string | number | null, format =
 // Пример использования
 // Output: Date => '2024-07-13'
 
+export function getRussianDayOfWeek(day: string | null): string {
+    const daysOfWeek: { [key: string]: string } = {
+        Monday: 'Понедельник',
+        Tuesday: 'Вторник',
+        Wednesday: 'Среда',
+        Thursday: 'Четверг',
+        Friday: 'Пятница',
+        Saturday: 'Суббота',
+        Sunday: 'Воскресенье',
+    };
+
+    // Безопасный доступ с проверкой на null и существование ключа в объекте
+    return daysOfWeek?.[day!] || '';
+}
+
+
+// Пример использования
+// console.log(getRussianDayOfWeek('Monday')); // Понедельник
+// console.log(getRussianDayOfWeek('Friday')); // Пятница
