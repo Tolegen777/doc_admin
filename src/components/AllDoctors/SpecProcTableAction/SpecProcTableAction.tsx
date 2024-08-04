@@ -33,8 +33,10 @@ export const SpecProcTableAction = ({
 
     const isSpec = entityType === 'speciality'
 
+    console.log(procSpecList, 'BRO')
+
     const options =
-        selectOptionsParser(procSpecList ?? [], isSpec ? 'medical_speciality_title' : 'title', isSpec ? 'medical_speciality_id' : 'id')
+        selectOptionsParser(procSpecList ?? [], isSpec ? 'medical_speciality_title' : 'procedure_title', isSpec ? 'medical_speciality_id' : 'procedure_id')
 
     const entityTitle = entityType === "speciality" ? "специальность" : 'процедуру'
 

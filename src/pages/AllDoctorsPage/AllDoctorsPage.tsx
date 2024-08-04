@@ -2,7 +2,6 @@ import {useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
 import {CustomTable} from "../../components/Shared/CustomTable";
-import {useStateContext} from "../../contexts";
 import {ActionType, FormInitialFieldsParamsType, IGet} from "../../types/common";
 import {customNotification} from "../../utils/customNotification";
 import {Button, Drawer} from "antd";
@@ -14,6 +13,11 @@ import styles from './styles.module.scss';
 import {datePickerFormatter, formatDateToString} from "../../utils/date/getDates.ts";
 import AllDoctorAdditionalDataTable
     from "../../components/AllDoctors/AllDoctorAdditionalDataTable/AllDoctorAdditionalDataTable.tsx";
+import {IDoctor} from "../../types/doctor.ts";
+import {IFranchisePhoto} from "../../types/franchiseTypes.ts";
+import {PhotoForm} from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
+import AllDoctorWorkSchedulesPage
+    from "../../components/AllDoctors/AllDoctorWorkSchedulesPage/AllDoctorWorkSchedulesPage.tsx";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -62,10 +66,27 @@ const initialValues: FormInitialFieldsParamsType[] = [
     }
 ];
 
+const photoInitialValues: FormInitialFieldsParamsType[] = [
+    {
+        name: 'branch',
+        value: null,
+    },
+    {
+        name: 'doctor_profile',
+        value: null,
+    },
+    {
+        name: 'photo',
+        value: '',
+    },
+    {
+        name: 'title_code',
+        value: '',
+    },
+];
+
 const AllDoctorsPage = () => {
     const queryClient = useQueryClient();
-    const { state } = useStateContext();
-    const { addressId } = state;
     const [page, setPage] = useState(1);
     const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false);
     const [editEntity, setEditEntity] = useState<IAllDoctors | null>(null);
@@ -73,6 +94,16 @@ const AllDoctorsPage = () => {
     const [formType, setFormType] = useState<ActionType>('');
     const [activeDoctor, setActiveDoctor] = useState<IAllDoctors | null>(null);
     const [isOpenSpecs, setIsOpenSpecs] = useState(false);
+
+    const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
+
+    const [photosDrawerOpen, setPhotosDrawerOpen] = useState<boolean>(false);
+    const [photoFormType, setPhotoFormType] = useState<ActionType>('');
+    const [photoEditEntity, setPhotoEditEntity] = useState<IFranchisePhoto | null>(null);
+    const [photoModalOpen, setPhotoModalOpen] = useState<boolean>(false);
+    const [photoFormInitialFields, setPhotoFormInitialFields] = useState<FormInitialFieldsParamsType[]>(photoInitialValues);
+
+    const [scheduleModalOpen, setScheduleModalOpen] = useState<boolean>(false);
 
 
     const {
@@ -125,12 +156,61 @@ const AllDoctorsPage = () => {
         }
     });
 
+    const {
+        mutate: onPhotoCreateUpdate,
+        isPending: isPhotoCreateUpdateLoading,
+    } = useMutation({
+        mutationKey: ['createUpdatePhoto'],
+        mutationFn: ({doctor_profile, ...body}: any) => {
+            const url = body.id ?
+                `partners/franchise-info/all-doctors/${doctor_profile}/doctor-photos/${body?.id}/` :
+                `partners/franchise-info/all-doctors/${doctor_profile}/doctor-photos/`;
+            return axiosInstance({
+                method: body.id ? 'put' : 'post',
+                url,
+                data: body,
+            });
+        },
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: `Фото успешно ${photoFormType === 'update' ? 'изменено' : 'создано'}!`
+            });
+            queryClient.invalidateQueries({ queryKey: ['doctorPhotos', selectedDoctorId] });
+        },
+    });
+
+    const {
+        mutate: onPhotoDelete,
+        isPending: isPhotoDeleteLoading,
+    } = useMutation({
+        mutationKey: ['deletePhoto'],
+        mutationFn: ({ doctorId, photoId }: { doctorId: number, photoId: number }) =>
+            axiosInstance.delete(`partners/franchise-info/all-doctors/${doctorId}/doctor-photos/${photoId}/`),
+        onSuccess: () => {
+            customNotification({
+                type: 'success',
+                message: 'Фото успешно удалено!'
+            });
+            queryClient.invalidateQueries({ queryKey: ['doctorPhotos', selectedDoctorId] });
+        }
+    });
+
     const { data, isLoading } = useQuery({
         queryKey: ['doctorsData', page],
         queryFn: () =>
             axiosInstance
                 .get<IGet<IAllDoctors>>(`partners/franchise-info/all-doctors/`)
                 .then((response) => response?.data),
+    });
+
+    const { data: photos, isFetching: isPhotosLoading } = useQuery({
+        queryKey: ['doctorPhotos', selectedDoctorId],
+        queryFn: () =>
+            axiosInstance
+                .get<IFranchisePhoto[]>(`partners/franchise-info/all-doctors/${selectedDoctorId}/doctor-photos/`)
+                .then((response) => response?.data),
+        enabled: !!selectedDoctorId && photosDrawerOpen,
     });
 
     const onClose = () => {
@@ -189,7 +269,57 @@ const AllDoctorsPage = () => {
         setActiveDoctor(null)
     }
 
+    const openPhotosDrawer = (doctorId: number) => {
+        setPhotosDrawerOpen(true);
+        setSelectedDoctorId(doctorId);
+    };
+
+    const openSchedule = (doctorId: number) => {
+        setSelectedDoctorId(doctorId);
+        setScheduleModalOpen(true)
+    };
+
+    const closePhotosDrawer = () => {
+        setPhotosDrawerOpen(false);
+    };
+
+    const onOpenPhotoModal = (doctorId: number, photoData: any | null = null, type: ActionType) => {
+        setSelectedDoctorId(doctorId);
+        if (photoData) {
+            setPhotoFormInitialFields(changeFormFieldsData<object>(photoInitialValues, photoData));
+            setPhotoEditEntity(photoData);
+        } else {
+            setPhotoFormInitialFields(photoInitialValues);
+        }
+        setPhotoModalOpen(true);
+        setPhotoFormType(type);
+    };
+
+    const onSubmitPhotoModal = async (formData: any) => {
+        const payload = {
+            doctor_profile: selectedDoctorId,
+            photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
+            title_code: formData?.title_code
+        };
+        console.log(payload, 'PAYLOAAD')
+        onPhotoCreateUpdate(photoFormType === 'create' ? payload : {
+            id: photoEditEntity?.id,
+            ...payload
+        });
+        setPhotoModalOpen(false);
+    };
+
+    const handlePhotoDelete = (doctorId: number, photoId: number) => {
+        onPhotoDelete({ doctorId, photoId });
+    };
+
     const columns = [
+        {
+            title: 'Фото',
+            key: 'latest_photo',
+            dataIndex: 'latest_photo',
+            render: (photo: string) => <img src={photo} alt="doctor" style={{ width: 50, height: 50 }} />,
+        },
         {
             title: 'ФИО',
             key: 'full_name',
@@ -234,12 +364,6 @@ const AllDoctorsPage = () => {
             render: (branches: string[]) => branches.join(', '),
         },
         {
-            title: 'Фото',
-            key: 'latest_photo',
-            dataIndex: 'latest_photo',
-            render: (photo: string) => <img src={photo} alt="doctor" style={{ width: 50, height: 50 }} />,
-        },
-        {
             title: 'Редактировать',
             render: (data: IAllDoctors) => <Button
                 onClick={() => onOpenCreateUpdateModal(data, 'update')}
@@ -249,15 +373,31 @@ const AllDoctorsPage = () => {
             </Button>
         },
         {
-            title: 'Открыть специальности',
+            title: 'Специальности',
             key: 'action',
             render: (item: IAllDoctors) => (
                 <Button
                     onClick={() => handleSpecsOpen(item)}
                 >
-                    Открыть специальности
+                    Специальности
                 </Button>
             ),
+        },
+        {
+            title: 'Фотографии',
+            render: (data: IDoctor) => (
+                <Button onClick={() => openPhotosDrawer(data.id)}>
+                    Фотографии
+                </Button>
+            )
+        },
+        {
+            title: 'Расписание',
+            render: (data: IDoctor) => (
+                <Button onClick={() => openSchedule(data.id)}>
+                    Расписание
+                </Button>
+            )
         },
         {
             title: 'Удалить',
@@ -270,8 +410,87 @@ const AllDoctorsPage = () => {
         },
     ];
 
+    const photoColumns = [
+        {
+            title: 'ID',
+            key: 'id',
+            dataIndex: 'id',
+        },
+        {
+            title: 'Фото',
+            key: 'photo',
+            dataIndex: 'photo',
+            render: (photo: string) => <img src={photo} alt="фото" style={{ width: '100px' }} />,
+        },
+        {
+            title: 'Название',
+            key: 'title_code',
+            dataIndex: 'title_code',
+        },
+        {
+            title: 'Редактировать',
+            render: (photo: IFranchisePhoto) => <Button
+                onClick={() => onOpenPhotoModal(selectedDoctorId as number, photo, 'update')}
+                type={"primary"}
+            >
+                Редактировать
+            </Button>
+        },
+        {
+            title: 'Удалить',
+            render: (photo: IFranchisePhoto) => <Button
+                onClick={() => handlePhotoDelete(selectedDoctorId as number, photo.id)}
+                disabled={isPhotoDeleteLoading}
+            >
+                Удалить
+            </Button>
+        },
+    ];
+
     return (
         <>
+            <Drawer
+                title={photoFormInitialFields.some(field => field.name === 'id' && field.value) ? 'Редактирование фото' : 'Добавление фото'}
+                onClose={() => setPhotoModalOpen(false)}
+                open={photoModalOpen}
+                width="500px"
+            >
+                <PhotoForm
+                    initialFields={photoFormInitialFields}
+                    onSubmit={onSubmitPhotoModal}
+                    onClose={() => setPhotoModalOpen(false)}
+                    isLoading={isPhotoCreateUpdateLoading}
+                />
+            </Drawer>
+            <Drawer
+                title={'Расписание врача'}
+                onClose={() => setScheduleModalOpen(false)}
+                open={scheduleModalOpen}
+                width={'90%'}
+            >
+                <AllDoctorWorkSchedulesPage doctorId={selectedDoctorId as number}/>
+            </Drawer>
+            <Drawer
+                title="Фотографии"
+                onClose={closePhotosDrawer}
+                open={photosDrawerOpen}
+                width="600px"
+            >
+                <div className={styles.action}>
+                    <Button
+                        onClick={() => onOpenPhotoModal(selectedDoctorId as number, null, 'create')}
+                        type={"primary"}
+                        size={"large"}
+                    >
+                        Добавить фото
+                    </Button>
+                </div>
+                <CustomTable
+                    columns={photoColumns}
+                    dataSource={photos}
+                    loading={isPhotosLoading || isPhotoCreateUpdateLoading || isPhotoDeleteLoading}
+                />
+            </Drawer>
             <Drawer
                 title={formType === 'create' ? 'Создание врача' : 'Редактирование врача'}
                 onClose={onClose}

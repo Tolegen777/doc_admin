@@ -12,7 +12,7 @@ type Props = {
     initialFields: FormInitialFieldsParamsType[]
 }
 
-export const DoctorProcPriceCreateForm = ({form, onSubmit, initialFields}: Props) => {
+export const AllDoctorProcPriceCreateForm = ({form, onSubmit, initialFields}: Props) => {
 
     const {data, isLoading} = useQuery({
         queryKey: [

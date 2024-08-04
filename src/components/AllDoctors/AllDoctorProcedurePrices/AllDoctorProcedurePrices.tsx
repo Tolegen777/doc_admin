@@ -7,7 +7,7 @@ import {ICreatePrice, IDoctorProcPrice, IUpdatePrice} from "../../../types/docto
 import {useStateContext} from "../../../contexts";
 import {DoctorProcedure} from "../../../types/doctorSpec.ts";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
-import {DoctorProcPriceCreateForm} from "./DoctorProcPriceCreateForm/DoctorProcPriceCreateForm.tsx";
+import {AllDoctorProcPriceCreateForm} from "./AllDoctorProcPriceCreateForm/AllDoctorProcPriceCreateForm.tsx";
 import {FormInitialFieldsParamsType} from "../../../types/common.ts";
 import {changeFormFieldsData} from "../../../utils/changeFormFieldsData.ts";
 import {useParams} from "react-router-dom";
@@ -15,7 +15,8 @@ import {datePickerFormatter, formatDateTime} from "../../../utils/date/getDates.
 
 type Props = {
     activeSpecId: number | null,
-    activeProcId: number | null
+    activeProcId: number | null,
+    doctorId: number | null,
 }
 
 const initialValues: FormInitialFieldsParamsType[] = [
@@ -50,7 +51,7 @@ const initialValues: FormInitialFieldsParamsType[] = [
 ];
 
 
-const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) => {
+const AllDoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId, doctorId}) => {
 
     const {state} = useStateContext()
 
@@ -75,7 +76,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['createPrice'],
         mutationFn: (body: ICreatePrice) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/`, body),
+            axiosInstance.post(`partners/franchise-info/all-doctors/${doctorId}/doctor-specialities/${activeSpecId}/doctor-procedures/${activeProcId}/doctor-procedure-prices/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -92,7 +93,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['updatePrice'],
         mutationFn: ({id, ...body}: IUpdatePrice) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`, body)
+            return axiosInstance.put(`partners/franchise-info/all-doctors/${doctorId}/doctor-specialities/${activeSpecId}/doctor-procedures/${activeProcId}/doctor-procedure-prices/${id}`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -109,7 +110,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['deletePrice'],
         mutationFn: (id: number) =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`),
+            axiosInstance.delete(`partners/franchise-info/all-doctors/${doctorId}/doctor-specialities/${activeSpecId}/doctor-procedures/${activeProcId}/doctor-procedure-prices/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -133,9 +134,9 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         queryFn: () =>
             axiosInstance
                 .get<IDoctorProcPrice[]>(
-                    `partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices`)
+                    `partners/franchise-info/all-doctors/${doctorId}/doctor-specialities/${activeSpecId}/doctor-procedures/${activeProcId}/doctor-procedure-prices/`)
                 .then((response) => response?.data),
-        enabled: !!addressId && !!pathname?.id && !!activeProcId && !!activeSpecId
+        enabled: !!doctorId && !!activeProcId && !!activeSpecId
     });
 
     const handleCreateUpdatePrice = (values: any) => {
@@ -294,7 +295,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
                 footer={<></>}
                 onCancel={handleCloseModal}
             >
-                <DoctorProcPriceCreateForm
+                <AllDoctorProcPriceCreateForm
                     form={form}
                     onSubmit={handleCreateUpdatePrice}
                     initialFields={createUpdateFormInitialFields}
@@ -318,4 +319,4 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
 
 };
 
-export default DoctorProcedurePrices;
+export default AllDoctorProcedurePrices;

@@ -5,21 +5,21 @@ import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {useStateContext} from "../../../contexts";
 import {SpecProcTableAction} from "../SpecProcTableAction/SpecProcTableAction.tsx";
-import {
-    DoctorProcedure,
-    IAllSpec,
-    ICreateSpec,
-    IMedProcedures,
-    IPrice,
-    ISpec,
-    ISpecContent,
-    IUpdateSpec
-} from "../../../types/doctorSpec.ts";
+import {IAllSpec} from "../../../types/doctorSpec.ts";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {customNotification} from "../../../utils/customNotification.ts";
-import {ICreateProc, IProc, IUpdateProc} from "../../../types/doctorProc.ts";
-import DoctorProcedurePrices from "../DoctorProcedurePrices/DoctorProcedurePrices.tsx";
-import {AllAvailableMedicalProcedure, IAllDoctors, IAllDoctorSpec} from "../../../types/allDoctors.ts";
+import AllDoctorProcedurePrices from "../AllDoctorProcedurePrices/AllDoctorProcedurePrices.tsx";
+import {
+    AllAvailableMedicalProcedure,
+    AllCurrentPrice,
+    IAllCreateProc,
+    IAllCreateSpec,
+    IAllDoctorProcs,
+    IAllDoctors,
+    IAllDoctorSpec,
+    IAllUpdateProc,
+    IAllUpdateSpec
+} from "../../../types/allDoctors.ts";
 
 interface DataType {
     key: string;
@@ -55,8 +55,8 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         isPending: isSpecCreateLoading,
         isSuccess: createSpecSuccess
     } = useMutation({
-        mutationKey: ['createSpec'],
-        mutationFn: (body: ICreateSpec) =>
+        mutationKey: ['createAllSpec'],
+        mutationFn: (body: IAllCreateSpec) =>
             axiosInstance.post(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/`, body),
         onSuccess: () => {
             customNotification({
@@ -71,8 +71,8 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         isPending: isSpecUpdateLoading,
         isSuccess: updateSpecSuccess
     } = useMutation({
-        mutationKey: ['updateSpec'],
-        mutationFn: ({id, ...body}: IUpdateSpec) => {
+        mutationKey: ['updateAllSpec'],
+        mutationFn: ({id, ...body}: IAllUpdateSpec) => {
             return axiosInstance.put(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${id}`, body)
         },
         onSuccess: () => {
@@ -88,7 +88,7 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         isPending: isSpecDeleteLoading,
         isSuccess: deleteSpecSuccess
     } = useMutation({
-        mutationKey: ['deleteSpec'],
+        mutationKey: ['deleteAllSpec'],
         mutationFn: (id: number) =>
             axiosInstance.delete(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${id}`),
         onSuccess: () => {
@@ -105,9 +105,10 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         isPending: isProcCreateLoading,
         isSuccess: createProcSuccess
     } = useMutation({
-        mutationKey: ['createProc'],
-        mutationFn: (body: ICreateProc) =>
-            axiosInstance.post(`/api/v1/partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/`, body),
+        mutationKey: ['createAllProc'],
+        mutationFn: (body: IAllCreateProc) =>
+            axiosInstance.post(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/`, body),
+
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -121,9 +122,9 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         isPending: isProcUpdateLoading,
         isSuccess: updateProcSuccess
     } = useMutation({
-        mutationKey: ['updateProc'],
-        mutationFn: ({id, ...body}: IUpdateProc) => {
-            return axiosInstance.post(`/api/v1/partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/${id}`, body)
+        mutationKey: ['updateAllProc'],
+        mutationFn: ({id, ...body}: IAllUpdateProc) => {
+            return axiosInstance.put(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/${id}`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -138,9 +139,9 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         isPending: isProcDeleteLoading,
         isSuccess: deleteProcSuccess
     } = useMutation({
-        mutationKey: ['deleteProc'],
+        mutationKey: ['deleteAllProc'],
         mutationFn: (id: number) =>
-            axiosInstance.post(`/api/v1/partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/${id}`),
+            axiosInstance.delete(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -172,25 +173,27 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         queryKey: ['doctorProcsList', createProcSuccess, updateProcSuccess, deleteProcSuccess, activeSpecId, doctorDetails?.id, addressId],
         queryFn: () =>
             axiosInstance
-                .get<IProc[]>(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/`)
+                .get<IAllDoctorProcs[]>(`partners/franchise-info/all-doctors/${doctorDetails?.id}/doctor-specialities/${activeSpecId}/doctor-procedures/`)
                 .then((response) => response?.data),
         enabled: !!addressId && !!doctorDetails?.id && !!activeSpecId
     });
 
     // SPEC methods
-    const handleUpdateSpec = (id: number, specId: number, isActive: boolean) => {
+    const handleUpdateSpec = (id: number, isActive: boolean) => {
         const payload = {
             id: id,
-            med_spec_id: specId,
-            is_active: isActive
+            is_active: isActive,
+            // speciality: id,
+            // doctor: doctorDetails?.id as number
         }
         onUpdateSpec(payload)
     }
 
     const handleCreateSpec = (id: number) => {
         const payload = {
-            med_spec_id: id,
-            is_active: true
+            is_active: true,
+            speciality: id,
+            doctor: doctorDetails?.id as number
         }
 
         onCreateSpec(payload)
@@ -213,19 +216,19 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
     };
 
     // PROC methods
-    const handleUpdateProc = (id: number, procId: number, isActive: boolean) => {
+    const handleUpdateProc = (id: number, isActive: boolean) => {
         const payload = {
             id: id,
-            med_proc_id: procId,
-            is_active: isActive
+            is_active: isActive,
         }
         onUpdateProc(payload)
     }
 
     const handleCreateProc = (id: number) => {
         const payload = {
-            med_proc_id: id,
-            is_active: true
+            is_active: true,
+            procedure: id,
+            doctor: doctorDetails?.id as number
         }
 
         onCreateProc(payload)
@@ -259,7 +262,7 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
             const doctorSpecIds = specs?.map(item => item?.doctor_speciality_id);
             return allSpecsList?.filter(item => !doctorSpecIds?.includes(item?.medical_speciality_id))
         } else {
-            const doctorProcIds = procs?.map(item => item?.med_proc_info?.id);
+            const doctorProcIds = procs?.map(item => item?.id);
             return allProcs?.filter(item => !doctorProcIds?.includes(item?.procedure_id))
         }
     }
@@ -289,10 +292,10 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         {
             title: 'Активность',
             key: 'is_active',
-            render: (item: ISpec) => (
+            render: (item: IAllDoctorSpec) => (
                 <Switch
                     checked={item?.is_active}
-                    onChange={() => handleUpdateSpec(item?.id, item?.speciality?.id, !item?.is_active)}
+                    onChange={() => handleUpdateSpec(item?.doctor_speciality_id, !item?.is_active)}
                     disabled={isSpecUpdateLoading}
                 />
             ),
@@ -300,9 +303,9 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         {
             title: 'Удалить',
             key: 'action',
-            render: (item: ISpec) => (
+            render: (item: IAllDoctorSpec) => (
                 <Button
-                    onClick={() => handleDeleteSpec(item?.id)}
+                    onClick={() => handleDeleteSpec(item?.doctor_speciality_id)}
                     disabled={isSpecDeleteLoading}
                 >
                     Удалить
@@ -331,23 +334,58 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         },
         {
             title: 'Название процедуры',
-            dataIndex: 'med_proc_info',
-            key: 'med_proc_info',
-            render: (item: IMedProcedures) => <div>{item?.title}</div>
+            dataIndex: 'procedure_title',
+            key: 'procedure_title',
         },
         {
-            title: 'Конечная стоимость услуги',
-            dataIndex: 'price',
-            key: 'price',
-            render: (doctor_procedures: IPrice) => <div>{doctor_procedures?.final_price} Тг</div>
+            title: 'Количество цен',
+            dataIndex: 'price_count',
+            key: 'price_count',
         },
+        {
+            title: 'Конечная стоимость',
+            dataIndex: 'current_price',
+            key: 'price',
+            render: (price: AllCurrentPrice) => <div>{price?.final_price} Тг</div>,
+        },
+        {
+            title: 'Стандартная цена',
+            dataIndex: 'current_price',
+            key: 'default_price',
+            render: (price: AllCurrentPrice) => <div>{price?.default_price} Тг</div>,
+        },
+        {
+            title: 'Скидка',
+            dataIndex: 'current_price',
+            key: 'discount',
+            render: (price: AllCurrentPrice) => <div>{price?.discount}%</div>,
+        },
+        {
+            title: 'Для детей',
+            dataIndex: 'current_price',
+            key: 'is_for_children',
+            render: (price: AllCurrentPrice) => <div>{price?.is_for_children ? 'Да' : 'Нет'}</div>,
+        },
+        {
+            title: 'Возраст ребенка (от)',
+            key: 'child_age_from',
+            dataIndex: 'current_price',
+            render: (price: AllCurrentPrice) => <div>{price?.child_age_from || '-'}</div>,
+        },
+        {
+            title: 'Возраст ребенка (до)',
+            key: 'child_age_to',
+            dataIndex: 'current_price',
+            render: (price: AllCurrentPrice) => <div>{price?.child_age_to || '-'}</div>,
+        },
+
         {
             title: 'Активность',
             key: 'is_active',
-            render: (item: DoctorProcedure) => (
+            render: (item: IAllDoctorProcs) => (
                 <Switch
                     checked={item?.is_active}
-                    onChange={() => handleUpdateProc(item?.id, item?.med_proc_info?.id, !item?.is_active)}
+                    onChange={() => handleUpdateProc(item?.id, !item?.is_active)}
                     disabled={isProcUpdateLoading}
                 />
             ),
@@ -355,7 +393,7 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
         {
             title: 'Удалить',
             key: 'action',
-            render: (item: DoctorProcedure) => (
+            render: (item: IAllDoctorProcs) => (
                 <Button
                     onClick={() => handleDeleteProc(item?.id)}
                     disabled={isProcDeleteLoading}
@@ -365,11 +403,11 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
             ),
         },
         {
-            title: 'Открыть цены процедуры',
+            title: 'Открыть цены',
             key: 'action',
-            render: (item: DoctorProcedure) => (
+            render: (item: IAllDoctorProcs) => (
                 <Button
-                    onClick={() => handleOpenProcedurePrices(item?.id, item?.med_proc_info?.title)}
+                    onClick={() => handleOpenProcedurePrices(item?.id, item?.procedure_title)}
                     disabled={isSpecDeleteLoading}
                 >
                     Открыть цены процедуры
@@ -410,7 +448,8 @@ const AllDoctorAdditionalDataTable = ({doctorDetails}: Props) => {
             open={isPriceOpen}
             width={'90%'}
         >
-            <DoctorProcedurePrices activeSpecId={activeSpecId} activeProcId={activeProcId}/>
+            <AllDoctorProcedurePrices activeSpecId={activeSpecId} activeProcId={activeProcId}
+                                      doctorId={doctorDetails?.id ?? null}/>
         </Drawer>
     </>
 };
