@@ -9,6 +9,8 @@ export interface IAllDoctors {
     rating: number
     clinic_branches: string[]
     latest_photo: string
+    city_id: string
+    category_id: string
 }
 
 export interface ICreateDoctors {

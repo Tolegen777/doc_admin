@@ -274,7 +274,9 @@ const AllDoctorsPage = () => {
             setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, {
                 ...data,
                 // @ts-ignore
-                works_since: datePickerFormatter(data?.works_since ?? '')
+                works_since: datePickerFormatter(data?.works_since ?? ''),
+                city: parseInt(data?.city_id),
+                category: parseInt(data?.category_id)
             }))
         }
 
