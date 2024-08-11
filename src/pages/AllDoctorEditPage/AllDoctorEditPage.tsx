@@ -119,10 +119,11 @@ const AllDoctorEditPage = () => {
                 .get<IAllDoctors>(`partners/franchise-info/all-doctors/${pathname?.id}`)
                 .then((response) => {
                     if (response) {
+                        // debugger
                         setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, {
                             ...response?.data,
                             // @ts-ignore
-                            works_since: datePickerFormatter(response?.data?.works_since ?? ''),
+                            works_since: response?.data?.works_since ? datePickerFormatter(response?.data?.works_since) : null,
                             city: parseInt(response?.data?.city_id),
                             category: parseInt(response?.data?.category_id)
                         }))
@@ -138,15 +139,15 @@ const AllDoctorEditPage = () => {
                 ...formData,
                 id: parseInt(pathname?.id ?? ''),
                 // @ts-ignore
-                works_since: formatDateToString(formData?.works_since?.$d ?? null) ?? ''
+                works_since: formData?.works_since?.$d ? formatDateToString(formData?.works_since?.$d ?? null) : null
             };
-
+            // @ts-ignore
             onUpdate(payload);
         } else {
             onCreate({
                 ...formData,
                 // @ts-ignore
-                works_since: formatDateToString(formData?.works_since?.$d ?? null) ?? ''
+                works_since: formData?.works_since?.$d ? formatDateToString(formData?.works_since?.$d ?? null) : null
             });
         }
 
