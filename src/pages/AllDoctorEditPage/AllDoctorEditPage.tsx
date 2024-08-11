@@ -28,7 +28,7 @@ const initialValues: FormInitialFieldsParamsType[] = [
     },
     {
         name: 'description',
-        value: null,
+        value: '',
     },
     {
         name: 'city',
@@ -48,15 +48,15 @@ const initialValues: FormInitialFieldsParamsType[] = [
     },
     {
         name: 'for_child',
-        value: null,
+        value: false,
     },
     {
         name: 'is_active',
-        value: null,
+        value: false,
     },
     {
         name: 'is_top',
-        value: null,
+        value: false,
     }
 ];
 
