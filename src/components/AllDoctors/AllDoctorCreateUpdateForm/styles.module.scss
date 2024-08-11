@@ -1,6 +1,23 @@
 .container {
   padding-bottom: 40px;
   box-sizing: border-box;
+
+  &_fields {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &_swith_fields {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
 }
 
 .action {

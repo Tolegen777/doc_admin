@@ -10,7 +10,7 @@ import {IAllDoctors, ICreateDoctors, IUpdateDoctors} from "../../types/allDoctor
 import AllDoctorCreateUpdateForm
     from "../../components/AllDoctors/AllDoctorCreateUpdateForm/AllDoctorCreateUpdateForm.tsx";
 import styles from './styles.module.scss';
-import {datePickerFormatter, formatDateToString} from "../../utils/date/getDates.ts";
+import {formatDateToString} from "../../utils/date/getDates.ts";
 import AllDoctorAdditionalDataTable
     from "../../components/AllDoctors/AllDoctorAdditionalDataTable/AllDoctorAdditionalDataTable.tsx";
 import {IDoctor} from "../../types/doctor.ts";
@@ -23,6 +23,7 @@ import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
 import {IAllSpec} from "../../types/doctorSpec.ts";
 import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
 import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
+import {useNavigate} from "react-router-dom";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -92,6 +93,7 @@ const photoInitialValues: FormInitialFieldsParamsType[] = [
 
 const AllDoctorsPage = () => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false);
     const [editEntity, setEditEntity] = useState<IAllDoctors | null>(null);
@@ -268,21 +270,21 @@ const AllDoctorsPage = () => {
         setFormType('');
     };
 
-    const onOpenCreateUpdateModal = (data: IAllDoctors | null, type: ActionType) => {
-        if (data && type === 'update') {
-            setEditEntity(data);
-            setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, {
-                ...data,
-                // @ts-ignore
-                works_since: datePickerFormatter(data?.works_since ?? ''),
-                city: parseInt(data?.city_id),
-                category: parseInt(data?.category_id)
-            }))
-        }
-
-        setFormType(type);
-        setCreateUpdateModalOpen(true);
-    };
+    // const onOpenCreateUpdateModal = (data: IAllDoctors | null, type: ActionType) => {
+    //     if (data && type === 'update') {
+    //         setEditEntity(data);
+    //         setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, {
+    //             ...data,
+    //             // @ts-ignore
+    //             works_since: datePickerFormatter(data?.works_since ?? ''),
+    //             city: parseInt(data?.city_id),
+    //             category: parseInt(data?.category_id)
+    //         }))
+    //     }
+    //
+    //     setFormType(type);
+    //     setCreateUpdateModalOpen(true);
+    // };
 
     const onSubmitCreateUpdateModal = async (formData: ICreateDoctors) => {
         if (formType === 'update') {
@@ -437,7 +439,7 @@ const AllDoctorsPage = () => {
         {
             title: 'Редактировать',
             render: (data: IAllDoctors) => <Button
-                onClick={() => onOpenCreateUpdateModal(data, 'update')}
+                onClick={() => navigate( `${data?.id as number}`)}
                 type={"primary"}
             >
                 Редактировать
@@ -587,7 +589,7 @@ const AllDoctorsPage = () => {
             <div className={styles.container}>
                 <div className={styles.action}>
                     <Button
-                        onClick={() => onOpenCreateUpdateModal(null, 'create')}
+                        onClick={() => navigate( 'create')}
                         type={'primary'}
                         size={"large"}
                     >
