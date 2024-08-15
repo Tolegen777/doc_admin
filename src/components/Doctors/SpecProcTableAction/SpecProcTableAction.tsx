@@ -68,6 +68,7 @@ export const SpecProcTableAction = ({
                         onChange={(value: number) => {
                             setValue(value)
                         }}
+                        loading={isLoading}
                     />
                     <Button
                         type={"primary"}

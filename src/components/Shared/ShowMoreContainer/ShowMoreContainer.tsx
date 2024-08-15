@@ -4,11 +4,13 @@ import {DownOutlined, UpOutlined} from "@ant-design/icons";
 import {ReactNode, useState} from "react";
 
 type Props = {
-    children: ReactNode
+    children: ReactNode,
+    showButton?: boolean
 }
 
 const ShowMoreContainer = ({
-                               children
+                               children,
+    showButton = true
                            }: Props) => {
 
     const [showAllTimeSlots, setShowAllTimeSlots] = useState(false);
@@ -19,14 +21,14 @@ const ShowMoreContainer = ({
                 {children}
             </div>
             <div className={styles.action}>
-                <Button
+                {showButton && <Button
                     type={'text'}
                     icon={showAllTimeSlots ? <UpOutlined/> : <DownOutlined/>}
                     onClick={() => setShowAllTimeSlots(prevState => !prevState)}
                     style={{color: '#459BFF'}}
                 >
                     {showAllTimeSlots ? 'Скрыть' : 'Показать еще'}
-                </Button>
+                </Button>}
             </div>
         </div>
     );

@@ -90,7 +90,7 @@ const Header = () => {
                 </div>
             </div>
             <div className={styles.container_action}>
-                <Button onClick={() => router('/all-doctors')}>
+                <Button onClick={() => router('/all2-doctors')}>
                     Показать все врачи клиники
                 </Button>
                 <div>
