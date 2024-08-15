@@ -13,6 +13,7 @@ import FranchisePage from "../pages/FranchisePage/FranchisePage.tsx";
 import AmenitiesPage from "../pages/AmenityPage/AmenityPage.tsx";
 import AllDoctorsPage from "../pages/AllDoctorsPage/AllDoctorsPage.tsx";
 import AllDoctorEditPage from "../pages/AllDoctorEditPage/AllDoctorEditPage.tsx";
+import DoctorsPage2 from "../pages/DoctorsPage2/DoctorsPage2.tsx";
 
 export const routesList = [
   {
@@ -30,6 +31,14 @@ export const routesList = [
   {
     path: '/doctors',
     element: <DoctorsPage />,
+  },
+  {
+    path: '/all2-doctors',
+    element: <DoctorsPage2 />,
+  },
+  {
+    path: '/all2-doctors/:id',
+    element: <DoctorsPage2 />,
   },
   {
     path: '/all-doctors',

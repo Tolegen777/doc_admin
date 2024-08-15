@@ -74,21 +74,22 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
             }]
         },
         {
-            name: 'category',
+            name: 'categories',
             element: <Select
-                placeholder="Выберите категорию врача"
+                placeholder="Выберите категорий врача"
                 options={options}
                 showSearch
                 allowClear
                 loading={categoryLoading}
                 popupMatchSelectWidth={false}
                 style={{width: '600px'}}
+                mode={"multiple"}
             />,
-            label: 'Категория врача',
-            rules: [{
-                required: true,
-                message: 'Обязательное поле!'
-            }],
+            label: 'Категорий врача',
+            // rules: [{
+            //     required: true,
+            //     message: 'Обязательное поле!'
+            // }],
         },
         {
             name: 'city',

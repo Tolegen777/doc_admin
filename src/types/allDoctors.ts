@@ -1,3 +1,4 @@
+
 export interface IAllDoctors {
     id: number
     full_name: string
@@ -11,6 +12,7 @@ export interface IAllDoctors {
     latest_photo: string
     city_id: string
     category_id: string
+    categories?: ICategory2[]
 }
 
 export interface ICreateDoctors {
@@ -19,7 +21,7 @@ export interface ICreateDoctors {
     patronymic_name: string,
     description: string,
     city: number,
-    category: number,
+    categories: string[],
     gender: string,
     works_since: string,
     for_child: boolean,
@@ -127,4 +129,10 @@ export interface ICreateAllDoctorSchedule {
 
 export interface IUpdateAllDoctorSchedule extends ICreateAllDoctorSchedule{
     id: number
+}
+
+export interface ICategory2 {
+    doctor_category_id: number,
+    doctor_category_title: string,
+    doctor_category_slug: string
 }

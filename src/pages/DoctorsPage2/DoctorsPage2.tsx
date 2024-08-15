@@ -1,53 +1,50 @@
-import {useState} from "react";
+import {CustomTable} from "../../components/Shared/CustomTable";
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {axiosInstance} from "../../api";
-import {CustomTable} from "../../components/Shared/CustomTable";
-import {ActionType, FormInitialFieldsParamsType, IGet} from "../../types/common";
-import {customNotification} from "../../utils/customNotification";
+import {IDoctor} from "../../types/doctor.ts";
+import {useState} from "react";
+import {ActionType, FormInitialFieldsParamsType, IGet} from "../../types/common.ts";
 import {Button, Drawer, Tag} from "antd";
-import {changeFormFieldsData} from "../../utils/changeFormFieldsData";
-import {IAllDoctors, ICategory2, ICreateDoctors, IUpdateDoctors} from "../../types/allDoctors.ts";
-import AllDoctorCreateUpdateForm
-    from "../../components/AllDoctors/AllDoctorCreateUpdateForm/AllDoctorCreateUpdateForm.tsx";
+import {useNavigate} from "react-router-dom";
+import {DoctorCreateForm} from "../../components/Doctors/DoctorCreateForm/DoctorCreateForm.tsx";
+import {customNotification} from "../../utils/customNotification.ts";
 import styles from './styles.module.scss';
 import {formatDateToString} from "../../utils/date/getDates.ts";
-import AllDoctorAdditionalDataTable
-    from "../../components/AllDoctors/AllDoctorAdditionalDataTable/AllDoctorAdditionalDataTable.tsx";
-import {IDoctor} from "../../types/doctor.ts";
-import {IFranchise, IFranchisePhoto} from "../../types/franchiseTypes.ts";
 import {PhotoForm} from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
+import {IFranchise, IFranchisePhoto} from "../../types/franchiseTypes.ts";
+import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
+import {IAllDoctors, ICategory2, ICreateDoctors} from "../../types/allDoctors.ts";
+import {IAllSpec} from "../../types/doctorSpec.ts";
+import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
+import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
+import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
+import AllDoctorsFilter from "../../components/AllDoctors/AllDoctorsFilter/AllDoctorsFilter.tsx";
 import AllDoctorWorkSchedulesPage
     from "../../components/AllDoctors/AllDoctorWorkSchedulesPage/AllDoctorWorkSchedulesPage.tsx";
-import AllDoctorsFilter from "../../components/AllDoctors/AllDoctorsFilter/AllDoctorsFilter.tsx";
-import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
-import {IAllSpec} from "../../types/doctorSpec.ts";
-import {objectToQueryParams} from "../../utils/objectToQueryParams.ts";
-import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
-import {useNavigate} from "react-router-dom";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
         name: 'first_name',
-        value: null,
+        value: '',
     },
     {
         name: 'last_name',
-        value: null,
+        value: '',
     },
     {
         name: 'patronymic_name',
-        value: null,
+        value: '',
     },
     {
         name: 'description',
-        value: null,
+        value: '',
+    },
+    {
+        name: 'categories',
+        value: [],
     },
     {
         name: 'city',
-        value: null,
-    },
-    {
-        name: 'category',
         value: null,
     },
     {
@@ -56,15 +53,15 @@ const initialValues: FormInitialFieldsParamsType[] = [
     },
     {
         name: 'works_since',
-        value: null,
+        value: '',
     },
     {
         name: 'for_child',
-        value: null,
+        value: false,
     },
     {
         name: 'is_active',
-        value: null,
+        value: false,
     },
     {
         name: 'is_top',
@@ -91,46 +88,23 @@ const photoInitialValues: FormInitialFieldsParamsType[] = [
     },
 ];
 
-const AllDoctorsPage = () => {
+const DoctorsPage2 = () => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+
     const [page, setPage] = useState(1);
     const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false);
-    const [editEntity, setEditEntity] = useState<IAllDoctors | null>(null);
     const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues);
-    const [formType, setFormType] = useState<ActionType>('');
-    const [activeDoctor, setActiveDoctor] = useState<IAllDoctors | null>(null);
-    const [isOpenSpecs, setIsOpenSpecs] = useState(false);
-
+    const [photoModalOpen, setPhotoModalOpen] = useState<boolean>(false);
+    const [photoFormInitialFields, setPhotoFormInitialFields] = useState<FormInitialFieldsParamsType[]>(photoInitialValues);
     const [selectedDoctorId, setSelectedDoctorId] = useState<number | null>(null);
-
     const [photosDrawerOpen, setPhotosDrawerOpen] = useState<boolean>(false);
     const [photoFormType, setPhotoFormType] = useState<ActionType>('');
     const [photoEditEntity, setPhotoEditEntity] = useState<IFranchisePhoto | null>(null);
-    const [photoModalOpen, setPhotoModalOpen] = useState<boolean>(false);
-    const [photoFormInitialFields, setPhotoFormInitialFields] = useState<FormInitialFieldsParamsType[]>(photoInitialValues);
-
-    const [scheduleModalOpen, setScheduleModalOpen] = useState<boolean>(false);
 
     const [params, setParams] = useState<string>('');
 
-
-    const {
-        mutate: onUpdate,
-        isPending: isUpdateLoading,
-    } = useMutation({
-        mutationKey: ['updateDoctor'],
-        mutationFn: ({id, ...body}: IUpdateDoctors) => {
-            return axiosInstance.put(`partners/franchise-info/all-doctors/${id}/`, body);
-        },
-        onSuccess: () => {
-            customNotification({
-                type: 'success',
-                message: 'Данные врача успешно обновлены!'
-            });
-            queryClient.invalidateQueries({queryKey: ['doctorsData']});
-        },
-    });
+    const [scheduleModalOpen, setScheduleModalOpen] = useState<boolean>(false);
 
     const {
         mutate: onCreate,
@@ -150,7 +124,7 @@ const AllDoctorsPage = () => {
     });
 
     const {
-        mutate: onDelete,
+        mutate: onDeleteDoctor,
         isPending: isDeleteLoading,
     } = useMutation({
         mutationKey: ['deleteDoctor'],
@@ -257,78 +231,22 @@ const AllDoctorsPage = () => {
         refetchOnMount: false,
     });
 
-
     const clinicOptions = selectOptionsParser(clinics?.results ?? [], 'title', 'id')
     const cityOptions = selectOptionsParser(cities ?? [], 'title', 'id')
     const specOptions = selectOptionsParser(allSpecsList ?? [], 'medical_speciality_title', 'medical_speciality_id')
     const categoryOptions = selectOptionsParser(categories ?? [], 'title', 'doctor_category_id')
 
-    const onClose = () => {
-        setCreateUpdateModalOpen(false);
-        setCreateUpdateFormInitialFields(initialValues);
-        setEditEntity(null);
-        setFormType('');
-    };
-
-    // const onOpenCreateUpdateModal = (data: IAllDoctors | null, type: ActionType) => {
-    //     if (data && type === 'update') {
-    //         setEditEntity(data);
-    //         setCreateUpdateFormInitialFields(changeFormFieldsData(initialValues, {
-    //             ...data,
-    //             // @ts-ignore
-    //             works_since: datePickerFormatter(data?.works_since ?? ''),
-    //             city: parseInt(data?.city_id),
-    //             category: parseInt(data?.category_id)
-    //         }))
-    //     }
-    //
-    //     setFormType(type);
-    //     setCreateUpdateModalOpen(true);
-    // };
-
-    const onSubmitCreateUpdateModal = async (formData: ICreateDoctors) => {
-        if (formType === 'update') {
-            const payload = {
-                ...formData,
-                id: editEntity?.id as number,
-                // @ts-ignore
-                works_since: formatDateToString(formData?.works_since?.$d ?? null) ?? ''
-            };
-
-            onUpdate(payload);
-        } else {
-            onCreate({
-                ...formData,
-                // @ts-ignore
-                works_since: formatDateToString(formData?.works_since?.$d ?? null) ?? ''
-            });
-        }
-
-        onClose();
+    const handleGoEditPage = (doctorDetails: IAllDoctors) => {
+        navigate(`/all2-doctors/${doctorDetails?.id}`);
     };
 
     const handleDelete = (id: number) => {
-        onDelete(id);
+        onDeleteDoctor(id);
     };
-
-    const handleSpecsOpen = (doctor: IAllDoctors | null) => {
-        setIsOpenSpecs(true)
-        setActiveDoctor(doctor)
-    }
-
-    const handleSpecsClose = () => {
-        setIsOpenSpecs(false)
-        setActiveDoctor(null)
-    }
 
     const openPhotosDrawer = (doctorId: number) => {
         setPhotosDrawerOpen(true);
         setSelectedDoctorId(doctorId);
-    };
-
-    const openSchedule = (doctorId: number) => {
-        setSelectedDoctorId(doctorId);
-        setScheduleModalOpen(true)
     };
 
     const closePhotosDrawer = () => {
@@ -362,7 +280,26 @@ const AllDoctorsPage = () => {
     };
 
     const handlePhotoDelete = (doctorId: number, photoId: number) => {
-        onPhotoDelete({doctorId, photoId});
+        onPhotoDelete({ doctorId, photoId });
+    };
+
+    const onClose = () => {
+        setCreateUpdateModalOpen(false);
+        setCreateUpdateFormInitialFields(initialValues);
+    };
+
+    // const onOpenCreateUpdateModal = () => {
+    //     setCreateUpdateModalOpen(true);
+    // };
+
+    const onSubmitCreateUpdateModal = async (formData: ICreateDoctors) => {
+        const payload = {
+            ...formData,
+            // @ts-ignore
+            works_since: formatDateToString(formData?.works_since?.$d) ?? '',
+        };
+        onCreate(payload);
+        onClose();
     };
 
     const handleFilter = (formData: any) => {
@@ -373,6 +310,11 @@ const AllDoctorsPage = () => {
             setParams(`&${urlParams}`)
         }
     }
+
+    const openSchedule = (doctorId: number) => {
+        setSelectedDoctorId(doctorId);
+        setScheduleModalOpen(true)
+    };
 
     const columns = [
         {
@@ -451,23 +393,23 @@ const AllDoctorsPage = () => {
         {
             title: 'Редактировать',
             render: (data: IAllDoctors) => <Button
-                onClick={() => navigate( `${data?.id as number}`)}
+                onClick={() => handleGoEditPage(data)}
                 type={"primary"}
             >
                 Редактировать
             </Button>
         },
-        {
-            title: 'Специальности',
-            key: 'action',
-            render: (item: IAllDoctors) => (
-                <Button
-                    onClick={() => handleSpecsOpen(item)}
-                >
-                    Специальности
-                </Button>
-            ),
-        },
+        // {
+        //     title: 'Специальности',
+        //     key: 'action',
+        //     render: (item: IAllDoctors) => (
+        //         <Button
+        //             onClick={() => handleSpecsOpen(item)}
+        //         >
+        //             Специальности
+        //         </Button>
+        //     ),
+        // },
         {
             title: 'Фотографии',
             render: (data: IDoctor) => (
@@ -533,7 +475,21 @@ const AllDoctorsPage = () => {
     ];
 
     return (
-        <div className={styles.wrapper}>
+        <>
+            <Drawer
+                title={'Создание врача'}
+                onClose={onClose}
+                open={createUpdateModalOpen}
+                width="90%"
+            >
+                <DoctorCreateForm
+                    formType={'create'}
+                    initialFields={createUpdateFormInitialFields}
+                    onSubmit={onSubmitCreateUpdateModal}
+                    onClose={onClose}
+                    isLoading={isCreateLoading}
+                />
+            </Drawer>
             <Drawer
                 title={photoFormInitialFields.some(field => field.name === 'id' && field.value) ? 'Редактирование фото' : 'Добавление фото'}
                 onClose={() => setPhotoModalOpen(false)}
@@ -559,11 +515,11 @@ const AllDoctorsPage = () => {
                 title="Фотографии"
                 onClose={closePhotosDrawer}
                 open={photosDrawerOpen}
-                width={'80%'}
+                width="80%"
             >
                 <div className={styles.action}>
                     <Button
-                        onClick={() => onOpenPhotoModal(selectedDoctorId as number, null, 'create')}
+                        onClick={() => onOpenPhotoModal(selectedDoctorId as number, null,  'create')}
                         type={"primary"}
                         size={"large"}
                     >
@@ -576,31 +532,10 @@ const AllDoctorsPage = () => {
                     loading={isPhotosLoading || isPhotoCreateUpdateLoading || isPhotoDeleteLoading}
                 />
             </Drawer>
-            <Drawer
-                title={formType === 'create' ? 'Создание врача' : 'Редактирование врача'}
-                onClose={onClose}
-                open={createUpdateModalOpen}
-                width="800px"
-            >
-                <AllDoctorCreateUpdateForm
-                    formType={formType}
-                    initialFields={createUpdateFormInitialFields}
-                    onSubmit={onSubmitCreateUpdateModal}
-                    onClose={onClose}
-                    isLoading={isUpdateLoading || isCreateLoading}
-                />
-            </Drawer>
-            <Drawer
-                title={`Выбранный врач: ${activeDoctor?.full_name}`}
-                onClose={handleSpecsClose}
-                open={isOpenSpecs}
-                width={'90%'}
-            >
-                <AllDoctorAdditionalDataTable doctorDetails={activeDoctor}/>
-            </Drawer>
             <div className={styles.container}>
                 <div className={styles.action}>
                     <Button
+                        // onClick={onOpenCreateUpdateModal}
                         onClick={() => navigate( 'create')}
                         type={'primary'}
                         size={"large"}
@@ -618,20 +553,18 @@ const AllDoctorsPage = () => {
                     citiesLoading={citiesLoading}
                     specLoading={allSpecLoading}
                     onFilter={handleFilter}
-
                 />
                 <CustomTable
                     columns={columns}
                     dataSource={data?.results}
                     loading={isLoading}
                     setPage={setPage}
-                    pagination={false}
-                    current={page}
                     total={data?.count ?? 0}
+                    current={page}
                 />
             </div>
-        </div>
+        </>
     );
 };
 
-export default AllDoctorsPage;
+export default DoctorsPage2;
