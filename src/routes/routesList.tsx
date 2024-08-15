@@ -14,6 +14,8 @@ import AmenitiesPage from "../pages/AmenityPage/AmenityPage.tsx";
 import AllDoctorsPage from "../pages/AllDoctorsPage/AllDoctorsPage.tsx";
 import AllDoctorEditPage from "../pages/AllDoctorEditPage/AllDoctorEditPage.tsx";
 import DoctorsPage2 from "../pages/DoctorsPage2/DoctorsPage2.tsx";
+import DoctorEditPage2 from "../pages/DoctorEditPage2/DoctorEditPage2.tsx";
+import DescriptionFragmentPage from "../pages/DescriptionFragmentPage/DescriptionFragmentPage.tsx";
 
 export const routesList = [
   {
@@ -38,7 +40,19 @@ export const routesList = [
   },
   {
     path: '/all2-doctors/:id',
-    element: <DoctorsPage2 />,
+    element: <DoctorEditPage2 />,
+  },
+  {
+    path: '/all2-doctors/:id/survey',
+    element: <AllDoctorEditPage />,
+  },
+  {
+    path: '/all2-doctors/:id/description',
+    element: <DescriptionFragmentPage />,
+  },
+  {
+    path: '/all2-doctors/create',
+    element: <AllDoctorEditPage />,
   },
   {
     path: '/all-doctors',

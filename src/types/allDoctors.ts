@@ -13,6 +13,14 @@ export interface IAllDoctors {
     city_id: string
     category_id: string
     categories?: ICategory2[]
+    is_active?: boolean
+    description_fragments?: {
+        id:      number;
+        doctor:  number;
+        title:   string;
+        content: string;
+        number:  number;
+    }[]
 }
 
 export interface ICreateDoctors {

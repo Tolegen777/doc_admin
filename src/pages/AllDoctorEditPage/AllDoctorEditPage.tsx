@@ -27,10 +27,10 @@ const initialValues: FormInitialFieldsParamsType[] = [
         name: 'patronymic_name',
         value: null,
     },
-    {
-        name: 'description',
-        value: '',
-    },
+    // {
+    //     name: 'description',
+    //     value: '',
+    // },
     {
         name: 'city',
         value: null,

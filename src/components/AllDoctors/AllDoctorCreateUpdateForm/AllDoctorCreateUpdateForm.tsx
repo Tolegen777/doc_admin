@@ -1,8 +1,8 @@
-import { Button, Form, Input, Select, DatePicker, Space, Switch } from 'antd';
+import {Button, DatePicker, Form, Input, Select, Switch} from 'antd';
 import styles from './styles.module.scss';
-import { ActionType, FormInitialFieldsParamsType } from "../../../types/common";
-import { useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "../../../api";
+import {ActionType, FormInitialFieldsParamsType} from "../../../types/common";
+import {useQuery} from "@tanstack/react-query";
+import {axiosInstance} from "../../../api";
 import {selectOptionsParser} from "../../../utils/selectOptionsParser.ts";
 
 type Props = {
@@ -155,17 +155,17 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
         },
     ]
 
-    const textareaFields = [
-        {
-            name: 'description',
-            element: <Input.TextArea placeholder="Введите описание" rows={12} />,
-            label: 'Описание',
-            rules: [{
-                required: true,
-                message: 'Обязательное поле!'
-            }]
-        },
-    ]
+    // const textareaFields = [
+    //     {
+    //         name: 'description',
+    //         element: <Input.TextArea placeholder="Введите описание" rows={12} />,
+    //         label: 'Описание',
+    //         rules: [{
+    //             required: true,
+    //             message: 'Обязательное поле!'
+    //         }]
+    //     },
+    // ]
 
     return (
         <div className={styles.container}>
@@ -199,17 +199,17 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
                         </Form.Item>
                     ))}
                 </div>
-                <Space size="small" direction="vertical" style={{ width: '100%', boxSizing: 'border-box', padding: '0 30px' }}>
-                    {textareaFields.map(field => (
-                        <Form.Item
-                            key={field.name}
-                            name={field.name}
-                            label={field.label}
-                        >
-                            {field.element}
-                        </Form.Item>
-                    ))}
-                </Space>
+                {/*<Space size="small" direction="vertical" style={{ width: '100%', boxSizing: 'border-box', padding: '0 30px' }}>*/}
+                {/*    {textareaFields.map(field => (*/}
+                {/*        <Form.Item*/}
+                {/*            key={field.name}*/}
+                {/*            name={field.name}*/}
+                {/*            label={field.label}*/}
+                {/*        >*/}
+                {/*            {field.element}*/}
+                {/*        </Form.Item>*/}
+                {/*    ))}*/}
+                {/*</Space>*/}
             </Form>
             <div className={styles.action}>
                 <Button

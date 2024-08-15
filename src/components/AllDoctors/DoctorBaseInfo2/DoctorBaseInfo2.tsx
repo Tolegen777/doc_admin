@@ -1,15 +1,14 @@
 import styles from './styles.module.scss'
-import userIcon from '../../../assets/userIcon.svg'
 import GapContainer from "../../Shared/GapContainer/GapContainer.tsx";
 import {Button} from "antd";
 import {useNavigate} from "react-router-dom";
-import {IDoctor} from "../../../types/doctor.ts";
+import {IAllDoctors} from "../../../types/allDoctors.ts";
 
 type Props = {
-    doctorDetails: IDoctor | undefined
+    doctorDetails:  IAllDoctors | undefined
 }
 
-const DoctorBaseInfo = ({doctorDetails}: Props) => {
+const DoctorBaseInfo2 = ({doctorDetails}: Props) => {
 
     const navigate = useNavigate()
 
@@ -17,10 +16,14 @@ const DoctorBaseInfo = ({doctorDetails}: Props) => {
         navigate('survey')
     };
 
+    const onGoToDescriptionPage = () => {
+        navigate('description')
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.container_avatar}>
-                <img src={userIcon} alt='' width={100} height={100}/>
+                <img src={doctorDetails?.latest_photo} alt=''/>
             </div>
             <div className={styles.container_info}>
                 <div className={styles.container_info_title}>
@@ -28,10 +31,10 @@ const DoctorBaseInfo = ({doctorDetails}: Props) => {
                 </div>
                 <div className={styles.container_specs}>
                     {doctorDetails?.specialities.map((item, index) => <div
-                            key={item?.doctor_profile_id}
+                            key={index}
                             className={styles.container_info_sub_title}
                         >
-                            {item?.medical_speciality_title}{index + 1 < doctorDetails?.specialities?.length ? ',': ''}
+                            {item}{index + 1 < doctorDetails?.specialities?.length ? ',': ''}
                         </div>
                     )}
                 </div>
@@ -50,9 +53,16 @@ const DoctorBaseInfo = ({doctorDetails}: Props) => {
                 >
                     Редактировать анкетные данные
                 </Button>
+                <Button
+                    type={"primary"}
+                    onClick={onGoToDescriptionPage}
+                    className={styles.container_info_edit}
+                >
+                    {doctorDetails?.description_fragments ? 'Изменить описание' : 'Добавить описание'}
+                </Button>
             </div>
         </div>
     );
 };
 
-export default DoctorBaseInfo;
+export default DoctorBaseInfo2;

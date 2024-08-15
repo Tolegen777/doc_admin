@@ -1,29 +1,25 @@
-import DoctorBaseInfo from "../../components/Doctors/DoctorBaseInfo/DoctorBaseInfo.tsx";
 import DoctorAdditionalDataTable
     from "../../components/Doctors/DoctorAdditionalDataTable/DoctorAdditionalDataTable.tsx";
 import styles from './styles.module.scss'
 import {axiosInstance} from "../../api";
-import {IDoctor} from "../../types/doctor.ts";
-import {useStateContext} from "../../contexts";
 import {useQuery} from "@tanstack/react-query";
 import {useParams} from "react-router-dom";
 import {FullSpinner} from "../../components/Shared/FullSpinner";
+import {IAllDoctors} from "../../types/allDoctors.ts";
+import DoctorBaseInfo2 from "../../components/AllDoctors/DoctorBaseInfo2/DoctorBaseInfo2.tsx";
 
 const DoctorEditPage2 = () => {
-
-    const {state} = useStateContext()
-
     const pathname = useParams()
 
-    const {addressId} = state
-
     const { data, isLoading } = useQuery({
-        queryKey: ['doctorByIDData', addressId, pathname?.id],
+        queryKey: ['allDoctorByIDData', pathname?.id],
         queryFn: () =>
             axiosInstance
-                .get<IDoctor>(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}`)
-                .then((response) => response?.data),
-        enabled: !!addressId
+                .get<IAllDoctors>(`partners/franchise-info/all-doctors/${pathname?.id}`)
+                .then((response) => {
+                    return response?.data
+                }),
+        enabled: !!pathname?.id?.length
     });
 
     if (isLoading) {
@@ -32,7 +28,8 @@ const DoctorEditPage2 = () => {
 
     return (
         <div className={styles.container}>
-            <DoctorBaseInfo doctorDetails={data} />
+            <DoctorBaseInfo2 doctorDetails={data} />
+            {/*// @ts-ignore*/}
             <DoctorAdditionalDataTable doctorDetails={data}/>
         </div>
     );
