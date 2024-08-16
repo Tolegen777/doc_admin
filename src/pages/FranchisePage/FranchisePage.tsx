@@ -375,7 +375,7 @@ const FranchisePage = () => {
     return (
         <>
             <Drawer
-                title={formType === 'create' ? 'Создание франшизы' : 'Редактирование франшизы'}
+                title={formType === 'create' ? 'Создание филиала' : 'Редактирование филиала'}
                 onClose={onClose}
                 open={createUpdateModalOpen}
                 width="500px"

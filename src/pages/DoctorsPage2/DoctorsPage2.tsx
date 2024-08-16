@@ -237,7 +237,7 @@ const DoctorsPage2 = () => {
     const categoryOptions = selectOptionsParser(categories ?? [], 'title', 'doctor_category_id')
 
     const handleGoEditPage = (doctorDetails: IAllDoctors) => {
-        navigate(`/all2-doctors/${doctorDetails?.id}`);
+        navigate(`/all-doctors/${doctorDetails?.id}`);
     };
 
     const handleDelete = (id: number) => {

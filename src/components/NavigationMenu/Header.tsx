@@ -30,10 +30,10 @@ const items: MenuItem[] = [
         label: 'Врачи',
         key: '/doctors',
     },
-    {
-        label: 'Франшизы',
-        key: '/franchises',
-    },
+    // {
+    //     label: 'Франшизы',
+    //     key: '/franchises',
+    // },
     // {
     //     label: 'Удобства франшизы',
     //     key: '/amenities',

@@ -35,27 +35,27 @@ export const routesList = [
     element: <DoctorsPage />,
   },
   {
-    path: '/all2-doctors',
+    path: '/all-doctors',
     element: <DoctorsPage2 />,
   },
   {
-    path: '/all2-doctors/:id',
+    path: '/all-doctors/:id',
     element: <DoctorEditPage2 />,
   },
   {
-    path: '/all2-doctors/:id/survey',
+    path: '/all-doctors/:id/survey',
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/all2-doctors/:id/description',
+    path: '/all-doctors/:id/description',
     element: <DescriptionFragmentPage />,
   },
   {
-    path: '/all2-doctors/create',
+    path: '/all-doctors/create',
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/all-doctors',
+    path: '/all2-doctors',
     element: <AllDoctorsPage />,
   },
   {
@@ -73,11 +73,11 @@ export const routesList = [
     element: <DoctorEditPage />,
   },
   {
-    path: '/all-doctors/:id',
+    path: '/all2-doctors/:id',
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/all-doctors/create',
+    path: '/all2-doctors/create',
     element: <AllDoctorEditPage />,
   },
   {
