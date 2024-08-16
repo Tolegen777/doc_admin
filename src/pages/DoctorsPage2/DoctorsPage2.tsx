@@ -485,6 +485,7 @@ const DoctorsPage2 = () => {
                 <DoctorCreateForm
                     formType={'create'}
                     initialFields={createUpdateFormInitialFields}
+                    // @ts-ignore
                     onSubmit={onSubmitCreateUpdateModal}
                     onClose={onClose}
                     isLoading={isCreateLoading}
