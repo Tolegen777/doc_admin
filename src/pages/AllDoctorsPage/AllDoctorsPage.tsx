@@ -396,7 +396,7 @@ const AllDoctorsPage = () => {
             key: 'categories',
             dataIndex: 'categories',
             render: (categories: ICategory2[]) => {
-                return <ShowMoreContainer showButton={!!categories?.length}>
+                return <ShowMoreContainer>
                     <div className={styles.tag_wrapper}>
                         {categories?.map((item, index) => <Tag key={index} color="#108ee9">{item?.doctor_category_title}</Tag>)}
                     </div>

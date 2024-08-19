@@ -19,10 +19,12 @@
     "debounce": "^2.0.0",
     "moment": "^2.30.1",
     "prettier": "^3.2.5",
+    "quill": "^2.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-mouse-select": "^1.1.2",
     "react-query": "^3.39.3",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {

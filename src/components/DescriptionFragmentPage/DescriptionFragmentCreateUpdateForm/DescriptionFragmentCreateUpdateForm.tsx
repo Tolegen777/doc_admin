@@ -1,4 +1,7 @@
 import { Button, Form, Input, InputNumber, Space } from 'antd';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Подключаем стили Quill
+import { useState } from 'react';
 import styles from './styles.module.scss';
 import { ActionType, FormInitialFieldsParamsType } from "../../../types/common.ts";
 
@@ -20,21 +23,13 @@ export const DescriptionFragmentCreateUpdateForm = (props: Props) => {
     } = props;
 
     const [form] = Form.useForm();
+    const [content, setContent] = useState('');
 
     const formFields = [
         {
             name: 'title',
             element: <Input placeholder="Введите заголовок" />,
             label: 'Заголовок',
-            rules: [{
-                required: true,
-                message: 'Обязательное поле!'
-            }]
-        },
-        {
-            name: 'content',
-            element: <Input.TextArea placeholder="Введите контент" />,
-            label: 'Контент',
             rules: [{
                 required: true,
                 message: 'Обязательное поле!'
@@ -49,7 +44,32 @@ export const DescriptionFragmentCreateUpdateForm = (props: Props) => {
                 message: 'Обязательное поле!'
             }]
         },
+        {
+            name: 'content',
+            element: (
+                <ReactQuill
+                    value={content}
+                    onChange={setContent}
+                    placeholder="Введите контент"
+                />
+            ),
+            label: 'Контент',
+            rules: [{
+                required: true,
+                message: 'Обязательное поле!'
+            }]
+        },
     ];
+
+    const handleSubmit = () => {
+        form.validateFields().then(values => {
+            const payload = {
+                ...values,
+                content,
+            };
+            onSubmit(payload, formType);
+        });
+    };
 
     return (
         <div className={styles.container}>
@@ -57,7 +77,6 @@ export const DescriptionFragmentCreateUpdateForm = (props: Props) => {
                 fields={initialFields}
                 form={form}
                 layout="vertical"
-                onFinish={value => onSubmit(value, formType)}
                 className={styles.form}
             >
                 <Space size="small" direction="vertical" style={{ width: '100%' }}>
@@ -81,7 +100,7 @@ export const DescriptionFragmentCreateUpdateForm = (props: Props) => {
                     Отмена
                 </Button>
                 <Button
-                    onClick={form.submit}
+                    onClick={handleSubmit}
                     type={"primary"}
                     disabled={isLoading}
                     size={"large"}
