@@ -1,10 +1,10 @@
-import type { FC } from 'react'
-import { ConfigProvider } from 'antd';
-import { BrowserRouter } from 'react-router-dom';
-import { AppRoutes } from './routes/AppRoutes';
+import type {FC} from 'react'
+import {ConfigProvider} from 'antd';
+import {BrowserRouter} from 'react-router-dom';
+import {AppRoutes} from './routes/AppRoutes';
 
 
-const App: FC = () =>  (
+const App: FC = () => (
     <ConfigProvider
         theme={{
             token: {
@@ -13,6 +13,9 @@ const App: FC = () =>  (
             },
             components: {
                 Input: {
+                    controlHeight: 44
+                },
+                InputNumber: {
                     controlHeight: 44
                 },
                 Select: {
@@ -25,7 +28,7 @@ const App: FC = () =>  (
         }}
     >
         <BrowserRouter>
-            <AppRoutes />
+            <AppRoutes/>
         </BrowserRouter>
     </ConfigProvider>
 )

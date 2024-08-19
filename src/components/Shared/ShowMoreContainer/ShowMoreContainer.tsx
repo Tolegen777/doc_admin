@@ -1,37 +1,61 @@
+'use client';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import styles from './styles.module.scss';
-import {Button} from "antd";
-import {DownOutlined, UpOutlined} from "@ant-design/icons";
-import {ReactNode, useState} from "react";
+import clsx from 'clsx';
 
-type Props = {
-    children: ReactNode,
-    showButton?: boolean
+interface PropsType {
+    children: ReactNode;
 }
 
-const ShowMoreContainer = ({
-                               children,
-    showButton = true
-                           }: Props) => {
+const SHOW_MORE_CONTAINER_MAX_HEIGHT = 40;
 
-    const [showAllTimeSlots, setShowAllTimeSlots] = useState(false);
+const ShowMoreContainer = ({ children }: PropsType) => {
+    const [isOverflow, setIsOverflow] = useState(false);
+    const [showMore, setShowMore] = useState(false);
+
+    const ref = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const checkOverflow = () => {
+            const current = ref.current;
+            if (current) {
+                const { scrollHeight } = current;
+                setIsOverflow(scrollHeight > SHOW_MORE_CONTAINER_MAX_HEIGHT);
+            }
+        };
+
+        checkOverflow();
+
+        // Перепроверка переполнения при изменении размеров окна
+        window.addEventListener('resize', checkOverflow);
+        return () => {
+            window.removeEventListener('resize', checkOverflow);
+        };
+    }, [children]);
 
     return (
-        <div className={styles.timeSlotsContainer}>
-            <div className={`${styles.timeSlots} ${showAllTimeSlots ? styles.showAll : ''}`}>
+        <div className={styles.container}>
+            <div
+                ref={ref}
+                className={clsx(styles.text, {
+                    [styles.text_full]: showMore,
+                    [styles.text_hideLines]: isOverflow && !showMore,
+                })}
+            >
                 {children}
             </div>
-            <div className={styles.action}>
-                {showButton && <Button
-                    type={'text'}
-                    icon={showAllTimeSlots ? <UpOutlined/> : <DownOutlined/>}
-                    onClick={() => setShowAllTimeSlots(prevState => !prevState)}
-                    style={{color: '#459BFF'}}
+            {isOverflow && (
+                <p
+                    className={clsx(styles.moreButton, {
+                        [styles.moreButton_open]: showMore,
+                    })}
+                    onClick={() => setShowMore(!showMore)}
                 >
-                    {showAllTimeSlots ? 'Скрыть' : 'Показать еще'}
-                </Button>}
-            </div>
+                    {showMore ? 'Скрыть' : 'Показать еще'}
+                </p>
+            )}
         </div>
     );
 };
 
-export default ShowMoreContainer;
+export default ShowMoreContainer

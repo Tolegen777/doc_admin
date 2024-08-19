@@ -16,6 +16,7 @@ import {
     DescriptionFragmentCreateUpdateForm
 } from "../../components/DescriptionFragmentPage/DescriptionFragmentCreateUpdateForm/DescriptionFragmentCreateUpdateForm.tsx";
 import {useParams} from "react-router-dom";
+import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -114,6 +115,8 @@ const DescriptionFragmentPage = () => {
         if (data && type === 'update') {
             setEditEntity(data);
             setCreateUpdateFormInitialFields(changeFormFieldsData<object>(initialValues, data));
+        } else {
+            setCreateUpdateFormInitialFields(initialValues)
         }
 
         setFormType(type);
@@ -150,7 +153,7 @@ const DescriptionFragmentPage = () => {
             dataIndex: 'id',
         },
         {
-            title: 'Доктор',
+            title: 'Идентификатор врача',
             key: 'doctor',
             dataIndex: 'doctor',
         },
@@ -163,6 +166,9 @@ const DescriptionFragmentPage = () => {
             title: 'Контент',
             key: 'content',
             dataIndex: 'content',
+            render: (item: string) => <ShowMoreContainer>
+                <div dangerouslySetInnerHTML={{__html: item}}/>
+            </ShowMoreContainer>
         },
         {
             title: 'Номер',
@@ -195,7 +201,7 @@ const DescriptionFragmentPage = () => {
                 title={formType === 'create' ? 'Создание фрагмента описания' : 'Редактирование фрагмента описания'}
                 onClose={onClose}
                 open={createUpdateModalOpen}
-                width="500px"
+                width="80%"
             >
                 <DescriptionFragmentCreateUpdateForm
                     formType={formType}

@@ -1,55 +1,26 @@
-.timeSlotsContainer {
-  display: flex;
-  gap: 5px;
-  flex-wrap: wrap;
-  padding: 5px;
+.container {
+  position: relative;
 }
 
-.timeSlots {
-  display: flex;
-  flex-wrap: wrap;
-  max-height: 50px;
+.text {
+  max-height: 100%;
   overflow: hidden;
-  transition: max-height 0.3s ease;
-  width: 100%;
-  justify-content: center;
+  word-break: break-all;
+  transition: max-height 0.3s ease; // Плавный переход высоты
+
+  &_hideLines {
+    max-height: 40px; // Ограничение высоты для скрытия части текста
+  }
+
+  &_full {
+    max-height: 1000px; // Достаточно большое значение для отображения всего текста
+  }
 }
 
-.timeSlots.showAll {
-  max-height: 1000px; // Достаточно большое значение для отображения всех таймслотов
-}
-
-.timeSlot {
-  width: 54px;
-  height: 27px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ccc;
-  margin: 5px;
-  background-color: #ffffff;
-  border-radius: 6px;
-  color: #FF6200;
+.moreButton {
   cursor: pointer;
-}
-
-.toggleButton {
-  margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #0070f3;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.toggleButton:hover {
-  background-color: #005bb5;
-}
-
-.action {
-  width: 100%;
+  color: #5BA2F2;
   display: flex;
-  align-items: center;
   justify-content: center;
+  margin-top: 10px; // Отступ сверху для разделения кнопки от текста
 }
