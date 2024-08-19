@@ -5,7 +5,7 @@ import {axiosInstance} from "../../api";
 import {ActionType, FormInitialFieldsParamsType} from "../../types/common.ts";
 import {useState} from "react";
 import {customNotification} from "../../utils/customNotification.ts";
-import {Button, Drawer} from "antd";
+import {Button, Modal} from "antd";
 import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
 import {
     IDescriptionFragment,
@@ -197,10 +197,11 @@ const DescriptionFragmentPage = () => {
 
     return (
         <>
-            <Drawer
+            <Modal
                 title={formType === 'create' ? 'Создание фрагмента описания' : 'Редактирование фрагмента описания'}
-                onClose={onClose}
+                footer={<></>}
                 open={createUpdateModalOpen}
+                onCancel={onClose}
                 width="80%"
             >
                 <DescriptionFragmentCreateUpdateForm
@@ -210,7 +211,7 @@ const DescriptionFragmentPage = () => {
                     onClose={onClose}
                     isLoading={isUpdateLoading || isCreateLoading}
                 />
-            </Drawer>
+            </Modal>
             <div className={styles.container}>
                 <div className={styles.title_wrap}>
                     <div className={styles.title}>
