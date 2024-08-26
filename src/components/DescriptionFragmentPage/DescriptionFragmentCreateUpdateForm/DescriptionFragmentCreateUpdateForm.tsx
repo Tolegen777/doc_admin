@@ -68,6 +68,7 @@ export const DescriptionFragmentCreateUpdateForm = (props: Props) => {
                 content,
             };
             onSubmit(payload, formType);
+            form.resetFields()
         });
     };
 
