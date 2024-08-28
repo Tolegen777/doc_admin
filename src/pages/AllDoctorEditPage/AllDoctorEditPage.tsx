@@ -11,7 +11,6 @@ import {IAllDoctors, ICreateDoctors, IUpdateDoctors} from "../../types/allDoctor
 import {datePickerFormatter, formatDateToString} from "../../utils/date/getDates.ts";
 import {customNotification} from "../../utils/customNotification.ts";
 import {changeFormFieldsData} from "../../utils/changeFormFieldsData.ts";
-import {selectOptionsParser} from "../../utils/selectOptionsParser.ts";
 
 
 const initialValues: FormInitialFieldsParamsType[] = [
@@ -126,7 +125,7 @@ const AllDoctorEditPage = () => {
                             // @ts-ignore
                             works_since: response?.data?.works_since ? datePickerFormatter(response?.data?.works_since) : null,
                             city: parseInt(response?.data?.city_id),
-                            categories: selectOptionsParser(response?.data?.categories ?? [], 'doctor_category_title', 'doctor_category_id')
+                            categories: response?.data?.categories?.map(item => item?.doctor_category_id)
                         }))
                     }
                     return response?.data
