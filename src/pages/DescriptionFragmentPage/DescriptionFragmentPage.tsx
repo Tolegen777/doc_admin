@@ -115,8 +115,6 @@ const DescriptionFragmentPage = () => {
         if (data && type === 'update') {
             setEditEntity(data);
             setCreateUpdateFormInitialFields(changeFormFieldsData<object>(initialValues, data));
-        } else {
-            setCreateUpdateFormInitialFields(initialValues)
         }
 
         setFormType(type);
