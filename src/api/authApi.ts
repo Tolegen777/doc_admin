@@ -23,7 +23,9 @@ export const authApi = {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         // Обработка ошибок, связанных с axios
-        const errorMessage = error.response?.data?.find((item: string) => item)
+        console.log(error, 'KKK')
+        const errorMessage = error.response?.data?.detail?.find((item: string) => item)
+        console.log(errorMessage, 'LLL')
         if (errorMessage === 'Refresh token is invalid or expired') {
           customConfirmAction({
             message: 'Время вашего сеанса истекло, пожалуйста, войдите снова!',
