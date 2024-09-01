@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {useState} from "react";
-import {Button, Drawer} from "antd";
+import {Button, Modal} from "antd";
 import {axiosInstance} from "../../../api";
 import {customNotification} from "../../../utils/customNotification.ts";
 import {ActionType, FormInitialFieldsParamsType, IGet} from "../../../types/common.ts";
@@ -19,6 +19,7 @@ import {
     getRussianDayOfWeek,
     removeSeconds
 } from "../../../utils/date/getDates.ts";
+import {useParams} from "react-router-dom";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -35,12 +36,12 @@ const initialValues: FormInitialFieldsParamsType[] = [
     },
 ];
 
-type Props = {
-    doctorId: number
-}
-
-const DoctorWorkSchedulesPage = ({ doctorId }: Props) => {
+const DoctorWorkSchedulesPage = () => {
     const queryClient = useQueryClient();
+    const pathname = useParams()
+
+    const doctorId = pathname?.id
+
     const [page, setPage] = useState(1);
     const [createUpdateModalOpen, setCreateUpdateModalOpen] = useState<boolean>(false);
     const [editEntity, setEditEntity] = useState<IAllDoctorSchedule | null>(null);
@@ -223,11 +224,12 @@ const DoctorWorkSchedulesPage = ({ doctorId }: Props) => {
 
     return (
         <>
-            <Drawer
+            <Modal
                 title={formType === 'create' ? 'Создание расписания' : 'Редактирование расписания'}
-                onClose={onClose}
+                footer={<></>}
                 open={createUpdateModalOpen}
-                width="500px"
+                onCancel={onClose}
+                width="80%"
             >
                 <DoctorWorkScheduleCreateUpdateForm
                     formType={formType}
@@ -240,7 +242,7 @@ const DoctorWorkSchedulesPage = ({ doctorId }: Props) => {
                     clinics={clinics ?? null}
                     workingHours={workingHours ?? []}
                 />
-            </Drawer>
+            </Modal>
             <div className={styles.container}>
                 <div className={styles.action}>
                     <Button

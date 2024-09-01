@@ -553,7 +553,7 @@ const AllDoctorsPage = () => {
                 open={scheduleModalOpen}
                 width={'90%'}
             >
-                <AllDoctorWorkSchedulesPage doctorId={selectedDoctorId as number}/>
+                <AllDoctorWorkSchedulesPage/>
             </Drawer>
             <Drawer
                 title="Фотографии"

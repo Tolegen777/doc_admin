@@ -20,6 +20,14 @@ const DoctorBaseInfo2 = ({doctorDetails}: Props) => {
         navigate('description')
     };
 
+    const onGoToDoctorSchedulePage = () => {
+        navigate('schedule')
+    }
+
+    const onGoToDoctorPhotoPage = () => {
+        navigate('photo')
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.container_avatar}>
@@ -46,20 +54,40 @@ const DoctorBaseInfo2 = ({doctorDetails}: Props) => {
                         <div className={styles.container_info_sub_title}>{doctorDetails?.is_active ? 'Активен' : 'Неактивен'}</div>
                         {/*<Switch checked={doctorData?.is_active} onChange={onChange}/>*/}
                     </div>
-                <Button
-                    type={"primary"}
-                    onClick={onClick}
-                    className={styles.container_info_edit}
-                >
-                    Редактировать анкетные данные
-                </Button>
-                <Button
-                    type={"primary"}
-                    onClick={onGoToDescriptionPage}
-                    className={styles.container_info_edit}
-                >
-                    {doctorDetails?.description_fragments ? 'Изменить описание' : 'Добавить описание'}
-                </Button>
+                <div className={styles.container_actions}>
+                    <div>
+                        <Button
+                            type={"primary"}
+                            onClick={onClick}
+                            className={styles.container_info_edit}
+                        >
+                            Редактировать анкетные данные
+                        </Button>
+                        <Button
+                            type={"primary"}
+                            onClick={onGoToDescriptionPage}
+                            className={styles.container_info_edit}
+                        >
+                            {doctorDetails?.description_fragments ? 'Изменить описание' : 'Добавить описание'}
+                        </Button>
+                    </div>
+                    <div>
+                        <Button
+                            type={"primary"}
+                            onClick={onGoToDoctorSchedulePage}
+                            className={styles.container_info_edit}
+                        >
+                            {'Управление расписанием врача'}
+                        </Button>
+                        <Button
+                            type={"primary"}
+                            onClick={onGoToDoctorPhotoPage}
+                            className={styles.container_info_edit}
+                        >
+                            {'Управление фотографиями врача'}
+                        </Button>
+                    </div>
+                </div>
             </div>
         </div>
     );

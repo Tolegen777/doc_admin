@@ -5,6 +5,7 @@
   display: flex;
   align-items: center;
   gap: 15px;
+  max-width: 70%;
 
   &_avatar {
     border-radius: 100%;
@@ -54,5 +55,11 @@
       margin-top: 30px;
       width: 300px;
     }
+  }
+
+  &_actions {
+    display: flex;
+    align-items: center;
+    width: 620px;
   }
 }
