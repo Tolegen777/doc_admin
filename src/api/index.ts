@@ -116,6 +116,7 @@ axiosInstance.interceptors.response.use(
         if (errorStatus !== 401) {
             const errorMessage = error?.response?.data?.non_field_errors?.find((item: string) => item) ||
                 error?.response?.data?.errors?.non_field_errors?.find((item: string) => item) ||
+                error?.response?.data?.detail?.non_field_errors?.join('') ||
                 error?.response?.data?.detail ||
                 error?.response?.data?.error
 
