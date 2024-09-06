@@ -1,4 +1,4 @@
-import { Button, Form, Input, Upload, Space } from 'antd';
+import {Button, Form, Input, Upload, Space, Switch} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import styles from './styles.module.scss';
 import {FormInitialFieldsParamsType} from "../../../types/common.ts";
@@ -57,9 +57,9 @@ export const PhotoForm = (props: Props) => {
                 form={form}
                 layout="vertical"
                 onFinish={(values) => {
+                    onSubmit(values)
                     form.resetFields(['title_code', 'photo'])
                     setFileList([])
-                    onSubmit(values)
                 }}
                 className={styles.form}
                 fields={initialFields}
@@ -71,6 +71,14 @@ export const PhotoForm = (props: Props) => {
                         rules={[{ required: true, message: 'Обязательное поле!' }]}
                     >
                         <Input placeholder="Введите название фото" />
+                    </Form.Item>
+                    <Form.Item
+                        name="is_main"
+                        label="Главная фотография"
+                        rules={[{ required: true, message: 'Обязательное поле!' }]}
+                        valuePropName={'checked'}
+                    >
+                        <Switch/>
                     </Form.Item>
                     <Form.Item
                         name="photo"

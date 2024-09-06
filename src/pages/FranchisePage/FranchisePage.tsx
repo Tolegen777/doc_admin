@@ -14,6 +14,7 @@ import {
 } from "../../components/Franchise/FranchiseCreateUpdateForm/FranchiseCreateUpdateForm.tsx";
 import {PhotoForm} from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
 import {CityTypes} from "../../types/cityTypes.ts";
+import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
 
 const initialValues: FormInitialFieldsParamsType[] = [
     {
@@ -54,6 +55,10 @@ const photoInitialValues: FormInitialFieldsParamsType[] = [
     {
         name: 'title_code',
         value: '',
+    },
+    {
+        name: 'is_main',
+        value: false,
     },
 ];
 
@@ -219,7 +224,6 @@ const FranchisePage = () => {
 
     const onOpenPhotoModal = (branchId: number, photoData: any | null = null, type: ActionType) => {
         setSelectedBranchId(branchId);
-        debugger
         if (photoData) {
             setPhotoFormInitialFields(changeFormFieldsData<object>(photoInitialValues, photoData));
             setPhotoEditEntity(photoData);
@@ -249,8 +253,9 @@ const FranchisePage = () => {
     const onSubmitPhotoModal = async (formData: any) => {
         const payload = {
             branch: selectedBranchId,
-            photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
-            title_code: formData?.title_code
+            photo: Array.isArray(formData?.photo) ? formData?.photo?.find((item: any) => item)?.thumbUrl : formData?.photo,
+            title_code: formData?.title_code,
+            is_main: !!formData?.is_main
         };
         onPhotoCreateUpdate(photoFormType === 'create' ? payload : {
             id: photoEditEntity?.id,
@@ -291,6 +296,12 @@ const FranchisePage = () => {
             title: 'Описание',
             key: 'description',
             dataIndex: 'description',
+            render: (item: string) => <ShowMoreContainer>
+                <div
+                    style={{width: 300}}
+                    dangerouslySetInnerHTML={{__html: item}}
+                />
+            </ShowMoreContainer>,
         },
         {
             title: 'Адрес',
@@ -394,7 +405,7 @@ const FranchisePage = () => {
                 title={photoFormInitialFields.some(field => field.name === 'id' && field.value) ? 'Редактирование фото' : 'Добавление фото'}
                 onClose={onClosePhotoModal}
                 open={photoModalOpen}
-                width="500px"
+                width="600px"
             >
                 <PhotoForm
                     initialFields={photoFormInitialFields}
@@ -407,7 +418,7 @@ const FranchisePage = () => {
                 title="Фотографии"
                 onClose={closePhotosDrawer}
                 open={photosDrawerOpen}
-                width="600px"
+                width="70%"
             >
                 <div className={styles.action}>
                     <Button
