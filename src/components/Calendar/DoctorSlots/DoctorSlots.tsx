@@ -106,6 +106,15 @@ const DoctorSlots: React.FC<Props> = memo(({slots, doctorName, doctorId, dates})
         if (panel_colour === 'white') {
             setActionType('create')
             setActiveWorkDate(work_date)
+            dispatch({
+                type: 'SET_SLOT_DATA',
+                payload: {
+                    doctorId: doctorId,
+                    workScheduleId: doctor_work_schedule_object_id,
+                    title: `${doctorName}, ${formatDateToDayMonth(work_date ?? '')}`,
+                    panelColor: panel_colour
+                }
+            });
         } else {
             setActionType('update')
             dispatch({
