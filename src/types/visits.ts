@@ -21,6 +21,11 @@ export interface IVisit {
     visit_time_slot: string
     created_at: string
     updated_at: string
+
+    status?: {
+        id: number,
+        status_title: string
+    }
 }
 
 

@@ -39,30 +39,10 @@ const initialValues: FormInitialFieldsParamsType[] = [
         name: 'approved',
         value: false,
     },
-    // {
-    //     name: 'doctor_id',
-    //     value: null,
-    // },
-    // {
-    //     name: 'doctor_procedure_id',
-    //     value: null,
-    // },
-    // {
-    //     name: 'visit_time_id',
-    //     value: null,
-    // },
-    // {
-    //     name: 'clinic_branch_id',
-    //     value: null,
-    // },
-    // {
-    //     name: 'patient_id',
-    //     value: null,
-    // },
-    // {
-    //     name: 'status_id',
-    //     value: null,
-    // },
+    {
+        name: 'status_id',
+        value: null,
+    },
 ];
 
 
@@ -119,7 +99,8 @@ const VisitsPage = () => {
             setCreateUpdateFormInitialFields(changeFormFieldsData<object>(initialValues,
                 {
                     ...data,
-                    date: datePickerFormatter(data?.date ?? '')
+                    date: datePickerFormatter(data?.date ?? ''),
+                    status_id: data?.status?.id
                 }
             ))
         }

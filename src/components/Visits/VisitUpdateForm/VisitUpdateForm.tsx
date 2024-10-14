@@ -1,6 +1,9 @@
-import {Button, DatePicker, Form, Input, Space, Switch} from 'antd';
+import {Button, DatePicker, Form, Input, Select, Space, Switch} from 'antd';
 import styles from './styles.module.scss'
 import {ActionType, FormInitialFieldsParamsType} from "../../../types/common.ts";
+import {axiosInstance} from "../../../api";
+import {selectOptionsParser} from "../../../utils/selectOptionsParser.ts";
+import {useQuery} from "@tanstack/react-query";
 
 type Props = {
     formType: ActionType
@@ -23,6 +26,17 @@ export const VisitUpdateForm = (props: Props) => {
 
     const [form] = Form.useForm();
 
+    const { data: statuses, isLoading: statusLoading } = useQuery({
+        queryKey: ['doctorStatuses'],
+        queryFn: () =>
+            axiosInstance
+                .get('partners/visit-statuses/')
+                .then((response) => response.data),
+        refetchOnMount: false,
+    });
+
+    const options = selectOptionsParser(statuses ?? [], 'status_title', 'id')
+
     const formFields = [
         // {
         //     name: 'clinic_branch_id',
@@ -34,11 +48,18 @@ export const VisitUpdateForm = (props: Props) => {
         //     element: <Input type="number" placeholder="Введите ID пациента" />,
         //     label: 'ID пациента'
         // },
-        // {
-        //     name: 'status_id',
-        //     element: <Input type="number" placeholder="Введите ID статуса" />,
-        //     label: 'ID статуса'
-        // },
+        {
+            name: 'status_id',
+            element: <Select
+                placeholder="Выберите статус"
+                options={options}
+                showSearch
+                allowClear
+                loading={statusLoading}
+                popupMatchSelectWidth={false}
+            />,
+            label: 'Статус'
+        },
         // {
         //     name: 'doctor_id',
         //     element: <Input type="number" placeholder="Введите ID доктора" />,
