@@ -26,7 +26,7 @@ const MonthSummaryByIdPage = () => {
             render: (item: boolean) => <div>{item ? 'Да' : 'Нет'}</div>
         },
         {
-            title: 'Одобрен клиникой',
+            title: 'Подтверждено',
             key: 'approved_by_clinic',
             dataIndex: 'approved_by_clinic',
             render: (item: boolean) => <div>{item ? 'Да' : 'Нет'}</div>

@@ -105,20 +105,20 @@ export const VisitUpdateForm = (props: Props) => {
             label: 'Оплачено',
             valuePropName: 'checked'
         },
-        {
-            name: 'approved',
-            element: <Switch />,
-            label: 'Одобрено',
-            valuePropName: 'checked',
-            rules: [{
-                required: true,
-                message: 'Обязательное поле!'
-            }]
-        },
+        // {
+        //     name: 'approved',
+        //     element: <Switch />,
+        //     label: 'Одобрено',
+        //     valuePropName: 'checked',
+        //     rules: [{
+        //         required: true,
+        //         message: 'Обязательное поле!'
+        //     }]
+        // },
         {
             name: 'approved_by_clinic',
             element: <Switch />,
-            label: 'Одобрено клиникой',
+            label: 'Подтверждено',
             valuePropName: 'checked',
             rules: [{
                 required: true,

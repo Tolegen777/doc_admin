@@ -42,8 +42,8 @@ export const SlotAdditionalInfoBlock = memo(({data, isLoading}: Props) => {
                     })}
                 </Descriptions.Item>
                 <Descriptions.Item
-                    label="Одобрено клиникой">{data?.approved_by_clinic ? 'Да' : 'Нет'}</Descriptions.Item>
-                <Descriptions.Item label="Одобрено">{data?.approved ? 'Да' : 'Нет'}</Descriptions.Item>
+                    label="Подтверждено">{data?.approved_by_clinic ? 'Да' : 'Нет'}</Descriptions.Item>
+                {/*<Descriptions.Item label="Одобрено">{data?.approved ? 'Да' : 'Нет'}</Descriptions.Item>*/}
             </Descriptions>}
         </div>
     );

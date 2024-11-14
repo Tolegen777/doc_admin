@@ -35,10 +35,10 @@ const initialValues: FormInitialFieldsParamsType[] = [
         name: 'approved_by_clinic',
         value: false,
     },
-    {
-        name: 'approved',
-        value: false,
-    },
+    // {
+    //     name: 'approved',
+    //     value: false,
+    // },
     {
         name: 'status_id',
         value: null,
@@ -135,6 +135,22 @@ const VisitsPage = () => {
             })}</p>
         },
         {
+            title: 'Дата создания/обновления',
+            key: 'visit_time_slot',
+            render: (visit: IVisit) => <div>
+                <p>
+                    {formatDateTime({
+                        isoDateTime: visit?.created_at
+                    })}
+                </p>
+                {visit?.updated_at?.length > 0 && <p>
+                    Изменено: {formatDateTime({
+                    isoDateTime: visit?.updated_at
+                })}
+                </p>}
+            </div>
+        },
+        {
             title: 'Врач',
             key: 'doctor_full_name',
             render: (visit: IVisit) => <DoctorProfile
@@ -164,22 +180,6 @@ const VisitsPage = () => {
                         <div>{visit?.patient_iin_number}</div>
                     </div>
             },
-        },
-        {
-            title: 'Дата создания/обновления',
-            key: 'visit_time_slot',
-            render: (visit: IVisit) => <div>
-                <p>
-                    {formatDateTime({
-                        isoDateTime: visit?.created_at
-                    })}
-                </p>
-                {visit?.updated_at?.length > 0 && <p>
-                    Изменено: {formatDateTime({
-                        isoDateTime: visit?.updated_at
-                    })}
-                </p>}
-            </div>
         },
         {
             title: 'Редактировать',
