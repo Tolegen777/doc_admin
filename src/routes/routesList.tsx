@@ -19,6 +19,13 @@ import DescriptionFragmentPage from "../pages/DescriptionFragmentPage/Descriptio
 import AllDoctorWorkSchedulesPage
   from "../components/AllDoctors/AllDoctorWorkSchedulesPage/AllDoctorWorkSchedulesPage.tsx";
 import AllDoctorPhotoPage from "../components/AllDoctors/AllDoctorPhotoPage/AllDoctorPhotoPage.tsx";
+import {
+  AllVisitsPage,
+} from "../pages/AllVisitsPage/AllVisitsPage.tsx";
+import {PatientDetailPage} from "../pages/PatientDetailPage/PatientDetailPage.tsx";
+import {PatientVisitsPage} from "../pages/PatientVisitsPage/PatientVisitsPage.tsx";
+import {PatientsPage} from "../pages/PatientsPage/PatientsPage.tsx";
+import {VisitDetailPage} from "../pages/VisitDetailPage/VisitDetailPage.tsx";
 
 export const routesList = [
   {
@@ -122,5 +129,27 @@ export const routesList = [
   {
     path: '/login',
     element: <LoginPage />,
+  },
+
+  ///
+  {
+    path: '/all-visits',
+    element: <AllVisitsPage />,
+  },
+  {
+    path: '/visits/:id',
+    element: <VisitDetailPage />,
+  },
+  {
+    path: '/patients',
+    element: <PatientsPage />,
+  },
+  {
+    path: '/patients/:id',
+    element: <PatientDetailPage />,
+  },
+  {
+    path: '/patients/:id/visits',
+    element: <PatientVisitsPage />,
   },
 ];

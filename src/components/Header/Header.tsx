@@ -93,6 +93,9 @@ const Header = () => {
                 <Button onClick={() => router('/all-doctors')}>
                     Показать всех врачей Франшизы
                 </Button>
+                <Button onClick={() => router('/all-visits')}>
+                    Показать все посещения
+                </Button>
                 <Button onClick={() => router('/franchises')}>
                     Филиалы Клиник
                 </Button>
