@@ -70,7 +70,7 @@ const DoctorSlots: React.FC<Props> = memo(
       queryKey: ["TimeSlotsList"],
       queryFn: () =>
         axiosInstance
-          .get<ITime[]>(`/partners/time-slots/`)
+          .get<ITime[]>(`/employee_endpoints/clinics/time_slots/`)
           .then((response) => response?.data),
       refetchOnMount: false,
     });
@@ -79,10 +79,7 @@ const DoctorSlots: React.FC<Props> = memo(
       useMutation({
         mutationKey: ["doctorTimeSlotDetailsCreate"],
         mutationFn: (body: IWorkScheduleCreate) =>
-          axiosInstance.post(
-            `partners/franchise-branches/doctors/${doctorId}/work_schedule/`,
-            body,
-          ),
+          axiosInstance.post(`employee_endpoints/doctors/1/schedules/`, body),
         onSuccess: () => {
           setIsModalOpen(false);
           customNotification({
@@ -101,7 +98,7 @@ const DoctorSlots: React.FC<Props> = memo(
         mutationKey: ["doctorTimeSlotDetailsUpdate"],
         mutationFn: (body: IWorkScheduleUpdate) => {
           return axiosInstance.put(
-            `partners/franchise-branches/${addressId}/doctors/${slot.doctorId}/work_schedule/${slot.workScheduleId}`,
+            `employee_endpoints/doctors/1/schedules/${slot.workScheduleId}`,
             body,
           );
         },
@@ -156,13 +153,13 @@ const DoctorSlots: React.FC<Props> = memo(
 
       if (actionType === "create") {
         onCreateWorkSchedule({
-          
           addressId,
           work_date: activeWorkDate,
           working_hours: payload,
         });
       } else {
         onUpdateWorkSchedule({
+          addressId,
           working_hours: payload,
         });
       }

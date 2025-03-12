@@ -21,6 +21,11 @@ export interface WorkSchedule {
 
 export interface ITimeSlot {
   doctor_work_schedule_detailed_api_view: DoctorWorkScheduleDetailedApiView;
+  id: number;
+  clinic: number;
+  room: number;
+  date: string;
+  working_hours: number[];
 }
 
 export interface DoctorWorkScheduleDetailedApiView {
@@ -53,13 +58,16 @@ export interface ISlotPayload {
 }
 
 export interface IWorkScheduleUpdate {
+  addressId: number | null;
+  room?: number;
   working_hours: {
     time_slot_id: number;
   }[];
 }
 
 export interface IWorkScheduleCreate {
-  addressId: number;
+  room?: number;
+  addressId: number | null;
   work_date: string;
   working_hours: {
     time_slot_id: number;
@@ -68,8 +76,9 @@ export interface IWorkScheduleCreate {
 
 export interface ITime {
   start_time: string;
-  code: string;
-  time_slot_id: number;
+  // code: string;
+  end_time: string;
+  id: number;
 }
 
 export type PanelColourType = "red" | "green" | "gray";
