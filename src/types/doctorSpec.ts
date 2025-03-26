@@ -54,10 +54,10 @@ export enum ChildAgeFrom {
 }
 
 export interface IAllSpec {
-  medical_speciality_id: number;
-  medical_speciality_title: string;
-  medical_speciality_slug: string;
-  medical_speciality_description: string;
+  id: number;
+  title: string;
+  slug: string;
+  // medical_speciality_description: string;
   medical_speciality_procedures: MedicalSpecialityProcedure[];
 }
 

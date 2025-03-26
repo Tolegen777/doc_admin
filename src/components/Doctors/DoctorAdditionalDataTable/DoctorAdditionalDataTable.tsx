@@ -20,6 +20,7 @@ import { customNotification } from "../../../utils/customNotification.ts";
 import { ICreateProc, IProc, IUpdateProc } from "../../../types/doctorProc.ts";
 import DoctorProcedurePrices from "../DoctorProcedurePrices/DoctorProcedurePrices.tsx";
 import { IDoctor } from "../../../types/doctor.ts";
+import { IGet } from "../../../types/common.ts";
 
 interface DataType {
   key: string;
@@ -57,7 +58,7 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     mutationKey: ["createSpec"],
     mutationFn: (body: ICreateSpec) =>
       axiosInstance.post(
-        `partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/`,
+        `employee_endpoints/doctors/${doctorDetails?.id}/specialities/`,
         body,
       ),
     onSuccess: () => {
@@ -75,8 +76,8 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
   } = useMutation({
     mutationKey: ["updateSpec"],
     mutationFn: ({ id, ...body }: IUpdateSpec) => {
-      return axiosInstance.put(
-        `partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${id}/`,
+      return axiosInstance.patch(
+        `employee_endpoints/doctors/${doctorDetails?.id}/specialities/${id}/`,
         body,
       );
     },
@@ -96,7 +97,7 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     mutationKey: ["deleteSpec"],
     mutationFn: (id: number) =>
       axiosInstance.delete(
-        `partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${id}`,
+        `employee_endpoints/doctors/${doctorDetails?.id}/specialities/${id}`,
       ),
     onSuccess: () => {
       customNotification({
@@ -115,7 +116,7 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     mutationKey: ["createProc"],
     mutationFn: (body: ICreateProc) =>
       axiosInstance.post(
-        `partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/`,
+        `employee_endpoints/doctors/${doctorDetails?.id}/specialities/${activeSpecId}/procedures/`,
         body,
       ),
     onSuccess: () => {
@@ -133,8 +134,8 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
   } = useMutation({
     mutationKey: ["updateProc"],
     mutationFn: ({ id, ...body }: IUpdateProc) => {
-      return axiosInstance.put(
-        `partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`,
+      return axiosInstance.patch(
+        `employee_endpoints/doctors/${doctorDetails?.id}/specialities/${activeSpecId}/prcedures/${id}`,
         body,
       );
     },
@@ -154,7 +155,7 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     mutationKey: ["deleteProc"],
     mutationFn: (id: number) =>
       axiosInstance.delete(
-        `partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/${id}`,
+        `employee_endpoints/doctors/${doctorDetails?.id}/specialities/${activeSpecId}/procedures/${id}`,
       ),
     onSuccess: () => {
       customNotification({
@@ -177,8 +178,8 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     queryFn: () =>
       axiosInstance
         .get<
-          ISpec[]
-        >(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec`)
+          IGet<ISpec>
+        >(`employee_endpoints/doctors/${doctorDetails?.id}/specialities`)
         .then((response) => response?.data),
     enabled: !!addressId && !!doctorDetails?.id,
   });
@@ -205,8 +206,8 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     queryFn: () =>
       axiosInstance
         .get<
-          IProc[]
-        >(`partners/franchise-branches/${addressId}/doctors/${doctorDetails?.id}/doc_spec/${activeSpecId}/doc_proc/`)
+          IGet<IProc>
+        >(`employee_endpoints/doctors/${doctorDetails?.id}/specialities/${activeSpecId}/procedures/`)
         .then((response) => response?.data),
     enabled: !!addressId && !!doctorDetails?.id && !!activeSpecId,
   });
@@ -294,12 +295,12 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
 
   const filterAllFields = (type: "spec" | "proc") => {
     if (type === "spec") {
-      const doctorSpecIds = specs?.map((item) => item?.speciality?.id);
+      const doctorSpecIds = specs?.results?.map((item) => item?.speciality?.id);
       return allSpecsList?.filter(
-        (item) => !doctorSpecIds?.includes(item?.medical_speciality_id),
+        (item) => !doctorSpecIds?.includes(item?.id),
       );
     } else {
-      const doctorProcIds = procs?.map((item) => item?.med_proc_info?.id);
+      const doctorProcIds = procs?.results?.map((item) => item?.med_proc_info?.id);
       return allProcs?.filter((item) => !doctorProcIds?.includes(item?.id));
     }
   };
@@ -437,7 +438,7 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
   return (
     <>
       <SpecProcTableAction
-        data={specs ?? []}
+        data={specs?.results ?? []}
         columns={specColumns}
         onCreate={handleCreateSpec}
         procSpecList={filterAllFields("spec") ?? []}
@@ -452,7 +453,7 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
         width={"90%"}
       >
         <SpecProcTableAction
-          data={procs ?? []}
+          data={procs?.results ?? []}
           columns={procColumns}
           onCreate={handleCreateProc}
           procSpecList={filterAllFields("proc") ?? []}
