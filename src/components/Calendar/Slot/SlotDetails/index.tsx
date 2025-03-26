@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import styles from "./styles.module.scss";
 import { SlotEditBlock } from "../SlotEditBlock";
 import { axiosInstance } from "../../../../api";
@@ -12,10 +13,9 @@ import { useStateContext } from "../../../../contexts";
 import { SlotAdditionalInfoBlock } from "../SlotAdditionalInfoBlock";
 import { getPreviousDate } from "../../../../utils/date/getDates.ts";
 import { customNotification } from "../../../../utils/customNotification.ts";
-import { AxiosResponse } from "axios";
 import { ActionType } from "../../../../types/common.ts";
 import { useMemo } from "react";
-import { IVisitById } from "../../../../types/visits.ts";
+import { IVisit } from "../../../../types/visits.ts";
 
 type Props = {
   createLoading: boolean;
@@ -34,9 +34,9 @@ export const SlotDetails = ({ createLoading, actionType, times }: Props) => {
     queryKey: ["visitDetailsById", visitId],
     queryFn: () =>
       axiosInstance
-        .get<IVisitById>(`/employee_endpoints/visits/${visitId}`)
+        .get<IVisit>(`/employee_endpoints/visits/${visitId}`)
         .then((response) => response?.data),
-    enabled: !!visitId,
+    enabled: Boolean(visitId),
   });
 
   const { data, isFetching: isLoading } = useQuery({
@@ -49,13 +49,12 @@ export const SlotDetails = ({ createLoading, actionType, times }: Props) => {
         .then((response) => response?.data),
     enabled: !!addressId && !!doctorId && !!workScheduleId,
   });
-
   const { isPending: isUpdateLoading, mutateAsync: onGetPrevWorkSchedule } =
     useMutation({
       mutationKey: ["previousDoctorTimeSlotDetails"],
-      mutationFn: (date: string) =>
+      mutationFn: (date: string): Promise<ITimeSlot> =>
         axiosInstance.get(
-          `/partners/franchise-branches/${addressId}/doctors/${doctorId}/work_schedule_by_date/${date}`,
+          `/employee_endpoints/doctors/${doctorId}/get_schedule_by_date/${date}`,
         ),
     });
 
@@ -63,9 +62,11 @@ export const SlotDetails = ({ createLoading, actionType, times }: Props) => {
     if (actionType === "create") {
       return times?.map((item) => ({
         ...item,
-        doctor_availability: false,
         panel_colour: "empty_blue",
-        patient_clinic_visit_id: undefined,
+        time_slot_object_id: item.id,
+        time_slot_object_start_time: item.start_time,
+        time_slot_object_end_time: item.end_time,
+        patient_clinic_visit_id: visitId,
         reserved: false,
       }));
     }
@@ -73,7 +74,7 @@ export const SlotDetails = ({ createLoading, actionType, times }: Props) => {
   }, [actionType]);
 
   const handleCopyPreviousDay = async () => {
-    const prevDate = getPreviousDate(data?.date ?? "");
+    const prevDate = getPreviousDate(data?.work_date ?? "");
     if (prevDate === "weekend") {
       customNotification({
         type: "warning",
@@ -81,13 +82,11 @@ export const SlotDetails = ({ createLoading, actionType, times }: Props) => {
           "Предыдущий день был выходным, и в этот день у врача не было рабочих часов.",
       });
     } else {
-      const data: AxiosResponse<ITimeSlot> =
-        await onGetPrevWorkSchedule(prevDate);
-      const workingHours =
-        data?.data?.doctor_work_schedule_detailed_api_view?.working_hours_list;
+      const data = await onGetPrevWorkSchedule(prevDate);
+      const workingHours = data?.working_hours_list;
       const activeSlotIds = workingHours
         ?.filter((item) => item?.panel_colour === "full_blue")
-        ?.map((item) => item?.time_slot_id);
+        ?.map((item) => item?.time_slot_object_id);
       dispatch({
         type: "SET_SELECTED_TIME_SLOTS_IDS",
         payload: activeSlotIds,
@@ -104,10 +103,7 @@ export const SlotDetails = ({ createLoading, actionType, times }: Props) => {
   }
 
   const workingHours =
-    actionType === "update"
-      ? data?.doctor_work_schedule_detailed_api_view?.working_hours_list
-      : formattedWorkingHours;
-
+    actionType === "update" ? data?.working_hours_list : formattedWorkingHours;
   return (
     <div className={styles.container}>
       <SlotEditBlock

@@ -9,6 +9,7 @@ const initialState: State = {
   searchQuery: "",
   page: 1,
   addressId: null,
+  addressSlug: null,
   doctor: {
     query: "",
     specialities: [],
@@ -54,6 +55,12 @@ const stateReducer = (state: State, action: Action) => {
       return {
         ...state,
         addressId: action.payload,
+      };
+    }
+    case "SET_ADDRESS_SLUG": {
+      return {
+        ...state,
+        addressSlug: action.payload,
       };
     }
     case "SET_DOCTOR_SEARCH_QUERY": {

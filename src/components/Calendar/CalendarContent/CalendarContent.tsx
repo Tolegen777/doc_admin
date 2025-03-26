@@ -18,7 +18,6 @@ const CalendarContent = ({ isLoading, data }: Props) => {
   const { page } = state;
 
   const dates = useMemo(() => getDates(page), [page]);
-
   if (isLoading) {
     return <FullSpinner />;
   }
@@ -31,10 +30,7 @@ const CalendarContent = ({ isLoading, data }: Props) => {
       </div>
       {data?.map((item, index) => (
         <div className={styles.container_content} key={index}>
-          <DoctorTitle
-            doctor={item?.doctor_fullname ?? ""}
-            count={index + 1}
-          />
+          <DoctorTitle doctor={item?.doctor_fullname ?? ""} count={index + 1} />
           <DoctorSlots
             slots={item?.schedule ?? []}
             doctorName={item?.doctor_fullname ?? ""}

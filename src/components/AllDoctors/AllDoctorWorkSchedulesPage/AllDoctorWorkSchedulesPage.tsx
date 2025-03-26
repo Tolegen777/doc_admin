@@ -12,11 +12,10 @@ import {
 import { changeFormFieldsData } from "../../../utils/changeFormFieldsData.ts";
 import { DoctorWorkScheduleCreateUpdateForm } from "../DoctorWorkScheduleCreateUpdateForm/DoctorWorkScheduleCreateUpdateForm.tsx";
 import { CustomTable } from "../../Shared/CustomTable";
-import {
-  IAllDoctorSchedule,
-  ICreateAllDoctorSchedule,
-  IUpdateAllDoctorSchedule,
-} from "../../../types/allDoctors.ts";
+// import {
+//   ICreateAllDoctorSchedule,
+//   IUpdateAllDoctorSchedule,
+// } from "../../../types/allDoctors.ts";
 import { IFranchise } from "../../../types/franchiseTypes.ts";
 import { ITime } from "../../../types/calendar.ts";
 import {
@@ -26,14 +25,18 @@ import {
   removeSeconds,
 } from "../../../utils/date/getDates.ts";
 import { useParams } from "react-router-dom";
+import {
+  IDoctorSchedule,
+  IDoctorScheduleCreateUpdate,
+} from "../../../types/doctor.ts";
 
 const initialValues: FormInitialFieldsParamsType[] = [
   {
-    name: "clinic_branch",
+    name: "clinic",
     value: null,
   },
   {
-    name: "work_date",
+    name: "date",
     value: null,
   },
   {
@@ -51,15 +54,15 @@ const DoctorWorkSchedulesPage = () => {
   const [page, setPage] = useState(1);
   const [createUpdateModalOpen, setCreateUpdateModalOpen] =
     useState<boolean>(false);
-  const [editEntity, setEditEntity] = useState<IAllDoctorSchedule | null>(null);
+  const [editEntity, setEditEntity] = useState<IDoctorSchedule | null>(null);
   const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] =
     useState(initialValues);
   const [formType, setFormType] = useState<ActionType>("");
 
   const { mutate: onUpdate, isPending: isUpdateLoading } = useMutation({
-    mutationFn: ({ id, ...body }: IUpdateAllDoctorSchedule) => {
-      return axiosInstance.put(
-        `partners/franchise-info/all-doctors/${doctorId}/doctor-work-schedules/${id}/`,
+    mutationFn: ({ id, ...body }: IDoctorScheduleCreateUpdate) => {
+      return axiosInstance.patch(
+        `employee_endpoints/doctors/${doctorId}/schedules/${id}/`,
         body,
       );
     },
@@ -73,9 +76,9 @@ const DoctorWorkSchedulesPage = () => {
   });
 
   const { mutate: onCreate, isPending: isCreateLoading } = useMutation({
-    mutationFn: (body: ICreateAllDoctorSchedule) => {
+    mutationFn: (body: IDoctorScheduleCreateUpdate) => {
       return axiosInstance.post(
-        `partners/franchise-info/all-doctors/${doctorId}/doctor-work-schedules/`,
+        `employee_endpoints/doctors/${doctorId}/schedules/`,
         body,
       );
     },
@@ -91,7 +94,7 @@ const DoctorWorkSchedulesPage = () => {
   const { mutate: onDelete, isPending: isDeleteLoading } = useMutation({
     mutationFn: (id: number) =>
       axiosInstance.delete(
-        `partners/franchise-info/all-doctors/${doctorId}/doctor-work-schedules/${id}/`,
+        `employee_endpoints/doctors/${doctorId}/schedules/${id}/`,
       ),
     onSuccess: () => {
       customNotification({
@@ -107,8 +110,8 @@ const DoctorWorkSchedulesPage = () => {
     queryFn: () =>
       axiosInstance
         .get<
-          IAllDoctorSchedule[]
-        >(`partners/franchise-info/all-doctors/${doctorId}/doctor-work-schedules/?page=${page}`)
+          IGet<IDoctorSchedule>
+        >(`employee_endpoints/doctors/${doctorId}/schedules/?page=${page}`)
         .then((response) => response?.data),
     enabled: !!doctorId,
   });
@@ -117,7 +120,7 @@ const DoctorWorkSchedulesPage = () => {
     queryKey: ["franchiseBranches"],
     queryFn: () =>
       axiosInstance
-        .get<IGet<IFranchise>>("partners/franchise-branches/?page_size=100")
+        .get<IFranchise[]>("employee_endpoints/clinics/?page_size=100")
         .then((response) => response.data),
     refetchOnMount: false,
   });
@@ -125,12 +128,14 @@ const DoctorWorkSchedulesPage = () => {
   const { data: workingHours, isLoading: workingHoursLoading } = useQuery({
     queryKey: ["TimeSlotsList"],
     queryFn: () =>
-      axiosInstance.get<ITime[]>(`/partners/time-slots/`).then((response) =>
-        response?.data?.map((item) => ({
-          ...item,
-          start_time: removeSeconds(item?.start_time ?? ""),
-        })),
-      ),
+      axiosInstance
+        .get<ITime[]>(`employee_endpoints/clinics/time_slots/`)
+        .then((response) =>
+          response?.data?.map((item) => ({
+            ...item,
+            start_time: removeSeconds(item?.start_time ?? ""),
+          })),
+        ),
     refetchOnMount: false,
   });
 
@@ -142,7 +147,7 @@ const DoctorWorkSchedulesPage = () => {
   };
 
   const onOpenCreateUpdateModal = (
-    data: IAllDoctorSchedule | null,
+    data: IDoctorSchedule | null,
     type: ActionType,
   ) => {
     if (data && type === "update") {
@@ -150,10 +155,9 @@ const DoctorWorkSchedulesPage = () => {
       setCreateUpdateFormInitialFields(
         changeFormFieldsData(initialValues, {
           ...data,
-          // @ts-ignore
-          work_date: datePickerFormatter(data?.work_date ?? ""),
-          working_hours: data?.working_hours?.map((item) => item?.id),
-          clinic_branch: data?.clinic_branch_id,
+          date: datePickerFormatter(data?.date ?? ""),
+          working_hours: data?.working_hours,
+          clinic: data?.clinic,
         }),
       );
     }
@@ -167,8 +171,7 @@ const DoctorWorkSchedulesPage = () => {
       const payload = {
         ...formData,
         id: editEntity?.id as number,
-        // @ts-ignore
-        work_date: formatDateToString(formData?.work_date?.$d ?? null) ?? "",
+        date: formatDateToString(formData?.date?.$d ?? null) ?? "",
         doctor_profile: doctorId,
       };
 
@@ -176,8 +179,7 @@ const DoctorWorkSchedulesPage = () => {
     } else {
       onCreate({
         ...formData,
-        // @ts-ignore
-        work_date: formatDateToString(formData?.work_date?.$d ?? null) ?? "",
+        date: formatDateToString(formData?.date?.$d ?? null) ?? "",
         doctor_profile: doctorId,
       });
     }
@@ -197,8 +199,8 @@ const DoctorWorkSchedulesPage = () => {
     },
     {
       title: "Филиал клиники",
-      key: "clinic_branch",
-      dataIndex: "clinic_branch",
+      key: "clinic",
+      dataIndex: "clinic",
     },
     {
       title: "Адрес клиники",
@@ -207,8 +209,8 @@ const DoctorWorkSchedulesPage = () => {
     },
     {
       title: "Дата работы",
-      key: "work_date",
-      dataIndex: "work_date",
+      key: "date",
+      dataIndex: "date",
     },
     {
       title: "День недели",
@@ -218,7 +220,7 @@ const DoctorWorkSchedulesPage = () => {
     },
     {
       title: "Редактировать",
-      render: (data: IAllDoctorSchedule) => (
+      render: (data: IDoctorSchedule) => (
         <Button
           onClick={() => onOpenCreateUpdateModal(data, "update")}
           type={"primary"}
@@ -229,7 +231,7 @@ const DoctorWorkSchedulesPage = () => {
     },
     {
       title: "Удалить",
-      render: (data: IAllDoctorSchedule) => (
+      render: (data: IDoctorSchedule) => (
         <Button
           onClick={() => handleDelete(data?.id as number)}
           disabled={isDeleteLoading}
@@ -277,12 +279,12 @@ const DoctorWorkSchedulesPage = () => {
         </div>
         <CustomTable
           columns={columns}
-          dataSource={data}
+          dataSource={data?.results ?? []}
           loading={isLoading}
           setPage={setPage}
           pagination={false}
           current={page}
-          total={data?.length ?? 0}
+          total={data?.count ?? 0}
         />
       </div>
     </>

@@ -12,7 +12,9 @@ module.exports = {
   plugins: ['react-refresh', "prettier"],
   rules: {
     'react/display-name': 'off',
-    'prettier/prettier': ['warn', { "endOfLine": "lf" }],
+    'prettier/prettier': ['warn', {
+      "endOfLine": "auto"
+    }],
     'react/react-in-jsx-scope': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': 'error',

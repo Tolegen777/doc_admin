@@ -7,6 +7,7 @@ export type State = {
   searchQuery: string;
   page: number;
   addressId: number | null;
+  addressSlug: string | null;
   doctor: {
     query: string;
     specialities: string[];
@@ -36,6 +37,10 @@ type SetSearchQueryActionType = {
 type SetAddressIdActionType = {
   type: "SET_ADDRESS_ID";
   payload: number;
+};
+type SetAddressSlugActionType = {
+  type: "SET_ADDRESS_SLUG";
+  payload: string;
 };
 
 type SetDoctorSearchQueryActionType = {
@@ -90,6 +95,7 @@ export type Action =
   | SetSelectedTimeSlotIdsActionType
   | AddSelectedTimeSlotIdsActionType
   | SetDoctorSurveyDataActionType
+  | SetAddressSlugActionType
   | SetVisitIdActionType;
 
 export type Dispatch = (action: Action) => void;

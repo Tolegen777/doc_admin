@@ -2,7 +2,7 @@ import styles from "./styles.module.scss";
 import { Button, Dropdown, MenuProps, Select, Space } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../../api";
-import { IFranchise, IFranchiseInfo } from "../../types/franchiseTypes.ts";
+import { IFranchise } from "../../types/franchiseTypes.ts";
 import { selectOptionsParser } from "../../utils/selectOptionsParser.ts";
 import { useEffect } from "react";
 import { useStateContext } from "../../contexts";
@@ -10,7 +10,6 @@ import { resetService } from "../../services/resetService.ts";
 import userIcon from "../../assets/userIcon.svg";
 import { DownOutlined } from "@ant-design/icons";
 import { Spinner } from "../Shared/Spinner";
-import { IGet } from "../../types/common.ts";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -29,14 +28,14 @@ const Header = () => {
     refetchOnMount: false,
   });
 
-  const { data: franchiseInfo, isLoading: franchiseInfoLoading } = useQuery({
-    queryKey: ["franchiseInfo"],
-    queryFn: () =>
-      axiosInstance
-        .get<IFranchiseInfo[]>("employee_endpoints/clinics/")
-        .then((response) => response?.data),
-    refetchOnMount: false,
-  });
+  // const { data: franchiseInfo, isLoading: franchiseInfoLoading } = useQuery({
+  //   queryKey: ["franchiseInfo"],
+  //   queryFn: () =>
+  //     axiosInstance
+  //       .get<IFranchise[]>("employee_endpoints/clinics/")
+  //       .then((response) => response?.data),
+  //   refetchOnMount: false,
+  // });
 
   const items: MenuProps["items"] = [
     {
@@ -51,17 +50,21 @@ const Header = () => {
 
   useEffect(() => {
     if (data && !addressId) {
-      const defaultId = data?.find((item) => item)?.id ?? null;
+      const defaultId = data?.find((item) => item) ?? null;
       dispatch({
         type: "SET_ADDRESS_ID",
-        payload: defaultId as number,
+        payload: defaultId?.id as number,
+      });
+      dispatch({
+        type: "SET_ADDRESS_SLUG",
+        payload: defaultId?.slug ?? "",
       });
     }
   }, [data]);
 
   const options = selectOptionsParser<IFranchise>(data ?? [], "title", "id");
 
-  const franchiseData = franchiseInfo?.find((item) => item);
+  const franchiseData = data?.find((item) => item.id === addressId);
 
   return (
     <div className={styles.container}>
@@ -75,11 +78,7 @@ const Header = () => {
           {/*</div>*/}
         </div>
         <div className={styles.container_info_user}>
-          {franchiseInfoLoading ? (
-            <Spinner text />
-          ) : (
-            franchiseData?.short_description
-          )}
+          {isLoading ? <Spinner text /> : franchiseData?.address}
         </div>
       </div>
       <div className={styles.container_action}>
@@ -96,6 +95,10 @@ const Header = () => {
               dispatch({
                 type: "SET_ADDRESS_ID",
                 payload: value as number,
+              });
+              dispatch({
+                type: "SET_ADDRESS_SLUG",
+                payload: franchiseData?.slug ?? "",
               });
             }}
             style={{ width: "max-content", color: "red" }}

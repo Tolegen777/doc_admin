@@ -60,7 +60,6 @@ const DoctorSlots: React.FC<Props> = memo(
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [actionType, setActionType] = useState<ActionType>("");
     const [activeWorkDate, setActiveWorkDate] = useState<string>("");
-
     const filledSlots = useMemo(
       () => fillEmptySlots(slots, dates, addressId as number),
       [slots, dates, addressId],
@@ -79,7 +78,10 @@ const DoctorSlots: React.FC<Props> = memo(
       useMutation({
         mutationKey: ["doctorTimeSlotDetailsCreate"],
         mutationFn: (body: IWorkScheduleCreate) =>
-          axiosInstance.post(`employee_endpoints/doctors/1/schedules/`, body),
+          axiosInstance.post(
+            `employee_endpoints/doctors/${doctorId}/schedules/`,
+            body,
+          ),
         onSuccess: () => {
           setIsModalOpen(false);
           customNotification({
@@ -97,8 +99,8 @@ const DoctorSlots: React.FC<Props> = memo(
       useMutation({
         mutationKey: ["doctorTimeSlotDetailsUpdate"],
         mutationFn: (body: IWorkScheduleUpdate) => {
-          return axiosInstance.put(
-            `employee_endpoints/doctors/1/schedules/${slot.workScheduleId}`,
+          return axiosInstance.patch(
+            `employee_endpoints/doctors/${doctorId}/schedules/${slot.workScheduleId}`,
             body,
           );
         },
@@ -117,18 +119,16 @@ const DoctorSlots: React.FC<Props> = memo(
 
     const onSlotOpen = async (item: WorkSchedule) => {
       setIsModalOpen(true);
-      const { doctor_work_schedule_object_id, time_slots_count, tile_color } =
-        item;
-
+      const { doctor_work_schedule_object_id, date, tile_color } = item;
       if (tile_color === "gray") {
         setActionType("create");
-        setActiveWorkDate(String(time_slots_count));
+        setActiveWorkDate(String(date));
         dispatch({
           type: "SET_SLOT_DATA",
           payload: {
             doctorId: doctorId,
             workScheduleId: doctor_work_schedule_object_id,
-            title: `${doctorName}, ${formatDateToDayMonth(String(time_slots_count) ?? "")}`,
+            title: `${doctorName}, ${formatDateToDayMonth(String(date) ?? "")}`,
             panelColor: tile_color,
           },
         });
@@ -139,7 +139,7 @@ const DoctorSlots: React.FC<Props> = memo(
           payload: {
             doctorId: doctorId,
             workScheduleId: doctor_work_schedule_object_id,
-            title: `${doctorName}, ${formatDateToDayMonth(String(time_slots_count) ?? "")}`,
+            title: `${doctorName}, ${formatDateToDayMonth(String(date) ?? "")}`,
             panelColor: tile_color,
           },
         });
@@ -147,19 +147,16 @@ const DoctorSlots: React.FC<Props> = memo(
     };
 
     const handleConfirm = () => {
-      const payload = selectedTimeSlotIds?.map((item) => ({
-        time_slot_id: item,
-      }));
-
+      const payload = selectedTimeSlotIds;
       if (actionType === "create") {
         onCreateWorkSchedule({
-          addressId,
-          work_date: activeWorkDate,
+          clinic: addressId,
+          date: activeWorkDate,
           working_hours: payload,
         });
       } else {
         onUpdateWorkSchedule({
-          addressId,
+          clinic: addressId,
           working_hours: payload,
         });
       }
@@ -173,7 +170,6 @@ const DoctorSlots: React.FC<Props> = memo(
         payload: null,
       });
     };
-
     return (
       <>
         <CustomModal

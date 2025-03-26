@@ -1,11 +1,11 @@
 import styles from "./styles.module.scss";
 import { memo } from "react";
 import { Descriptions, Spin } from "antd";
-import { IVisitById } from "../../../../types/visits.ts";
+import { IVisit } from "../../../../types/visits.ts";
 import { formatDateTime } from "../../../../utils/date/getDates.ts";
 
 type Props = {
-  data: IVisitById | undefined;
+  data: IVisit | undefined;
   isLoading: boolean;
 };
 
@@ -27,32 +27,32 @@ export const SlotAdditionalInfoBlock = memo(({ data, isLoading }: Props) => {
         data && (
           <Descriptions column={1}>
             <Descriptions.Item label="Франшиза">
-              {data?.clinic_branch_title}
+              {data?.clinic?.title}
             </Descriptions.Item>
             <Descriptions.Item label="Оплачен">
-              {data?.paid ? "Да" : "Нет"}
+              {data?.is_paid ? "Да" : "Нет"}
             </Descriptions.Item>
             <Descriptions.Item label="Пациент">
-              {data?.patient_full_name}
+              {data?.patient?.full_name}
             </Descriptions.Item>
             <Descriptions.Item label="День рожение пациента">
-              {data?.patient_birth_date}
+              {data?.patient?.birth_date}
             </Descriptions.Item>
-            {data?.patient_iin_number && (
+            {data?.patient?.iin_number && (
               <Descriptions.Item label="ИИН пациента">
-                {data?.patient_iin_number}
+                {data?.patient?.iin_number}
               </Descriptions.Item>
             )}
-            {data?.patient_phone_number && (
+            {data?.patient?.phone_number && (
               <Descriptions.Item label="Телефон пациента">
-                {data?.patient_phone_number}
+                {data?.patient?.phone_number}
               </Descriptions.Item>
             )}
             <Descriptions.Item label="Статус">
-              {data?.status?.status_title}
+              {data?.visit_status.title}
             </Descriptions.Item>
             <Descriptions.Item label="Описание статуса">
-              {data?.status?.status_description}
+              {data?.note}
             </Descriptions.Item>
             <Descriptions.Item label="Дата создания">
               {formatDateTime({

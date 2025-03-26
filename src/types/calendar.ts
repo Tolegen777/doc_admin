@@ -20,33 +20,33 @@ export interface WorkSchedule {
 }
 
 export interface ITimeSlot {
-  doctor_work_schedule_detailed_api_view: DoctorWorkScheduleDetailedApiView;
-  id: number;
-  clinic: number;
-  room: number;
-  date: string;
-  working_hours: number[];
-}
-
-export interface DoctorWorkScheduleDetailedApiView {
   clinic_branch: string;
   clinic_branch_id: number;
+  clinic_branch_slug: string;
   doctor_profile: string;
   doctor_profile_id: number;
+  doctor_profile_slug: string;
   doctor_work_schedule_id: number;
   work_date: string;
   working_hours_list: WorkingHoursList[];
 }
 
 export interface WorkingHoursList {
-  code: string;
-  doctor_availability: boolean;
-  start_time: string;
-  time_slot_id: number;
+  // code: string;
+  // doctor_availability: boolean;
+  // start_time: string;
+  // time_slot_id: number;
+  // reserved: boolean;
+  // patient_clinic_visit_id?: number;
+  // isActive?: boolean;
+  // panel_colour: "full_blue" | "empty_blue" | "grey";
+
+  time_slot_object_id: number;
+  time_slot_object_start_time: string;
+  time_slot_object_end_time: string;
   reserved: boolean;
-  patient_clinic_visit_id?: number;
-  isActive?: boolean;
-  panel_colour: "full_blue" | "empty_blue" | "grey";
+  patient_clinic_visit_id: number | null;
+  panel_colour: string;
 }
 
 export interface ISlotPayload {
@@ -58,20 +58,16 @@ export interface ISlotPayload {
 }
 
 export interface IWorkScheduleUpdate {
-  addressId: number | null;
+  clinic: number | null;
   room?: number;
-  working_hours: {
-    time_slot_id: number;
-  }[];
+  working_hours: number[];
 }
 
 export interface IWorkScheduleCreate {
   room?: number;
-  addressId: number | null;
-  work_date: string;
-  working_hours: {
-    time_slot_id: number;
-  }[];
+  clinic: number | null;
+  date: string;
+  working_hours: number[];
 }
 
 export interface ITime {
