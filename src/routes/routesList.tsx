@@ -1,8 +1,8 @@
-import { Empty } from 'antd';
+import { Empty } from "antd";
 import CalendarPage from "../pages/CalendarPage/CalendarPage.tsx";
 import DoctorsPage from "../pages/DoctorsPage/DoctorsPage.tsx";
 import VisitsPage from "../pages/VisitsPage/VisitsPage.tsx";
-import {LoginPage} from "../pages/LoginPage/LoginPage.tsx";
+import { LoginPage } from "../pages/LoginPage/LoginPage.tsx";
 import DoctorEditPage from "../pages/DoctorEditPage/DoctorEditPage.tsx";
 import DoctorSurveyPage from "../pages/DoctorSurveyPage/DoctorSurveyPage.tsx";
 import DailySummary from "../pages/DailySummary/DailySummary.tsx";
@@ -16,140 +16,141 @@ import AllDoctorEditPage from "../pages/AllDoctorEditPage/AllDoctorEditPage.tsx"
 import DoctorsPage2 from "../pages/DoctorsPage2/DoctorsPage2.tsx";
 import DoctorEditPage2 from "../pages/DoctorEditPage2/DoctorEditPage2.tsx";
 import DescriptionFragmentPage from "../pages/DescriptionFragmentPage/DescriptionFragmentPage.tsx";
-import AllDoctorWorkSchedulesPage
-  from "../components/AllDoctors/AllDoctorWorkSchedulesPage/AllDoctorWorkSchedulesPage.tsx";
+import AllDoctorWorkSchedulesPage from "../components/AllDoctors/AllDoctorWorkSchedulesPage/AllDoctorWorkSchedulesPage.tsx";
 import AllDoctorPhotoPage from "../components/AllDoctors/AllDoctorPhotoPage/AllDoctorPhotoPage.tsx";
-import {
-  AllVisitsPage,
-} from "../pages/AllVisitsPage/AllVisitsPage.tsx";
-import {PatientDetailPage} from "../pages/PatientDetailPage/PatientDetailPage.tsx";
-import {PatientVisitsPage} from "../pages/PatientVisitsPage/PatientVisitsPage.tsx";
-import {PatientsPage} from "../pages/PatientsPage/PatientsPage.tsx";
-import {VisitDetailPage} from "../pages/VisitDetailPage/VisitDetailPage.tsx";
+import { AllVisitsPage } from "../pages/AllVisitsPage/AllVisitsPage.tsx";
+import { PatientDetailPage } from "../pages/PatientDetailPage/PatientDetailPage.tsx";
+import { PatientVisitsPage } from "../pages/PatientVisitsPage/PatientVisitsPage.tsx";
+import { PatientsPage } from "../pages/PatientsPage/PatientsPage.tsx";
+import { VisitDetailPage } from "../pages/VisitDetailPage/VisitDetailPage.tsx";
 
 export const routesList = [
   {
-    path: '/empty',
-    element: <Empty description="К сожалению, у вас отсутствуют необходимые права для доступа к административной панели." />,
+    path: "/empty",
+    element: (
+      <Empty description="К сожалению, у вас отсутствуют необходимые права для доступа к административной панели." />
+    ),
   },
   {
-    path: '/*',
+    path: "/*",
     element: <CalendarPage />,
   },
   {
-    path: '/calendar',
+    path: "/calendar",
     element: <CalendarPage />,
   },
   {
-    path: '/doctors',
+    path: "/doctors",
     element: <DoctorsPage />,
   },
   {
-    path: '/all-doctors',
+    path: "/all-doctors",
     element: <DoctorsPage2 />,
   },
   {
-    path: '/all-doctors/:id',
+    path: "/all-doctors/:id",
     element: <DoctorEditPage2 />,
   },
   {
-    path: '/all-doctors/:id/survey',
+    path: "/all-doctors/:id/survey",
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/all-doctors/:id/description',
+    path: "/all-doctors/:id/description",
     element: <DescriptionFragmentPage />,
   },
   {
-    path: '/all-doctors/:id/schedule',
+    path: "/all-doctors/:id/schedule",
     element: <AllDoctorWorkSchedulesPage />,
   },
   {
-    path: '/all-doctors/:id/photo',
+    path: "/all-doctors/:id/photo",
     element: <AllDoctorPhotoPage />,
   },
   {
-    path: '/all-doctors/create',
+    path: "/all-doctors/create",
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/all2-doctors',
+    path: "/all2-doctors",
     element: <AllDoctorsPage />,
   },
   {
-    path: '/payment',
-    element: <div style={{padding: 20, fontSize: 16}}>
-      Страница еще в разработке...
-    </div>,
+    path: "/payment",
+    element: (
+      <div style={{ padding: 20, fontSize: 16 }}>
+        Страница еще в разработке...
+      </div>
+    ),
   },
   {
-    path: '/reviews',
-    element: <ReviewsPage/>,
+    path: "/reviews",
+    element: <ReviewsPage />,
   },
   {
-    path: '/doctor/:id',
+    path: "/doctor/:id",
     element: <DoctorEditPage />,
   },
   {
-    path: '/all2-doctors/:id',
+    path: "/all2-doctors/:id",
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/all2-doctors/create',
+    path: "/all2-doctors/create",
     element: <AllDoctorEditPage />,
   },
   {
-    path: '/doctor/:id/survey',
+    path: "/doctor/:id/survey",
     element: <DoctorSurveyPage />,
   },
   {
-    path: '/visits',
+    path: "/visits",
     element: <VisitsPage />,
   },
   {
-    path: '/franchises',
+    path: "/franchises",
     element: <FranchisePage />,
   },
   {
-    path: '/daily_summary',
+    path: "/daily_summary",
     element: <DailySummary />,
   },
   {
-    path: '/monthly_summary',
+    path: "/monthly_summary",
     element: <MonthSummaryPage />,
   },
   {
-    path: '/monthly_summary/:id',
+    path: "/monthly_summary/:id",
     element: <MonthSummaryByIdPage />,
   },
   {
-    path: '/amenities',
+    path: "/amenities",
     element: <AmenitiesPage />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <LoginPage />,
   },
 
   ///
   {
-    path: '/all-visits',
+    path: "/all-visits",
     element: <AllVisitsPage />,
   },
   {
-    path: '/visits/:id',
+    path: "/visits/:id",
     element: <VisitDetailPage />,
   },
   {
-    path: '/patients',
+    path: "/patients",
     element: <PatientsPage />,
   },
   {
-    path: '/patients/:id',
+    path: "/patients/:id",
     element: <PatientDetailPage />,
   },
   {
-    path: '/patients/:id/visits',
+    path: "/patients/:id/visits",
     element: <PatientVisitsPage />,
   },
 ];

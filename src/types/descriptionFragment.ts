@@ -1,18 +1,18 @@
 export interface IDescriptionFragment {
-    id: number;
-    doctor: number;
-    title: string;
-    content: string;
-    number: number;
+  id: number;
+  doctor_profile: number;
+  title: string;
+  content: string;
+  ordering_number: number;
 }
 
 export interface IDescriptionFragmentCreate {
-    doctor: number;
-    title: string;
-    content: string;
-    number: number;
+  doctor_profile: number;
+  title: string;
+  content: string;
+  ordering_number: number;
 }
 
 export interface IDescriptionFragmentUpdate extends IDescriptionFragmentCreate {
-    id: number
+  id: number;
 }
