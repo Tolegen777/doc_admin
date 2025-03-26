@@ -1,5 +1,5 @@
 import styles from "./styles.module.scss";
-import userIcon from "../../../assets/userIcon.svg";
+// import userIcon from "../../../assets/userIcon.svg";
 import GapContainer from "../../Shared/GapContainer/GapContainer.tsx";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";

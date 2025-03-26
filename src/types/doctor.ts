@@ -14,6 +14,9 @@ export interface IDoctor {
   categories: ICategory[];
   description_fragments: DescriptionFragment[];
 
+  experience_years: number;
+  works_since: string;
+
   // id: number;
   // full_name: string;
   // short_name: string;

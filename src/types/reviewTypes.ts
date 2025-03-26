@@ -15,6 +15,12 @@ export interface IReview {
   // updated_at: string;
   // author_name: string;
 
+  visit_date: string;
+  doctor_name: string;
+  procedure_title: string;
+  patient_name: string;
+  updated_at: string;
+
   id: number;
   author_name: string;
   text: string;
