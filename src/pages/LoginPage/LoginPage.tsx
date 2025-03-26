@@ -8,7 +8,7 @@ import { tokenService } from "../../services/tokenService.ts";
 import { useStateContext } from "../../contexts";
 import { AxiosError } from "axios";
 import { customNotification } from "../../utils/customNotification.ts";
-import { regExpValidator } from "../../utils/regExpValidator.ts";
+// import { regExpValidator } from "../../utils/regExpValidator.ts";
 import { useNavigate } from "react-router-dom";
 
 const { useToken } = theme;
