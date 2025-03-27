@@ -252,8 +252,9 @@ const DoctorsPage = () => {
   };
 
   const onSubmitPhotoModal = async (formData: any) => {
+    debugger
     const payload = {
-      photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
+      photo: formData?.photo?.find((item: any) => item)?.originFileObj,
       title_code: formData?.title_code,
       is_main: formData?.is_main,
     };

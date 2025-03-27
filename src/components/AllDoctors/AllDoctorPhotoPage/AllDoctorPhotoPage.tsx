@@ -48,14 +48,17 @@ const DoctorWorkSchedulesPage = () => {
   const { mutate: onPhotoCreateUpdate, isPending: isPhotoCreateUpdateLoading } =
     useMutation({
       mutationKey: ["createUpdatePhoto"],
-      mutationFn: ({ doctor_profile, ...body }: any) => {
-        const url = body.id
-          ? `employee_endpoints/doctors/${doctor_profile}/doctor_profile_photos/${body?.id}/`
-          : `employee_endpoints/doctors/${doctor_profile}/doctor_profile_photos/`;
+      mutationFn: (body: FormData) => {
+        const url = body.get('id') !== 'undefined'
+          ? `employee_endpoints/doctors/${selectedDoctorId}/doctor_profile_photos/${body.get('id')}/`
+          : `employee_endpoints/doctors/${selectedDoctorId}/doctor_profile_photos/`;
         return axiosInstance({
-          method: body.id ? "put" : "post",
+          method: body.get('id') !== 'undefined' ? "patch" : "post",
           url,
           data: body,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         });
       },
       onSuccess: () => {
@@ -112,20 +115,16 @@ const DoctorWorkSchedulesPage = () => {
   };
 
   const onSubmitPhotoModal = async (formData: any) => {
-    const payload = {
-      doctor_profile: selectedDoctorId,
-      photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
-      title_code: formData?.title_code,
-    };
-    console.log(payload, "PAYLOAAD");
-    onPhotoCreateUpdate(
-      photoFormType === "create"
-        ? payload
-        : {
-            id: photoEditEntity?.id,
-            ...payload,
-          },
-    );
+    const payload = new FormData();
+    if (selectedDoctorId) {
+      payload.append("doctor_profile", selectedDoctorId);
+    }
+    payload.append("title_code", formData?.title_code || "");
+    payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
+    if (photoFormType === "create") {
+      payload.append("id", String(photoEditEntity?.id) || "");
+    }
+    onPhotoCreateUpdate(payload);
     setPhotoModalOpen(false);
   };
 

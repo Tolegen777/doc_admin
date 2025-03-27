@@ -171,14 +171,17 @@ const AllDoctorsPage = () => {
   const { mutate: onPhotoCreateUpdate, isPending: isPhotoCreateUpdateLoading } =
     useMutation({
       mutationKey: ["createUpdatePhoto"],
-      mutationFn: ({ doctor_profile, ...body }: any) => {
-        const url = body.id
-          ? `partners/franchise-info/all-doctors/${doctor_profile}/doctor-photos/${body?.id}/`
-          : `partners/franchise-info/all-doctors/${doctor_profile}/doctor-photos/`;
+      mutationFn: (body: FormData) => {
+        const url = body.get('id') !== 'undefined'
+          ? `partners/franchise-info/all-doctors/${selectedDoctorId}/doctor-photos/${body.get('id')}/`
+          : `partners/franchise-info/all-doctors/${selectedDoctorId}/doctor-photos/`;
         return axiosInstance({
-          method: body.id ? "put" : "post",
+          method: body.get('id') !== 'undefined' ? "patch" : "post",
           url,
           data: body,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         });
       },
       onSuccess: () => {
@@ -378,11 +381,19 @@ const AllDoctorsPage = () => {
   };
 
   const onSubmitPhotoModal = async (formData: any) => {
-    const payload = {
-      doctor_profile: selectedDoctorId,
-      photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
-      title_code: formData?.title_code,
-    };
+    debugger
+    // const payload = {
+    //   doctor_profile: selectedDoctorId,
+    //   photo: formData?.photo?.find((item: any) => item)?.originFileObj,
+    //   title_code: formData?.title_code,
+    // };
+    const payload = new FormData();
+    if (selectedDoctorId) {
+      payload.append("doctor_profile", selectedDoctorId);
+    }
+    payload.append("title_code", formData?.title_code || "");
+    payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
+
     console.log(payload, "PAYLOAAD");
     onPhotoCreateUpdate(
       photoFormType === "create"
