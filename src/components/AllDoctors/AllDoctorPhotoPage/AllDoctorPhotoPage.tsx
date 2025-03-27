@@ -50,10 +50,10 @@ const DoctorWorkSchedulesPage = () => {
       mutationKey: ["createUpdatePhoto"],
       mutationFn: ({ doctor_profile, ...body }: any) => {
         const url = body.id
-          ? `employee_endpoints/doctors/${doctor_profile}/doctor_profile_photos/${body?.id}/`
-          : `employee_endpoints/doctors/${doctor_profile}/doctor_profile_photos/`;
+          ? `employee_endpoints/doctors/${selectedDoctorId}/doctor_profile_photos/${body?.id}/`
+          : `employee_endpoints/doctors/${selectedDoctorId}/doctor_profile_photos/`;
         return axiosInstance({
-          method: body.id ? "put" : "post",
+          method: body.id ? "patch" : "post",
           url,
           data: body,
         });
@@ -112,11 +112,15 @@ const DoctorWorkSchedulesPage = () => {
   };
 
   const onSubmitPhotoModal = async (formData: any) => {
-    const payload = {
-      doctor_profile: selectedDoctorId,
-      photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
-      title_code: formData?.title_code,
-    };
+    // const payload = {
+    //   doctor_profile: selectedDoctorId,
+    //   photo: formData?.photo?.find((item: any) => item)?.originFileObj,
+    //   title_code: formData?.title_code,
+    // };
+    const payload = new FormData();
+    payload.append("doctor_profile", selectedDoctorId);
+  payload.append("title_code", formData?.title_code || "");
+  payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
     console.log(payload, "PAYLOAAD");
     onPhotoCreateUpdate(
       photoFormType === "create"

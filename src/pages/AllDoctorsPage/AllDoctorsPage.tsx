@@ -176,7 +176,7 @@ const AllDoctorsPage = () => {
           ? `partners/franchise-info/all-doctors/${doctor_profile}/doctor-photos/${body?.id}/`
           : `partners/franchise-info/all-doctors/${doctor_profile}/doctor-photos/`;
         return axiosInstance({
-          method: body.id ? "put" : "post",
+          method: body.id ? "patch" : "post",
           url,
           data: body,
         });
@@ -378,9 +378,10 @@ const AllDoctorsPage = () => {
   };
 
   const onSubmitPhotoModal = async (formData: any) => {
+    debugger
     const payload = {
       doctor_profile: selectedDoctorId,
-      photo: formData?.photo?.find((item: any) => item)?.thumbUrl,
+      photo: formData?.photo?.find((item: any) => item)?.originFileObj,
       title_code: formData?.title_code,
     };
     console.log(payload, "PAYLOAAD");
