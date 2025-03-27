@@ -274,8 +274,8 @@ const DoctorsPage2 = () => {
     },
     {
       title: "Опыт (лет)",
-      key: "experience",
-      dataIndex: "experience",
+      key: "experience_years",
+      dataIndex: "experience_years",
     },
     {
       title: "Рейтинг",

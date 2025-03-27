@@ -52,7 +52,7 @@ const AllDoctorsFilter = ({
       className={styles.filterForm}
     >
       <Form.Item
-        name="name"
+        name="search"
         // label="Имя"
       >
         <Input placeholder="Введите имя врача" />
@@ -97,7 +97,7 @@ const AllDoctorsFilter = ({
         />
       </Form.Item>
       <Form.Item
-        name="branches"
+        name="clinics"
         // label="Филиалы"
       >
         <Select
