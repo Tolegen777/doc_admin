@@ -30,7 +30,7 @@ const DoctorBaseInfo2 = ({ doctorDetails }: Props) => {
   return (
     <div className={styles.container}>
       <div className={styles.container_avatar}>
-        <img src={doctorDetails?.main_photo.url} alt="" />
+        <img src={doctorDetails?.main_photo?.url} alt="" />
       </div>
       <div className={styles.container_info}>
         <div className={styles.container_info_title}>

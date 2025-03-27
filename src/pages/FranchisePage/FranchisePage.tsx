@@ -271,22 +271,17 @@ const FranchisePage = () => {
   };
 
   const onSubmitPhotoModal = async (formData: any) => {
-    const payload = {
-      branch: selectedBranchId,
-      photo: Array.isArray(formData?.photo)
-        ? formData?.photo?.find((item: any) => item)?.thumbUrl
-        : formData?.photo,
-      title_code: formData?.title_code,
-      is_main: !!formData?.is_main,
-    };
-    onPhotoCreateUpdate(
-      photoFormType === "create"
-        ? payload
-        : {
-            id: photoEditEntity?.id,
-            ...payload,
-          },
-    );
+    const payload = new FormData();
+    if (selectedBranchId) {
+      payload.append("doctor_profile", String(selectedBranchId));
+    }
+    payload.append("title_code", formData?.title_code || "");
+    // payload.append("is_main", Boolean(formData.is_main));
+    payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
+    if (photoFormType === "create") {
+      payload.append("id", String(photoEditEntity?.id) || "");
+    }
+    onPhotoCreateUpdate(payload);
     onClosePhotoModal();
   };
 
