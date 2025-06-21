@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Form, Modal, Switch, Table} from 'antd';
+import {Button, Form, Modal, Switch} from 'antd';
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {axiosInstance} from "../../../api";
 import {customNotification} from "../../../utils/customNotification.ts";
@@ -8,10 +8,11 @@ import {useStateContext} from "../../../contexts";
 import {DoctorProcedure} from "../../../types/doctorSpec.ts";
 import {customConfirmAction} from "../../../utils/customConfirmAction.ts";
 import {DoctorProcPriceCreateForm} from "./DoctorProcPriceCreateForm/DoctorProcPriceCreateForm.tsx";
-import {FormInitialFieldsParamsType} from "../../../types/common.ts";
+import {FormInitialFieldsParamsType, IGet} from "../../../types/common.ts";
 import {changeFormFieldsData} from "../../../utils/changeFormFieldsData.ts";
 import {useParams} from "react-router-dom";
 import {datePickerFormatter, formatDateTime} from "../../../utils/date/getDates.ts";
+import {CustomTable} from "../../Shared/CustomTable";
 
 type Props = {
     activeSpecId: number | null,
@@ -67,6 +68,8 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] = useState<FormInitialFieldsParamsType[]>(initialValues)
     const [editEntity, setEditEntity] = useState<IDoctorProcPrice | null>(null)
 
+    const [page, setPage] = useState(1);
+
     // SPECIALITY POST PUT DELETE API
     const {
         mutate: onCreatePrice,
@@ -75,7 +78,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['createPrice'],
         mutationFn: (body: ICreatePrice) =>
-            axiosInstance.post(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/`, body),
+            axiosInstance.post(`employee_endpoints/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -132,11 +135,13 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         ],
         queryFn: () =>
             axiosInstance
-                .get<IDoctorProcPrice[]>(
-                    `partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices`)
+                .get<IGet<IDoctorProcPrice>>(
+                    `employee_endpoints/doctors/${pathname?.id}/specialities/${activeSpecId}/procedures/${activeProcId}/prices?page=${page}`)
                 .then((response) => response?.data),
-        enabled: !!addressId && !!pathname?.id && !!activeProcId && !!activeSpecId
+        enabled: !!pathname?.id && !!activeProcId && !!activeSpecId
     });
+
+    console.log(data, 'DATA')
 
     const handleCreateUpdatePrice = (values: any) => {
         if (formType === 'update') {
@@ -156,7 +161,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
 
     const handleDeletePrice = (id: number) => {
         customConfirmAction({
-            message: 'Вы действительно хотите удалить специальность!',
+            message: 'Вы действительно хотите удалить цену!',
             action: () => onDeletePrice(id),
             okBtnText: 'Удалить',
             isCentered: true
@@ -186,7 +191,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
         }
     };
 
-    const procColumns = [
+    const procPriceColumns = [
         {
             title: 'ID цены',
             dataIndex: 'id',
@@ -308,10 +313,13 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
             >
                 Создать
             </Button>
-            <Table
-                dataSource={data}
-                columns={procColumns}
+            <CustomTable
+                columns={procPriceColumns}
+                dataSource={data?.results ?? []}
                 loading={isPriceLoading}
+                setPage={setPage}
+                total={data?.count ?? 0}
+                current={page}
             />
         </div>
     );

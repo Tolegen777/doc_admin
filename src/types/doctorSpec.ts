@@ -17,11 +17,11 @@ export interface ISpecContent {
 }
 
 export interface DoctorProcedure {
-  id: number;
-  med_proc_info: IMedProcedures;
-  is_active: boolean;
-  comission_amount: number;
-  price: IPrice;
+  doctor_profile: number
+  id: number
+  medical_procedure: number
+  medical_procedure_slug: string
+  medical_procedure_title: string
 }
 
 export interface IMedProcedures {
@@ -69,8 +69,7 @@ export interface MedicalSpecialityProcedure {
 }
 
 export interface ICreateSpec {
-  med_spec_id: number;
-  is_active: boolean;
+  medical_speciality: number;
 }
 
 export interface IUpdateSpec {

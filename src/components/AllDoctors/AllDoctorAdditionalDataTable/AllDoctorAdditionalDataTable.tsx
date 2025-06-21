@@ -275,7 +275,7 @@ const AllDoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
 
   const handleDeleteProc = (id: number) => {
     customConfirmAction({
-      message: "Вы действительно хотите удалить специальность!",
+      message: "Вы действительно хотите удалить процедуру!",
       action: () => onDeleteProc(id),
       okBtnText: "Удалить",
       isCentered: true,
@@ -300,7 +300,7 @@ const AllDoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     if (type === "spec") {
       const doctorSpecIds = specs?.map((item) => item?.doctor_speciality_id);
       return allSpecsList?.filter(
-        (item) => !doctorSpecIds?.includes(item?.medical_speciality_id),
+        (item) => !doctorSpecIds?.includes(item?.id),
       );
     } else {
       const doctorProcIds = procs?.map((item) => item?.id);
@@ -463,12 +463,13 @@ const AllDoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
       key: "action",
       render: (item: IAllDoctorProcs) => (
         <Button
-          onClick={() =>
+          onClick={() => {
             handleOpenProcedurePrices(item?.id, item?.procedure_title)
+          }
           }
           disabled={isSpecDeleteLoading}
         >
-          Открыть цены процедуры
+          Открыть цены процедурыd
         </Button>
       ),
     },

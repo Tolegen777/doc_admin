@@ -120,6 +120,7 @@ const DoctorWorkSchedulesPage = () => {
       payload.append("doctor_profile", selectedDoctorId);
     }
     payload.append("title_code", formData?.title_code || "");
+    payload.append("is_main", formData?.is_main || false);
     payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
     if (photoFormType === "create") {
       payload.append("id", String(photoEditEntity?.id) || "");

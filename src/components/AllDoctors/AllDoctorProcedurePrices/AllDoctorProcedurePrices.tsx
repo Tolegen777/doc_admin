@@ -157,7 +157,7 @@ const AllDoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId, 
 
     const handleDeletePrice = (id: number) => {
         customConfirmAction({
-            message: 'Вы действительно хотите удалить специальность!',
+            message: 'Вы действительно хотите удалить цену!',
             action: () => onDeletePrice(id),
             okBtnText: 'Удалить',
             isCentered: true
