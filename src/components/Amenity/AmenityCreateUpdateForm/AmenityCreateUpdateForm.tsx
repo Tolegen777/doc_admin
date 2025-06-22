@@ -1,13 +1,15 @@
-import { Button, Form, InputNumber, Space } from 'antd';
+import { Button, Form, Select, Space } from 'antd';
 import styles from './styles.module.scss';
 import { ActionType, FormInitialFieldsParamsType } from "../../../types/common.ts";
 
 type Props = {
     formType: ActionType
     initialFields: FormInitialFieldsParamsType[]
-    onSubmit: (data: any, type: ActionType) => void
+    onSubmit: (data: {amenity: number}) => void
     onClose: () => void
     isLoading: boolean
+    allAmenities: Array<{id: number, title: string}>
+    amenitiesLoading: boolean
 }
 
 export const AmenityCreateUpdateForm = (props: Props) => {
@@ -17,24 +19,34 @@ export const AmenityCreateUpdateForm = (props: Props) => {
         onSubmit,
         onClose,
         isLoading,
+        allAmenities,
+        amenitiesLoading,
     } = props;
 
     const [form] = Form.useForm();
 
     const formFields = [
         {
-            name: 'clinic_branch',
-            element: <InputNumber placeholder="Введите ID филиала клиники" style={{ width: '100%' }} />,
-            label: 'ID филиала клиники',
-            rules: [{
-                required: true,
-                message: 'Обязательное поле!'
-            }]
-        },
-        {
             name: 'amenity',
-            element: <InputNumber placeholder="Введите ID удобства" style={{ width: '100%' }} />,
-            label: 'ID удобства',
+            element: (
+                <Select
+                    placeholder="Выберите удобство"
+                    style={{ width: '100%' }}
+                    loading={amenitiesLoading}
+                    showSearch
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                        (option?.children as string)?.toLowerCase()?.includes(input.toLowerCase())
+                    }
+                >
+                    {allAmenities?.map((amenity) => (
+                        <Select.Option key={amenity.id} value={amenity.id}>
+                            {amenity.title}
+                        </Select.Option>
+                    ))}
+                </Select>
+            ),
+            label: 'Удобство',
             rules: [{
                 required: true,
                 message: 'Обязательное поле!'
@@ -48,7 +60,7 @@ export const AmenityCreateUpdateForm = (props: Props) => {
                 fields={initialFields}
                 form={form}
                 layout="vertical"
-                onFinish={value => onSubmit(value, formType)}
+                onFinish={value => onSubmit(value)}
                 className={styles.form}
             >
                 <Space size="small" direction="vertical" style={{ width: '100%' }}>
@@ -77,7 +89,7 @@ export const AmenityCreateUpdateForm = (props: Props) => {
                     disabled={isLoading}
                     size={"large"}
                 >
-                    {formType === 'create' ? 'Создать' : 'Сохранить изменения'}
+                    {formType === 'create' ? 'Добавить' : 'Сохранить изменения'}
                 </Button>
             </div>
         </div>
