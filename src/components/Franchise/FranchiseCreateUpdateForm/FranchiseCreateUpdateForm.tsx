@@ -14,8 +14,6 @@ type Props = {
     cityLoading: boolean
 }
 
-const { TextArea } = Input;
-
 export const FranchiseCreateUpdateForm = (props: Props) => {
     const {
         formType,
@@ -31,6 +29,20 @@ export const FranchiseCreateUpdateForm = (props: Props) => {
 
     const options = selectOptionsParser(cities, 'title', 'id')
 
+    // Функция валидации URL
+    const validateUrl = (_: any, value: string) => {
+        if (!value) {
+            return Promise.resolve();
+        }
+
+        try {
+            new URL(value);
+            return Promise.resolve();
+        } catch {
+            return Promise.reject(new Error('Введите корректный URL'));
+        }
+    };
+
     const formFields = [
         {
             name: 'title',
@@ -42,14 +54,18 @@ export const FranchiseCreateUpdateForm = (props: Props) => {
             }]
         },
         {
-            name: 'description',
-            element: <TextArea placeholder="Введите описание" />,
-            label: 'Описание',
-        },
-        {
             name: 'address',
             element: <Input placeholder="Введите адрес" />,
             label: 'Адрес',
+            rules: [{
+                required: true,
+                message: 'Обязательное поле!'
+            }]
+        },
+        {
+            name: 'slug',
+            element: <Input placeholder="Введите слаг" />,
+            label: 'Слаг',
             rules: [{
                 required: true,
                 message: 'Обязательное поле!'
@@ -85,6 +101,30 @@ export const FranchiseCreateUpdateForm = (props: Props) => {
             rules: [{
                 required: true,
                 message: 'Обязательное поле!'
+            }]
+        },
+        {
+            name: 'yandex_maps_url',
+            element: <Input placeholder="Введите ссылку на Яндекс.Карты" />,
+            label: 'Ссылка на Яндекс.Карты',
+            rules: [{
+                validator: validateUrl
+            }]
+        },
+        {
+            name: 'google_maps_url',
+            element: <Input placeholder="Введите ссылку на Google Maps" />,
+            label: 'Ссылка на Google Maps',
+            rules: [{
+                validator: validateUrl
+            }]
+        },
+        {
+            name: 'two_gis_url',
+            element: <Input placeholder="Введите ссылку на 2ГИС" />,
+            label: 'Ссылка на 2ГИС',
+            rules: [{
+                validator: validateUrl
             }]
         },
     ];

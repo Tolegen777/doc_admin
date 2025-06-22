@@ -16,15 +16,10 @@ import {
 import { FranchiseCreateUpdateForm } from "../../components/Franchise/FranchiseCreateUpdateForm/FranchiseCreateUpdateForm.tsx";
 import { PhotoForm } from "../../components/Franchise/PhotoForm/PhotoForm.tsx";
 import { CityTypes } from "../../types/cityTypes.ts";
-import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
 
 const initialValues: FormInitialFieldsParamsType[] = [
   {
     name: "title",
-    value: "",
-  },
-  {
-    name: "description",
     value: "",
   },
   {
@@ -42,6 +37,18 @@ const initialValues: FormInitialFieldsParamsType[] = [
   {
     name: "city",
     value: null,
+  },
+  {
+    name: "yandex_maps_url",
+    value: "",
+  },
+  {
+    name: "google_maps_url",
+    value: "",
+  },
+  {
+    name: "two_gis_url",
+    value: "",
   },
 ];
 
@@ -135,12 +142,15 @@ const FranchisePage = () => {
       mutationKey: ["createUpdatePhoto"],
       mutationFn: (body: any) => {
         const url = body.id
-          ? `employee_endpoints/clinics/${body.branch}/photos/${body.id}/`
-          : `employee_endpoints/clinics/${body.branch}/photos/add/`;
+          ? `employee_endpoints/clinics/${selectedBranchId}/photos/${body.id}/`
+          : `employee_endpoints/clinics/${selectedBranchId}/photos/add/`;
         return axiosInstance({
           method: body.id ? "patch" : "post",
           url,
           data: body,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         });
       },
       onSuccess: () => {
@@ -158,14 +168,13 @@ const FranchisePage = () => {
     useMutation({
       mutationKey: ["deletePhoto"],
       mutationFn: ({
-        branchId,
         photoId,
       }: {
         branchId: number;
         photoId: number;
       }) =>
         axiosInstance.delete(
-          `employee_endpoints/clinics/${branchId}/photos/${photoId}/`,
+          `employee_endpoints/clinics/${selectedBranchId}/photos/${photoId}/`,
         ),
       onSuccess: () => {
         customNotification({
@@ -273,11 +282,12 @@ const FranchisePage = () => {
   const onSubmitPhotoModal = async (formData: any) => {
     const payload = new FormData();
     if (selectedBranchId) {
-      payload.append("doctor_profile", String(selectedBranchId));
+      // payload.append("doctor_profile", String(selectedBranchId));
     }
     payload.append("title_code", formData?.title_code || "");
     // payload.append("is_main", Boolean(formData.is_main));
     payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
+    payload.append("is_main", formData?.is_main || false);
     if (photoFormType === "create") {
       payload.append("id", String(photoEditEntity?.id) || "");
     }
@@ -314,17 +324,9 @@ const FranchisePage = () => {
       dataIndex: "title",
     },
     {
-      title: "Описание",
-      key: "description",
-      dataIndex: "description",
-      render: (item: string) => (
-        <ShowMoreContainer>
-          <div
-            style={{ width: 300 }}
-            dangerouslySetInnerHTML={{ __html: item }}
-          />
-        </ShowMoreContainer>
-      ),
+      title: "Слаг",
+      key: "slug",
+      dataIndex: "slug",
     },
     {
       title: "Адрес",

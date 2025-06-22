@@ -18,14 +18,14 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
 
   const [form] = Form.useForm();
 
-  const { data: categories, isLoading: categoryLoading } = useQuery({
-    queryKey: ["doctorCategoriesData"],
-    queryFn: () =>
-      axiosInstance
-        .get("employee_endpoints/doctors/list_of_all_medical_categories/")
-        .then((response) => response.data),
-    refetchOnMount: false,
-  });
+  // const { data: categories, isLoading: categoryLoading } = useQuery({
+  //   queryKey: ["doctorCategoriesData"],
+  //   queryFn: () =>
+  //     axiosInstance
+  //       .get("employee_endpoints/doctors/list_of_all_medical_categories/")
+  //       .then((response) => response.data),
+  //   refetchOnMount: false,
+  // });
 
   const { data: cities, isLoading: citiesLoading } = useQuery({
     queryKey: ["doctorCitiesData"],
@@ -36,7 +36,7 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
     refetchOnMount: false,
   });
 
-  const options = selectOptionsParser(categories ?? [], "title", "id");
+  // const options = selectOptionsParser(categories ?? [], "title", "id");
   const cityOptions = selectOptionsParser(cities ?? [], "title", "id");
 
   const formFields = [
@@ -65,7 +65,7 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
       ],
     },
     {
-      name: "patronymic_name",
+      name: "middle_name",
       element: (
         <Input placeholder="Введите отчество" style={{ width: "600px" }} />
       ),
@@ -77,26 +77,26 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
         },
       ],
     },
-    {
-      name: "categories",
-      element: (
-        <Select
-          placeholder="Выберите категорий врача"
-          options={options}
-          showSearch
-          allowClear
-          loading={categoryLoading}
-          popupMatchSelectWidth={false}
-          style={{ width: "600px" }}
-          mode={"multiple"}
-        />
-      ),
-      label: "Категорий врача",
-      // rules: [{
-      //     required: true,
-      //     message: 'Обязательное поле!'
-      // }],
-    },
+    // {
+    //   name: "categories",
+    //   element: (
+    //     <Select
+    //       placeholder="Выберите категорий врача"
+    //       options={options}
+    //       showSearch
+    //       allowClear
+    //       loading={categoryLoading}
+    //       popupMatchSelectWidth={false}
+    //       style={{ width: "600px" }}
+    //       mode={"multiple"}
+    //     />
+    //   ),
+    //   label: "Категорий врача",
+    //   // rules: [{
+    //   //     required: true,
+    //   //     message: 'Обязательное поле!'
+    //   // }],
+    // },
     {
       name: "city",
       element: (
@@ -164,11 +164,11 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
       element: <Switch />,
       label: "Активен",
     },
-    {
-      name: "is_top",
-      element: <Switch />,
-      label: "Топовый врач",
-    },
+    // {
+    //   name: "is_top",
+    //   element: <Switch />,
+    //   label: "Топовый врач",
+    // },
   ];
 
   // const textareaFields = [

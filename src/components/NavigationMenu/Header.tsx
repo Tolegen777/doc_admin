@@ -26,10 +26,10 @@ const items: MenuItem[] = [
     label: "Отзывы",
     key: "/reviews",
   },
-  {
-    label: "Врачи",
-    key: "/doctors",
-  },
+  // {
+  //   label: "Врачи",
+  //   key: "/doctors",
+  // },
   // {
   //     label: 'Франшизы',
   //     key: '/franchises',
