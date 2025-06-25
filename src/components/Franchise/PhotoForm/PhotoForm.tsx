@@ -72,7 +72,6 @@ export const PhotoForm = (props: Props) => {
           <Form.Item
             name="is_main"
             label="Главная фотография"
-            rules={[{ required: true, message: "Обязательное поле!" }]}
             valuePropName={"checked"}
           >
             <Switch />

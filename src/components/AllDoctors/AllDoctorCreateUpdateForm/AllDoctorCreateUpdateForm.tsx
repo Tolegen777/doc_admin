@@ -70,12 +70,6 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
         <Input placeholder="Введите отчество" style={{ width: "600px" }} />
       ),
       label: "Отчество",
-      rules: [
-        {
-          required: true,
-          message: "Обязательное поле!",
-        },
-      ],
     },
     // {
     //   name: "categories",
@@ -150,6 +144,12 @@ const AllDoctorCreateUpdateForm = (props: Props) => {
         />
       ),
       label: "Дата начала трудовой деятельности",
+      rules: [
+        {
+          required: true,
+          message: "Обязательное поле!",
+        },
+      ],
     },
   ];
 
