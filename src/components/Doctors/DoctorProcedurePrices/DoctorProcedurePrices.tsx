@@ -78,7 +78,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['createPrice'],
         mutationFn: (body: ICreatePrice) =>
-            axiosInstance.post(`employee_endpoints/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/`, body),
+            axiosInstance.post(`employee_endpoints/doctors/${pathname?.id}/specialities/${activeSpecId}/procedures/${activeProcId}/prices/`, body),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -95,7 +95,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['updatePrice'],
         mutationFn: ({id, ...body}: IUpdatePrice) => {
-            return axiosInstance.put(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`, body)
+            return axiosInstance.put(`employee_endpoints/doctors/${pathname?.id}/specialities/${activeSpecId}/procedures/${activeProcId}/prices/${id}`, body)
         },
         onSuccess: () => {
             customNotification({
@@ -112,7 +112,7 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
     } = useMutation({
         mutationKey: ['deletePrice'],
         mutationFn: (id: number) =>
-            axiosInstance.delete(`partners/franchise-branches/${addressId}/doctors/${pathname?.id}/doc_spec/${activeSpecId}/doc_proc/${activeProcId}/prices/${id}`),
+            axiosInstance.delete(`employee_endpoints/doctors/${pathname?.id}/specialities/${activeSpecId}/procedures/${activeProcId}/prices/${id}`),
         onSuccess: () => {
             customNotification({
                 type: 'success',
@@ -140,8 +140,6 @@ const DoctorProcedurePrices: React.FC<Props> = ({activeSpecId, activeProcId}) =>
                 .then((response) => response?.data),
         enabled: !!pathname?.id && !!activeProcId && !!activeSpecId
     });
-
-    console.log(data, 'DATA')
 
     const handleCreateUpdatePrice = (values: any) => {
         if (formType === 'update') {

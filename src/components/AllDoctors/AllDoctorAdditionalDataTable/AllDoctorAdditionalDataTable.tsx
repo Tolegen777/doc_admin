@@ -469,7 +469,7 @@ const AllDoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
           }
           disabled={isSpecDeleteLoading}
         >
-          Открыть цены процедурыd
+          Открыть цены процедурыв
         </Button>
       ),
     },
