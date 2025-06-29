@@ -16,7 +16,7 @@ import {
   IDescriptionFragmentCreate,
   IDescriptionFragmentUpdate,
 } from "../../types/descriptionFragment.ts";
-import { DescriptionFragmentCreateUpdateForm } from "../../components/DescriptionFragmentPage/DescriptionFragmentCreateUpdateForm/DescriptionFragmentCreateUpdateForm.tsx";
+import { DescriptionFragmentCreateUpdateForm } from "../../components/DescriptionFragmentCreateUpdateForm/DescriptionFragmentCreateUpdateForm.tsx";
 import { useParams } from "react-router-dom";
 import ShowMoreContainer from "../../components/Shared/ShowMoreContainer/ShowMoreContainer.tsx";
 
