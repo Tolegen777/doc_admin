@@ -12,7 +12,7 @@ export const PatientDetailPage = () => {
         queryKey: ['patientDetail', id],
         queryFn: () =>
             axiosInstance
-                .get(`partners/franchise-info/all-visits/patients/${id}/`)
+                .get(`employee_endpoints/all-visits/patients/${id}/`)
                 .then((response) => response.data),
     });
 

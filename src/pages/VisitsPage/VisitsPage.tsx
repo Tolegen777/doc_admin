@@ -169,7 +169,7 @@ const VisitsPage = () => {
       render: (visit: IVisit) => (
         <DoctorProfile
           title={visit?.doctor_profile?.full_name}
-          subTitle={visit?.doctor_procedure.medical_procedure.title}
+          subTitle={visit?.doctor_procedure?.medical_procedure?.title}
           imgSrc={""}
         />
       ),
