@@ -60,6 +60,7 @@ export interface ISlotPayload {
 export interface IWorkScheduleUpdate {
   clinic: number | null;
   room?: number;
+  date: string;
   working_hours: number[];
 }
 

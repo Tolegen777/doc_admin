@@ -134,6 +134,7 @@ const DoctorSlots: React.FC<Props> = memo(
         });
       } else {
         setActionType("update");
+        setActiveWorkDate(String(date));
         dispatch({
           type: "SET_SLOT_DATA",
           payload: {
@@ -158,6 +159,7 @@ const DoctorSlots: React.FC<Props> = memo(
         onUpdateWorkSchedule({
           clinic: addressId,
           working_hours: payload,
+          date: activeWorkDate,
         });
       }
     };
