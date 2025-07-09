@@ -189,9 +189,7 @@ const DoctorsPage2 = () => {
 
   const handleFilter = (formData: any) => {
     if (formData) {
-      console.log(formData, "FROM");
       const urlParams = objectToQueryParams(formData);
-      console.log(urlParams, "PAR");
       setParams(`&${urlParams}`);
     }
   };

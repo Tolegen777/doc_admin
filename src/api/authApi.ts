@@ -33,7 +33,6 @@ export const authApi = {
     } catch (error) {
       if (axios.isAxiosError(error)) {
 
-        console.log(error?.response, "LLL");
         if (error?.response?.status === 401) {
           customConfirmAction({
             message: "Время вашего сеанса истекло, пожалуйста, войдите снова!",

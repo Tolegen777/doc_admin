@@ -394,7 +394,6 @@ const AllDoctorsPage = () => {
     payload.append("title_code", formData?.title_code || "");
     payload.append("photo", formData?.photo?.find((item: any) => item)?.originFileObj);
 
-    console.log(payload, "PAYLOAAD");
     onPhotoCreateUpdate(
       photoFormType === "create"
         ? payload
@@ -412,9 +411,7 @@ const AllDoctorsPage = () => {
 
   const handleFilter = (formData: any) => {
     if (formData) {
-      console.log(formData, "FROM");
       const urlParams = objectToQueryParams(formData);
-      console.log(urlParams, "PAR");
       setParams(`&${urlParams}`);
     }
   };

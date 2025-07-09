@@ -78,4 +78,4 @@ export interface ITime {
   id: number;
 }
 
-export type PanelColourType = "red" | "green" | "gray";
+export type PanelColourType = "red" | "green" | "grey";

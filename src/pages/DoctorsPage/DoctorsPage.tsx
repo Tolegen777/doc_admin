@@ -258,7 +258,6 @@ const DoctorsPage = () => {
       title_code: formData?.title_code,
       is_main: formData?.is_main,
     };
-    console.log(payload, "PAYLOAAD");
     onPhotoCreateUpdate(
       photoFormType === "create"
         ? payload

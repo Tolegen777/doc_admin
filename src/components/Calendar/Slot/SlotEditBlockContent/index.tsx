@@ -33,7 +33,7 @@ export const SlotEditBlockContent = memo(({ workingHours }: Props) => {
 
   useEffect(() => {
     const reservedWorkingHours = workingHours
-      ?.filter((item) => item?.reserved)
+      ?.filter((item) => item?.panel_colour === 'full_blue')
       ?.map((item) => item?.time_slot_object_id);
     dispatch({
       type: "SET_SELECTED_TIME_SLOTS_IDS",

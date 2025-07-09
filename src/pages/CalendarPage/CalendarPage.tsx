@@ -1,7 +1,7 @@
 import styles from "./styles.module.scss";
 import CalendarContent from "../../components/Calendar/CalendarContent/CalendarContent.tsx";
 import Filters from "../../components/Calendar/Filters/Filters.tsx";
-import { useMemo, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { getDateRange } from "../../utils/date/getDates.ts";
 import { axiosInstance } from "../../api";
 import { IGet } from "../../types/common.ts";
@@ -33,6 +33,12 @@ const CalendarPage = () => {
         .then((response) => response?.data),
     enabled: Boolean(addressId),
   });
+
+  useEffect(() => {
+      if (addressId) {
+          setPage(1);
+      }
+  }, [addressId])
 
   return (
     <div className={styles.container}>

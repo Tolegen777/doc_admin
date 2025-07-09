@@ -44,7 +44,7 @@ const fillEmptySlots = (
     return {
       clinic_branch_id: clinicBranchId,
       doctor_work_schedule_object_id: null,
-      tile_color: "gray",
+      tile_color: "grey",
       appointments_count: 0,
       date: date.date,
       time_slots_count: 0,
@@ -120,7 +120,7 @@ const DoctorSlots: React.FC<Props> = memo(
     const onSlotOpen = async (item: WorkSchedule) => {
       setIsModalOpen(true);
       const { doctor_work_schedule_object_id, date, tile_color } = item;
-      if (tile_color === "gray") {
+      if (tile_color === "grey") {
         setActionType("create");
         setActiveWorkDate(String(date));
         dispatch({

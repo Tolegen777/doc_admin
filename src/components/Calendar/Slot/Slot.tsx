@@ -23,13 +23,13 @@ const Slot = ({
       })}
       onClick={onSlotOpen}
     >
-      {panelColour !== "gray" && (
+      {panelColour !== "grey" && (
         <>
           <div className={styles.container_title}>{visitsCount}</div>
           <div className={styles.container_sub_title}>{workingHoursCount}</div>
         </>
       )}
-      {panelColour === "gray" && (
+      {panelColour === "grey" && (
         <div className={styles.container_empty_title}>o</div>
       )}
     </div>
