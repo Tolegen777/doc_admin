@@ -81,7 +81,7 @@ const MonthSummaryPage = () => {
       axiosInstance
         .get<
           IGet<IMonthSummary>
-        >(`partners/franchise-branches/${addressId}/monthly-summaries/?page=${page}`)
+        >(`employee_endpoints/clinics/${addressId}/monthly-summaries/?page=${page}`)
         .then((response) => response?.data),
     enabled: !!addressId,
   });

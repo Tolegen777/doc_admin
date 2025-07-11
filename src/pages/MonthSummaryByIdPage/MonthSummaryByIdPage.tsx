@@ -123,7 +123,7 @@ const MonthSummaryByIdPage = () => {
         queryKey: ['monthSummaryByIdData', addressId, params?.id, page],
         queryFn: () =>
             axiosInstance
-                .get<IGetMonthlySummariesById>(`partners/franchise-branches/${addressId}/monthly-summaries/${params?.id}?page=${page}`)
+                .get<IGetMonthlySummariesById>(`employee_endpoints/clinics/${addressId}/monthly-summaries/${params?.id}`)
                 .then((response) => response?.data),
         enabled: !!addressId
     });
