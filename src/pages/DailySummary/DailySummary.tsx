@@ -63,7 +63,7 @@ const DailySummaryPage = () => {
     queryFn: () =>
       axiosInstance
         .get<IDailySummary>(
-          `partners/franchise-branches/${addressId}/daily-summary/`,
+          `employee_endpoints/clinics/${addressId}/daily-summary/`,
         )
         .then((response) => response?.data),
     enabled: !!addressId,

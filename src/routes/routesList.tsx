@@ -23,6 +23,7 @@ import { PatientDetailPage } from "../pages/PatientDetailPage/PatientDetailPage.
 import { PatientVisitsPage } from "../pages/PatientVisitsPage/PatientVisitsPage.tsx";
 import { PatientsPage } from "../pages/PatientsPage/PatientsPage.tsx";
 import { VisitDetailPage } from "../pages/VisitDetailPage/VisitDetailPage.tsx";
+import PaymentPage from "../pages/PaymentPage/PaymentPage";
 
 export const routesList = [
   {
@@ -77,11 +78,7 @@ export const routesList = [
   },
   {
     path: "/payment",
-    element: (
-      <div style={{ padding: 20, fontSize: 16 }}>
-        Страница еще в разработке...
-      </div>
-    ),
+    element: <PaymentPage />,
   },
   {
     path: "/reviews",
