@@ -30,6 +30,7 @@ import {
   Procedure,
   Speciality,
 } from "../../types/doctor.ts";
+import {useStateContext} from "../../contexts";
 
 const initialValues: FormInitialFieldsParamsType[] = [
   {
@@ -81,6 +82,7 @@ const initialValues: FormInitialFieldsParamsType[] = [
 const DoctorsPage2 = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const {state} = useStateContext()
 
   const [page, setPage] = useState(1);
   const [createUpdateModalOpen, setCreateUpdateModalOpen] =
@@ -120,8 +122,9 @@ const DoctorsPage2 = () => {
     queryKey: ["doctorsData", page, params],
     queryFn: () =>
       axiosInstance
-        .get<IGet<IDoctor>>(`employee_endpoints/doctors/?page=${page}${params}`)
+        .get<IGet<IDoctor>>(`employee_endpoints/clinics/${state?.addressId}/doctors/?page=${page}${params}`)
         .then((response) => response?.data),
+    enabled: !!state?.addressId,
   });
 
   const { data: clinics, isLoading: clinicsLoading } = useQuery({
@@ -196,6 +199,11 @@ const DoctorsPage2 = () => {
 
   const columns = [
     {
+      title: "ID",
+      key: "id",
+      dataIndex: "id",
+    },
+    {
       title: "Фото",
       key: "main_photo",
       dataIndex: "main_photo",
@@ -213,29 +221,29 @@ const DoctorsPage2 = () => {
     //   key: "category",
     //   dataIndex: "category",
     // },
-    {
-      title: "Категорий",
-      key: "categories",
-      dataIndex: "categories",
-      render: (categories: ICategory[]) => {
-        return (
-          <ShowMoreContainer>
-            <div className={styles.tag_wrapper}>
-              {categories?.map((item) => (
-                <Tag key={item.doctor_category_id} color="#108ee9">
-                  {item?.medical_category_title}
-                </Tag>
-              ))}
-            </div>
-          </ShowMoreContainer>
-        );
-      },
-    },
-    {
-      title: "Город",
-      key: "city_title",
-      dataIndex: "city_title",
-    },
+    // {
+    //   title: "Категорий",
+    //   key: "categories",
+    //   dataIndex: "categories",
+    //   render: (categories: ICategory[]) => {
+    //     return (
+    //       <ShowMoreContainer>
+    //         <div className={styles.tag_wrapper}>
+    //           {categories?.map((item) => (
+    //             <Tag key={item.doctor_category_id} color="#108ee9">
+    //               {item?.medical_category_title}
+    //             </Tag>
+    //           ))}
+    //         </div>
+    //       </ShowMoreContainer>
+    //     );
+    //   },
+    // },
+    // {
+    //   title: "Город",
+    //   key: "city_title",
+    //   dataIndex: "city_title",
+    // },
     {
       title: "Специализации",
       key: "specialities",
@@ -270,26 +278,34 @@ const DoctorsPage2 = () => {
         );
       },
     },
+    // {
+    //   title: "Опыт (лет)",
+    //   key: "experience_years",
+    //   dataIndex: "experience_years",
+    // },
     {
-      title: "Опыт (лет)",
-      key: "experience_years",
-      dataIndex: "experience_years",
-    },
-    {
-      title: "Рейтинг",
-      key: "rating",
-      dataIndex: "rating",
-    },
-    {
-      title: "Филиалы клиник",
-      key: "clinics",
-      dataIndex: "clinics",
-      render: (branches: Clinic[]) => (
-        <ShowMoreContainer>
-          {branches.map((item) => item.title).join(", ")}
-        </ShowMoreContainer>
+      title: "Статус",
+      key: "is_active",
+      dataIndex: "is_active",
+      render: (isActive: boolean) => (
+          isActive ? 'Активен' : 'Неактивен'
       ),
     },
+    // {
+    //   title: "Рейтинг",
+    //   key: "rating",
+    //   dataIndex: "rating",
+    // },
+    // {
+    //   title: "Филиалы клиник",
+    //   key: "clinics",
+    //   dataIndex: "clinics",
+    //   render: (branches: Clinic[]) => (
+    //     <ShowMoreContainer>
+    //       {branches.map((item) => item.title).join(", ")}
+    //     </ShowMoreContainer>
+    //   ),
+    // },
     {
       title: "Редактировать",
       render: (data: IDoctor) => (
@@ -328,16 +344,16 @@ const DoctorsPage2 = () => {
         />
       </Drawer>
       <div className={styles.container}>
-        <div className={styles.action}>
-          <Button
-            // onClick={onOpenCreateUpdateModal}
-            onClick={() => navigate("create")}
-            type={"primary"}
-            size={"large"}
-          >
-            Создать
-          </Button>
-        </div>
+        {/*<div className={styles.action}>*/}
+        {/*  <Button*/}
+        {/*    // onClick={onOpenCreateUpdateModal}*/}
+        {/*    onClick={() => navigate("create")}*/}
+        {/*    type={"primary"}*/}
+        {/*    size={"large"}*/}
+        {/*  >*/}
+        {/*    Создать*/}
+        {/*  </Button>*/}
+        {/*</div>*/}
         <AllDoctorsFilter
           branchesOptions={clinicOptions}
           specialitiesOptions={specOptions}

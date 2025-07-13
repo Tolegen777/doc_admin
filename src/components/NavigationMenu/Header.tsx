@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -26,10 +26,10 @@ const items: MenuItem[] = [
     label: "Отзывы",
     key: "/reviews",
   },
-  // {
-  //   label: "Врачи",
-  //   key: "/doctors",
-  // },
+  {
+    label: "Врачи",
+    key: "/all-doctors",
+  },
   // {
   //     label: 'Франшизы',
   //     key: '/franchises',
@@ -45,7 +45,8 @@ const items: MenuItem[] = [
 ];
 
 const NavigationMenu: React.FC = () => {
-  const [current, setCurrent] = useState("/calendar");
+  const location = useLocation()
+  const [current, setCurrent] = useState(location.pathname.split("/")[1] ? `/${location.pathname.split("/")[1]}` : '/calendar');
   const navigate = useNavigate();
 
   const onClick: MenuProps["onClick"] = (e) => {

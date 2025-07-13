@@ -52,67 +52,80 @@ const AllDoctorsFilter = ({
       className={styles.filterForm}
     >
       <Form.Item
-        name="search"
+        name="name"
         // label="Имя"
       >
-        <Input placeholder="Введите имя врача" />
+        <Input placeholder="Введите имя врача" style={{minWidth: 400}} />
       </Form.Item>
-      <Form.Item
-        name="specialities"
-        // label="Специальности"
-      >
-        <Select
-          mode="multiple"
-          placeholder="Выберите специальности"
-          options={specialitiesOptions}
-          style={{ width: "300px" }}
-          popupMatchSelectWidth={false}
-          loading={specLoading}
-        />
-      </Form.Item>
-      <Form.Item
-        name="categories"
-        // label="Категории"
-      >
-        <Select
-          mode="multiple"
-          placeholder="Выберите категории"
-          options={categoriesOptions}
-          style={{ width: "200px" }}
-          popupMatchSelectWidth={false}
-          loading={categoriesLoading}
-        />
-      </Form.Item>
-      <Form.Item
-        name="cities"
-        // label="Города"
-      >
-        <Select
-          mode="multiple"
-          placeholder="Выберите города"
-          options={citiesOptions}
-          style={{ width: "200px" }}
-          popupMatchSelectWidth={false}
-          loading={citiesLoading}
-        />
-      </Form.Item>
-      <Form.Item
-        name="clinics"
-        // label="Филиалы"
-      >
-        <Select
-          mode="multiple"
-          placeholder="Выберите филиалы"
-          options={branchesOptions}
-          style={{ width: "400px" }}
-          popupMatchSelectWidth={false}
-          loading={branchesLoading}
-        />
-      </Form.Item>
+      {/*<Form.Item*/}
+      {/*  name="specialities"*/}
+      {/*  // label="Специальности"*/}
+      {/*>*/}
+      {/*  <Select*/}
+      {/*    mode="multiple"*/}
+      {/*    placeholder="Выберите специальности"*/}
+      {/*    options={specialitiesOptions}*/}
+      {/*    style={{ width: "300px" }}*/}
+      {/*    popupMatchSelectWidth={false}*/}
+      {/*    loading={specLoading}*/}
+      {/*  />*/}
+      {/*</Form.Item>*/}
+      {/*<Form.Item*/}
+      {/*  name="categories"*/}
+      {/*  // label="Категории"*/}
+      {/*>*/}
+      {/*  <Select*/}
+      {/*    mode="multiple"*/}
+      {/*    placeholder="Выберите категории"*/}
+      {/*    options={categoriesOptions}*/}
+      {/*    style={{ width: "200px" }}*/}
+      {/*    popupMatchSelectWidth={false}*/}
+      {/*    loading={categoriesLoading}*/}
+      {/*  />*/}
+      {/*</Form.Item>*/}
+      {/*<Form.Item*/}
+      {/*  name="cities"*/}
+      {/*  // label="Города"*/}
+      {/*>*/}
+      {/*  <Select*/}
+      {/*    mode="multiple"*/}
+      {/*    placeholder="Выберите города"*/}
+      {/*    options={citiesOptions}*/}
+      {/*    style={{ width: "200px" }}*/}
+      {/*    popupMatchSelectWidth={false}*/}
+      {/*    loading={citiesLoading}*/}
+      {/*  />*/}
+      {/*</Form.Item>*/}
+      {/*<Form.Item*/}
+      {/*  name="clinics"*/}
+      {/*  // label="Филиалы"*/}
+      {/*>*/}
+      {/*  <Select*/}
+      {/*    mode="multiple"*/}
+      {/*    placeholder="Выберите филиалы"*/}
+      {/*    options={branchesOptions}*/}
+      {/*    style={{ width: "400px" }}*/}
+      {/*    popupMatchSelectWidth={false}*/}
+      {/*    loading={branchesLoading}*/}
+      {/*  />*/}
+      {/*</Form.Item>*/}
       <Form.Item>
         <Button type="primary" htmlType="submit" size={"large"}>
           Поиск
         </Button>
+        {form.getFieldValue('name')?.length > 0 && <Button
+            type="default"
+            size={"large"}
+            style={{marginLeft: 10}}
+            onClick={() => {
+              form.resetFields(['name'])
+              onFinish({
+                name: ''
+              })
+            }}
+        >
+          Сбросить
+        </Button>}
       </Form.Item>
     </Form>
   );
