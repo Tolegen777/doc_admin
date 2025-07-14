@@ -134,9 +134,9 @@ const MonthSummaryByIdPage = () => {
                 columns={columns}
                 dataSource={data?.results?.visits ?? []}
                 loading={isLoading}
-                setPage={setPage}
-                current={page}
-                total={data?.count ?? 0}
+                // total={data?.count ?? 0}
+                hidePagination={true}
+
             />
         </div>
     );

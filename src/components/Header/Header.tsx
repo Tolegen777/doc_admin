@@ -1,5 +1,5 @@
 import styles from "./styles.module.scss";
-import { Button, Dropdown, MenuProps, Select, Space } from "antd";
+import { Dropdown, MenuProps, Select, Space } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import { axiosInstance } from "../../api";
 import { IFranchise } from "../../types/franchiseTypes.ts";
@@ -10,14 +10,11 @@ import { resetService } from "../../services/resetService.ts";
 import userIcon from "../../assets/userIcon.svg";
 import { DownOutlined } from "@ant-design/icons";
 import { Spinner } from "../Shared/Spinner";
-import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { state, dispatch } = useStateContext();
 
   const { addressId } = state;
-
-  const router = useNavigate();
 
   const { data, isLoading } = useQuery({
     queryKey: ["franchiseBranches"],
@@ -85,10 +82,10 @@ const Header = () => {
         {/*<Button onClick={() => router("/all-doctors")}>*/}
         {/*  Показать всех врачей Франшизы*/}
         {/*</Button>*/}
-        <Button onClick={() => router("/all-visits")}>
-          Показать все посещения
-        </Button>
-        <Button onClick={() => router("/franchises")}>Филиалы Клиник</Button>
+        {/*<Button onClick={() => router("/all-visits")}>*/}
+        {/*  Показать все посещения*/}
+        {/*</Button>*/}
+        {/*<Button onClick={() => router("/franchises")}>Филиалы Клиник</Button>*/}
         <div>
           <Select
             onChange={(value: number) => {
