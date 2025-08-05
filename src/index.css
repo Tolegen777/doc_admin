@@ -27,3 +27,52 @@ body {
 }
 
 
+
+/* Кастомные стили для уведомлений о записи */
+.custom-appointment-notification .ant-notification-notice-content {
+  background-color: #5194C1 !important;
+  color: white !important;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
+
+.custom-appointment-notification .ant-notification-notice-description {
+  color: white !important;
+  white-space: pre-line;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.custom-appointment-notification .ant-notification-notice-close {
+  color: white !important;
+  opacity: 0.8;
+  font-size: 16px;
+  right: 16px;
+  top: 16px;
+}
+
+.custom-appointment-notification .ant-notification-notice-close:hover {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.custom-appointment-notification .ant-notification-notice-icon {
+  color: white !important;
+  font-size: 20px;
+  margin-right: 12px;
+  margin-top: 2px;
+}
+
+/* Дополнительные стили для лучшего отображения */
+.custom-appointment-notification {
+  box-shadow: 0 6px 16px rgba(81, 148, 193, 0.4) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.custom-appointment-notification .ant-notification-notice {
+  background-color: #5194C1 !important;
+  border-radius: 8px !important;
+}

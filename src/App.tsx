@@ -2,7 +2,7 @@ import type {FC} from 'react'
 import {ConfigProvider} from 'antd';
 import {BrowserRouter} from 'react-router-dom';
 import {AppRoutes} from './routes/AppRoutes';
-
+import {WebSocketProvider} from './components/WebSocketProvider';
 
 const App: FC = () => (
     <ConfigProvider
@@ -28,7 +28,9 @@ const App: FC = () => (
         }}
     >
         <BrowserRouter>
-            <AppRoutes/>
+            <WebSocketProvider>
+                <AppRoutes/>
+            </WebSocketProvider>
         </BrowserRouter>
     </ConfigProvider>
 )
