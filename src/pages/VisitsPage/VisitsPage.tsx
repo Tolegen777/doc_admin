@@ -17,6 +17,7 @@ import { customNotification } from "../../utils/customNotification.ts";
 import { Button, Drawer } from "antd";
 import { changeFormFieldsData } from "../../utils/changeFormFieldsData.ts";
 import { VisitUpdateForm } from "../../components/Visits/VisitUpdateForm/VisitUpdateForm.tsx";
+import { useNavigate } from "react-router-dom";
 
 const initialValues: FormInitialFieldsParamsType[] = [
   {
@@ -32,25 +33,22 @@ const initialValues: FormInitialFieldsParamsType[] = [
     value: "",
   },
   {
-    name: "is_paid",
+    name: "paid",
     value: false,
   },
   {
     name: "approved_by_clinic",
     value: false,
   },
-  // {
-  //     name: 'approved',
-  //     value: false,
-  // },
   {
-    name: "visit_status",
+    name: "status_id",
     value: null,
   },
 ];
 
 const VisitsPage = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { state } = useStateContext();
 
@@ -58,10 +56,10 @@ const VisitsPage = () => {
 
   const [page, setPage] = useState(1);
   const [createUpdateModalOpen, setCreateUpdateModalOpen] =
-    useState<boolean>(false);
+      useState<boolean>(false);
   const [editEntity, setEditEntity] = useState<IVisit | null>(null);
   const [createUpdateFormInitialFields, setCreateUpdateFormInitialFields] =
-    useState<FormInitialFieldsParamsType[]>(initialValues);
+      useState<FormInitialFieldsParamsType[]>(initialValues);
 
   const { mutate: onUpdate, isPending: isUpdateLoading } = useMutation({
     mutationKey: ["updateVisit"],
@@ -80,15 +78,15 @@ const VisitsPage = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["visitsData", addressId, visitsQuery, page],
     queryFn: () =>
-      axiosInstance
-        .get<IVisit[]>(
-          `employee_endpoints/clinics/${addressId}/visits/?page=${page}&${objectToQueryParams(
-            {
-              part_of_name: visitsQuery,
-            },
-          )}`,
-        )
-        .then((response) => response?.data),
+        axiosInstance
+            .get<IVisit[]>(
+                `employee_endpoints/clinics/${addressId}/visits/?page=${page}&${objectToQueryParams(
+                    {
+                      part_of_name: visitsQuery,
+                    },
+                )}`,
+            )
+            .then((response) => response?.data),
     enabled: !!addressId,
   });
 
@@ -102,11 +100,12 @@ const VisitsPage = () => {
     if (data) {
       setEditEntity(data);
       setCreateUpdateFormInitialFields(
-        changeFormFieldsData<object>(initialValues, {
-          ...data,
-          date: datePickerFormatter(data?.date ?? ""),
-          visit_status: data?.visit_status?.id,
-        }),
+          changeFormFieldsData<object>(initialValues, {
+            ...data,
+            date: datePickerFormatter(data?.date ?? ""),
+            status_id: data?.visit_status?.id,
+            paid: data?.is_paid,
+          }),
       );
     }
 
@@ -118,10 +117,21 @@ const VisitsPage = () => {
       ...formData,
       date: formatDateToString(formData?.date?.$d ?? null) ?? "",
       id: editEntity?.id,
+      // Добавляем обязательные поля для IVisitCreate
+      doctor_id: editEntity?.doctor_profile?.id || null,
+      doctor_procedure_id: editEntity?.doctor_procedure?.id || null,
+      visit_time_id: editEntity?.visit_time_slot?.id || null,
+      clinic_branch_id: editEntity?.clinic?.id || null,
+      patient_id: editEntity?.patient?.id || null,
+      approved: editEntity?.approved_by_admin || false,
     };
 
     onUpdate(payload);
     onClose();
+  };
+
+  const handleVisitIdClick = (visitId: number) => {
+    navigate(`/visits/${visitId}`);
   };
 
   const columns = [
@@ -129,59 +139,67 @@ const VisitsPage = () => {
       title: "Идентификатор",
       key: "id",
       dataIndex: "id",
+      render: (id: number) => (
+          <Button
+              type="link"
+              onClick={() => handleVisitIdClick(id)}
+              style={{ padding: 0, height: 'auto', fontSize: '14px' }}
+          >
+            #{id}
+          </Button>
+      ),
     },
     {
       title: "Дата визита",
       key: "date",
       render: (visit: IVisit) => (
-        <p>
-          {formatDateTime({
-            inputDate: visit?.date,
-            inputTime: visit?.visit_time_slot.start_time,
-          })}
-        </p>
+          <p>
+            {formatDateTime({
+              inputDate: visit?.date,
+              inputTime: visit?.visit_time_slot.start_time,
+            })}
+          </p>
       ),
     },
     {
       title: "Дата создания/обновления",
       key: "visit_time_slot",
       render: (visit: IVisit) => (
-        <div>
-          <p>
-            {formatDateTime({
-              isoDateTime: visit?.created_at,
-            })}
-          </p>
-          {visit?.updated_at?.length > 0 && (
+          <div>
             <p>
-              Изменено:{" "}
               {formatDateTime({
-                isoDateTime: visit?.updated_at,
+                isoDateTime: visit?.created_at,
               })}
             </p>
-          )}
-        </div>
+            {visit?.updated_at?.length > 0 && (
+                <p>
+                  Изменено:{" "}
+                  {formatDateTime({
+                    isoDateTime: visit?.updated_at,
+                  })}
+                </p>
+            )}
+          </div>
       ),
     },
     {
       title: "Врач",
       key: "doctor_profile",
       render: (visit: IVisit) => (
-        <DoctorProfile
-          title={visit?.doctor_profile?.full_name}
-          subTitle={visit?.doctor_procedure?.medical_procedure?.title}
-          imgSrc={""}
-        />
+          <DoctorProfile
+              title={visit?.doctor_profile?.full_name}
+              subTitle={visit?.doctor_procedure?.medical_procedure?.title}
+              imgSrc={""}
+          />
       ),
     },
     {
       title: "Статус",
       key: "visit_status",
       render: (visit: IVisit) => (
-        <div>
-          <div>{visit.visit_status.title}</div>
-          {/*<TextButton text={'Изменить'} type={'primary'} action={() => {}} />*/}
-        </div>
+          <div>
+            <div>{visit.visit_status.title}</div>
+          </div>
       ),
     },
     {
@@ -189,51 +207,51 @@ const VisitsPage = () => {
       key: "patient",
       render: (visit: IVisit) => {
         return (
-          <div>
-            <div>{visit?.patient?.full_name}</div>
-            <div>{visit?.patient?.phone_number}</div>
-            <div>{visit?.patient?.iin_number}</div>
-          </div>
+            <div>
+              <div>{visit?.patient?.full_name}</div>
+              <div>{visit?.patient?.phone_number}</div>
+              <div>{visit?.patient?.iin_number}</div>
+            </div>
         );
       },
     },
     {
       title: "Редактировать",
       render: (data: IVisit) => (
-        <Button onClick={() => onOpenCreateUpdateModal(data)} type={"primary"}>
-          Редактировать
-        </Button>
+          <Button onClick={() => onOpenCreateUpdateModal(data)} type={"primary"}>
+            Редактировать
+          </Button>
       ),
     },
   ];
 
   return (
-    <>
-      <Drawer
-        title={"Редактирование записи"}
-        onClose={onClose}
-        open={createUpdateModalOpen}
-        width="500px"
-      >
-        <VisitUpdateForm
-          formType={"update"}
-          initialFields={createUpdateFormInitialFields}
-          onSubmit={onSubmitCreateUpdateModal}
-          onClose={onClose}
-          isLoading={isUpdateLoading}
-        />
-      </Drawer>
-      <div className={styles.container}>
-        <CustomTable
-          columns={columns}
-          dataSource={data}
-          loading={isLoading}
-          setPage={setPage}
-          total={data?.length ?? 0}
-          current={page}
-        />
-      </div>
-    </>
+      <>
+        <Drawer
+            title={"Редактирование записи"}
+            onClose={onClose}
+            open={createUpdateModalOpen}
+            width="500px"
+        >
+          <VisitUpdateForm
+              formType={"update"}
+              initialFields={createUpdateFormInitialFields}
+              onSubmit={onSubmitCreateUpdateModal}
+              onClose={onClose}
+              isLoading={isUpdateLoading}
+          />
+        </Drawer>
+        <div className={styles.container}>
+          <CustomTable
+              columns={columns}
+              dataSource={data}
+              loading={isLoading}
+              setPage={setPage}
+              total={data?.length ?? 0}
+              current={page}
+          />
+        </div>
+      </>
   );
 };
 

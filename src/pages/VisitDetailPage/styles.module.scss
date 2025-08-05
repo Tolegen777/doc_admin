@@ -1,15 +1,87 @@
 .container {
   padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 24px;
+  gap: 16px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #262626;
+    flex: 1;
+    text-align: center;
+  }
 }
 
-.actions {
+.content {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+
+  .ant-card-head {
+    border-bottom: 1px solid #f0f0f0;
+
+    .ant-card-head-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 24px;
+}
+
+// Адаптивность
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    h1 {
+      text-align: left;
+      font-size: 20px;
+    }
+  }
+
+  .content {
+    gap: 16px;
+  }
+
+  :global(.ant-descriptions) {
+    :global(.ant-descriptions-item) {
+      padding: 12px !important;
+    }
+  }
 }

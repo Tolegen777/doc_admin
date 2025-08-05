@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { websocketService, type NotificationData } from '../services/websocketService';
+import { websocketService, type NotificationData } from '../services/websocketService.tsx';
 import { tokenService } from '../services/tokenService';
 
 export const useWebSocket = () => {

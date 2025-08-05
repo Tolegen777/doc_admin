@@ -1,6 +1,6 @@
 // services/websocketService.ts
+import { notification } from 'antd';
 import { tokenService } from './tokenService';
-import { customNotification } from '../utils/customNotification';
 
 export interface NotificationData {
     first_name: string;
@@ -10,6 +10,7 @@ export interface NotificationData {
     clinic: string;
     date: string;
     time: string;
+    visit_id: number;
 }
 
 type NotificationCallback = (data: NotificationData) => void;
@@ -24,7 +25,6 @@ class WebSocketService {
 
     private getWebSocketUrl(): string {
         const token = tokenService.getLocalAccessToken();
-
         return `wss://backend.docfinder.kz/ws/notifications/?token=${token}`;
     }
 
@@ -137,16 +137,50 @@ class WebSocketService {
             });
         };
 
-        // Структурированное уведомление
-        const message = `📅 Новая запись создана
-Детали записи:
-• Клиника: ${data.clinic}
-• Дата: ${formatDate(data.date)}
-• Время: ${data.time}`
-        customNotification({
-            type: 'info',
-            message,
-            duration: 5000
+        // Создаем кликабельное уведомление с React элементом
+        const NotificationContent = (
+            <div
+                style={{
+            cursor: 'pointer',
+                color: 'white',
+                whiteSpace: 'pre-line',
+                fontSize: '16px',
+                lineHeight: '1.5',
+                fontWeight: 500
+        }}
+        onClick={() => {
+            // Переходим на страницу детальной записи
+            window.location.href = `/visits/${data.visit_id}`;
+            // Закрываем уведомление
+            notification.destroy();
+        }}
+    >
+    📅 Новая запись создана
+        {'\n'}Детали записи:
+        {'\n'}• Клиника: {data.clinic}
+        {'\n'}• Дата: {formatDate(data.date)}
+        {'\n'}• Время: {data.time}
+        {'\n'}
+        {'\n'}👆 Нажмите, чтобы просмотреть детали
+        </div>
+    );
+
+        notification.open({
+            message: null,
+            description: NotificationContent,
+            duration: 8000, // Увеличиваем время показа до 8 секунд
+            style: {
+                backgroundColor: '#5194C1',
+                border: 'none',
+                borderRadius: '8px',
+                boxShadow: '0 6px 16px rgba(81, 148, 193, 0.4)',
+            },
+            className: 'custom-appointment-notification',
+            onClick: () => {
+                // Дополнительный обработчик клика на само уведомление
+                window.location.href = `/visits/${data.visit_id}`;
+                notification.destroy();
+            }
         });
     }
 
