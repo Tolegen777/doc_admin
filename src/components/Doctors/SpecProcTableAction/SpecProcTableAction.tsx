@@ -1,18 +1,21 @@
 import { Button, Select, Table, Typography } from "antd";
-import { TableType } from "../../../types/common.ts";
+import {IGet, TableType} from "../../../types/common.ts";
 import { selectOptionsParser } from "../../../utils/selectOptionsParser.ts";
-import { useState } from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import styles from "./styles.module.scss";
 import GapContainer from "../../Shared/GapContainer/GapContainer.tsx";
+import {CustomTable} from "../../Shared/CustomTable";
 
 type Props = {
   columns: TableType<any>;
-  data: any[];
+  data: IGet<any> | undefined;
   onCreate: (id: number) => void;
   procSpecList: any[];
   isLoading: boolean;
   entityType: "speciality" | "procedure";
   isDisabled: boolean;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
 };
 
 export const SpecProcTableAction = ({
@@ -23,6 +26,8 @@ export const SpecProcTableAction = ({
   isLoading,
   entityType,
   isDisabled,
+    page,
+    setPage,
 }: Props) => {
   const { Title } = Typography;
 
@@ -81,11 +86,14 @@ export const SpecProcTableAction = ({
           </GapContainer>
         )}
       </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        style={{ marginBottom: 30 }}
-        loading={isLoading}
+      <CustomTable
+          columns={columns}
+          dataSource={data?.results ?? []}
+          loading={isLoading}
+          style={{ marginBottom: 30 }}
+          setPage={setPage}
+          total={data?.count ?? 0}
+          current={page}
       />
     </div>
   );

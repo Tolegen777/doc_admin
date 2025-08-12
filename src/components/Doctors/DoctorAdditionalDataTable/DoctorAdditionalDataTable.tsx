@@ -48,6 +48,9 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
 
   const [allProcs, setAllProcs] = useState<IMedProcedures[]>([]);
 
+  const [specPage, setSpecPage] = useState<number>(1);
+  const [procPage, setProcPage] = useState<number>(1);
+
   // SPECIALITY POST PUT DELETE API
   const {
     mutate: onCreateSpec,
@@ -132,12 +135,13 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
       deleteSpecSuccess,
       doctorDetails?.id,
       addressId,
+      specPage
     ],
     queryFn: () =>
       axiosInstance
         .get<
           IGet<ISpec>
-        >(`employee_endpoints/doctors/${doctorDetails?.id}/specialities`)
+        >(`employee_endpoints/doctors/${doctorDetails?.id}/specialities?page=${specPage}`)
         .then((response) => response?.data),
     enabled: !!addressId && !!doctorDetails?.id,
   });
@@ -159,12 +163,13 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
       activeSpecId,
       doctorDetails?.id,
       addressId,
+        procPage
     ],
     queryFn: () =>
       axiosInstance
         .get<
           IGet<IProc>
-        >(`employee_endpoints/doctors/${doctorDetails?.id}/specialities/${activeSpecId}/procedures/`)
+        >(`employee_endpoints/doctors/${doctorDetails?.id}/specialities/${activeSpecId}/procedures/?page=${procPage}`)
         .then((response) => response?.data),
     enabled: !!addressId && !!doctorDetails?.id && !!activeSpecId,
   });
@@ -195,6 +200,8 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
     setActiveSpecId(id);
     setActiveSpecTitle(title);
     setIsProcOpen(true);
+    setSpecPage(1)
+    setProcPage(1)
   };
 
   const handleCreateProc = (id: number) => {
@@ -222,6 +229,8 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
 
   const onProcClose = () => {
     setIsProcOpen(false);
+    setSpecPage(1)
+    setProcPage(1)
   };
 
   const onPriceClose = () => {
@@ -344,13 +353,15 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
   return (
     <>
       <SpecProcTableAction
-        data={specs?.results ?? []}
+        data={specs}
         columns={specColumns}
         onCreate={handleCreateSpec}
         procSpecList={filterAllFields("spec") ?? []}
         isLoading={isSpecLoading}
         entityType={"speciality"}
         isDisabled={isSpecCreateLoading}
+        page={specPage}
+        setPage={setSpecPage}
       />
       <Drawer
         title={`Выбранная специальность: ${activeSpecTitle}`}
@@ -359,13 +370,15 @@ const DoctorAdditionalDataTable = ({ doctorDetails }: Props) => {
         width={"90%"}
       >
         <SpecProcTableAction
-          data={procs?.results ?? []}
+          data={procs}
           columns={procColumns}
           onCreate={handleCreateProc}
           procSpecList={filterAllFields("proc") ?? []}
           isLoading={isProcLoading}
           entityType={"procedure"}
           isDisabled={isProcCreateLoading}
+          page={procPage}
+          setPage={setProcPage}
         />
       </Drawer>
       <Drawer
